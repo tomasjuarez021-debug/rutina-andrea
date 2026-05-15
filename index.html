@@ -1,0 +1,1753 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#1a1a1a">
+<title>Rutina Andrea</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #f5efe3;
+    --card: #fffdf7;
+    --ink: #2a241c;
+    --ink-soft: #6b5d4a;
+    --ink-mute: #a89878;
+    --accent: #b8893f;
+    --accent-soft: #f0e2c4;
+    --gold: #c9a45b;
+    --gold-deep: #9b7434;
+    --green: #8b9d6b;
+    --green-soft: #e8ead8;
+    --blue: #a08c6f;
+    --blue-soft: #ede4d2;
+    --rest: #d4c8b0;
+    --line: #e6dcc6;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: 'Inter', sans-serif;
+    font-size: 15px;
+    line-height: 1.5;
+    padding: 1.25rem 1rem 3rem;
+    max-width: 460px;
+    margin: 0 auto;
+  }
+
+  /* HEADER */
+  .header {
+    text-align: center;
+    margin-bottom: 1.25rem;
+  }
+  .header .tag {
+    font-size: 0.65rem;
+    text-transform: uppercase;
+    letter-spacing: 0.25em;
+    color: var(--ink-mute);
+    margin-bottom: 0.3rem;
+  }
+  .header h1 {
+    font-family: 'Space Grotesk', sans-serif;
+    font-weight: 900;
+    font-size: 1.6rem;
+    line-height: 1;
+    letter-spacing: -0.02em;
+  }
+  .header h1 em {
+    
+    font-weight: 400;
+    color: var(--accent);
+  }
+
+  /* STAT SUMMARY */
+  .summary {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 1.25rem;
+  }
+  .stat {
+    flex: 1;
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 0.7rem 0.4rem;
+    text-align: center;
+  }
+  .stat .num {
+    font-family: 'Space Grotesk', sans-serif;
+    font-weight: 900;
+    font-size: 1.4rem;
+    line-height: 1;
+    margin-bottom: 0.1rem;
+  }
+  .stat .num.accent { color: var(--accent); }
+  .stat .num.green { color: var(--green); }
+  .stat .label {
+    font-size: 0.58rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--ink-mute);
+    font-weight: 600;
+  }
+
+  /* WEEK NAV */
+  .week-nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 0.85rem;
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 0.45rem 0.6rem;
+  }
+  .nav-btn {
+    background: none;
+    border: none;
+    font-size: 1.2rem;
+    color: var(--ink);
+    cursor: pointer;
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .nav-btn:active { background: var(--accent-soft); }
+  .nav-btn:disabled { color: var(--ink-mute); cursor: not-allowed; opacity: 0.4; }
+  .nav-title {
+    text-align: center;
+    flex: 1;
+  }
+  .nav-title .num {
+    font-size: 0.6rem;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    color: var(--accent);
+    font-weight: 700;
+  }
+  .nav-title .desc {
+    font-family: 'Space Grotesk', sans-serif;
+    font-weight: 700;
+    font-size: 0.95rem;
+    margin-top: 0.05rem;
+  }
+  .nav-title .range {
+    font-size: 0.65rem;
+    color: var(--ink-mute);
+    margin-top: 0.1rem;
+  }
+
+  /* CALENDAR */
+  .calendar {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 0.35rem;
+    margin-bottom: 1.5rem;
+  }
+  .day {
+    aspect-ratio: 0.9;
+    background: var(--card);
+    border: 1.5px solid var(--line);
+    border-radius: 11px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    position: relative;
+    transition: all 0.15s;
+    padding: 0.2rem;
+  }
+  .day:active { transform: scale(0.94); }
+  .day .dow {
+    font-size: 0.6rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--ink-mute);
+    font-weight: 700;
+    margin-bottom: 0.2rem;
+  }
+  .day .dnum {
+    font-family: 'Space Grotesk', sans-serif;
+    font-weight: 900;
+    font-size: 1.4rem;
+    color: var(--ink);
+    line-height: 1;
+  }
+
+  /* Estado: futuro */
+  .day.future {
+    opacity: 0.85;
+  }
+  /* Hoy */
+  .day.today {
+    border-color: var(--accent);
+    border-width: 2px;
+  }
+
+  /* Seleccionado */
+  .day.selected {
+    background: var(--ink);
+    border-color: var(--ink);
+    opacity: 1;
+  }
+  .day.selected .dow { color: rgba(255,255,255,0.5); }
+  .day.selected .dnum { color: white !important; }
+
+  /* Hecho (puede combinarse con selected) */
+  .day.done::after {
+    content: '✓';
+    position: absolute;
+    top: 3px;
+    right: 5px;
+    color: var(--accent);
+    font-weight: 900;
+    font-size: 0.75rem;
+  }
+  .day.done:not(.selected) {
+    background: var(--accent-soft);
+    border-color: var(--accent);
+  }
+
+  /* ROUTINE DISPLAY (debajo del calendario) */
+  .selected-routine {
+    background: var(--card);
+    border: 1.5px solid var(--line);
+    border-radius: 16px;
+    overflow: hidden;
+    margin-bottom: 1rem;
+  }
+
+  .sr-header {
+    padding: 1rem 1.1rem;
+    border-bottom: 1px solid var(--line);
+    display: flex;
+    align-items: center;
+    gap: 0.85rem;
+  }
+  .sr-header.a { background: var(--blue-soft); border-bottom-color: rgba(74, 124, 196, 0.2); }
+  .sr-header.b { background: var(--green-soft); border-bottom-color: rgba(74, 157, 106, 0.2); }
+  .sr-header.rest { background: #f5f1e8; }
+
+  .sr-date {
+    flex: 0 0 auto;
+    text-align: center;
+    padding: 0.4rem 0.7rem;
+    background: rgba(255,255,255,0.6);
+    border-radius: 10px;
+    min-width: 56px;
+  }
+  .sr-date .dow {
+    font-size: 0.6rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--ink-soft);
+    font-weight: 700;
+    margin-bottom: 0.15rem;
+  }
+  .sr-date .dnum {
+    font-family: 'Space Grotesk', sans-serif;
+    font-weight: 900;
+    font-size: 1.4rem;
+    line-height: 1;
+  }
+  .sr-info { flex: 1; }
+  .sr-label {
+    font-size: 0.6rem;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    color: var(--ink-soft);
+    font-weight: 700;
+    margin-bottom: 0.2rem;
+  }
+  .sr-title {
+    font-family: 'Space Grotesk', sans-serif;
+    font-weight: 700;
+    font-size: 1.15rem;
+    line-height: 1.1;
+  }
+  .sr-title em {  color: var(--accent); }
+  .sr-sub {
+    font-size: 0.78rem;
+    color: var(--ink-soft);
+    margin-top: 0.15rem;
+  }
+
+  /* Mark done button */
+  .mark-btn {
+    width: 100%;
+    background: var(--accent);
+    color: white;
+    border: none;
+    padding: 0.85rem;
+    font-weight: 700;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+  .mark-btn:active { background: #c64a2e; }
+  .mark-btn.done {
+    background: var(--ink);
+  }
+  .mark-btn:disabled {
+    background: var(--line);
+    color: var(--ink-mute);
+    cursor: not-allowed;
+  }
+
+  /* ROUTINE CONTENT */
+  .sr-body {
+    padding: 0.85rem 1rem 1rem;
+  }
+
+  .block {
+    margin-bottom: 0.85rem;
+  }
+  .block:last-child { margin-bottom: 0; }
+
+  .block-name {
+    font-size: 0.62rem;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    color: var(--accent);
+    font-weight: 700;
+    margin-bottom: 0.45rem;
+    padding-bottom: 0.4rem;
+    border-bottom: 1px solid var(--line);
+  }
+  .block-name .time {
+    color: var(--ink-mute);
+    font-weight: 500;
+    text-transform: none;
+    letter-spacing: 0;
+    margin-left: 0.35rem;
+  }
+  .ex {
+    padding: 0.55rem 0;
+    display: flex;
+    align-items: flex-start;
+    gap: 0.7rem;
+    transition: opacity 0.2s;
+  }
+  .ex + .ex { border-top: 1px dashed var(--line); }
+  .ex-check {
+    flex: 0 0 22px;
+    width: 22px;
+    height: 22px;
+    border-radius: 6px;
+    border: 1.5px solid var(--gold);
+    background: var(--card);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.85rem;
+    color: var(--card);
+    font-weight: 900;
+    transition: all 0.15s;
+    margin-top: 0.05rem;
+    cursor: pointer;
+  }
+  .ex-text {
+    flex: 1;
+    cursor: pointer;
+  }
+  .ex-name {
+    font-weight: 700;
+    font-size: 0.88rem;
+    margin-bottom: 0.1rem;
+  }
+  .ex-sets {
+    font-size: 0.76rem;
+    color: var(--accent);
+    font-weight: 600;
+  }
+  .ex-load {
+    display: inline-block;
+    margin-left: 0.5rem;
+    padding: 0.1rem 0.5rem;
+    background: var(--gold);
+    color: var(--card);
+    font-size: 0.7rem;
+    font-weight: 700;
+    border-radius: 6px;
+    letter-spacing: 0.02em;
+  }
+  .ex.checked .ex-load { opacity: 0.5; }
+  .ex-edited {
+    display: inline-block;
+    margin-left: 0.35rem;
+    font-size: 0.65rem;
+    color: var(--gold-deep);
+    
+  }
+  .ex-menu {
+    flex: 0 0 auto;
+    width: 28px;
+    height: 28px;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--ink-mute);
+    font-size: 1.1rem;
+    cursor: pointer;
+    margin-top: -0.1rem;
+    user-select: none;
+  }
+  .ex-menu:active { background: var(--accent-soft); color: var(--gold-deep); }
+
+  .ex-info {
+    flex: 0 0 auto;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    border: 1.5px solid var(--gold);
+    color: var(--gold-deep);
+    background: var(--card);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.7rem;
+    font-weight: 900;
+    font-family: 'Space Grotesk', sans-serif;
+    cursor: pointer;
+    margin-top: 0.05rem;
+    margin-right: 0.2rem;
+    user-select: none;
+    transition: all 0.15s;
+  }
+  .ex-info:active { background: var(--gold); color: var(--card); }
+  .ex.info-open .ex-info {
+    background: var(--gold);
+    color: var(--card);
+  }
+
+  .ex-how {
+    grid-column: 1 / -1;
+    margin-top: 0.6rem;
+    padding: 0.7rem 0.85rem;
+    background: var(--accent-soft);
+    border-radius: 10px;
+    font-size: 0.82rem;
+    line-height: 1.5;
+    color: var(--ink-soft);
+    display: none;
+    border-left: 3px solid var(--gold);
+  }
+  .ex.info-open .ex-how {
+    display: block;
+    animation: fadeIn 0.2s ease;
+  }
+
+  .ex {
+    flex-wrap: wrap;
+  }
+
+  /* Modal de edición */
+  .modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(42, 36, 28, 0.55);
+    display: none;
+    align-items: flex-end;
+    justify-content: center;
+    z-index: 1000;
+    padding: 1rem;
+  }
+  .modal-overlay.open {
+    display: flex;
+    animation: fadeIn 0.2s ease;
+  }
+  @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+  .modal {
+    background: var(--card);
+    border-radius: 18px 18px 14px 14px;
+    width: 100%;
+    max-width: 420px;
+    padding: 1.25rem 1.1rem;
+    border: 1px solid var(--line);
+    animation: slideUp 0.25s ease;
+  }
+  @keyframes slideUp { from { transform: translateY(30px); } to { transform: translateY(0); } }
+  .modal-title {
+    font-family: 'Space Grotesk', sans-serif;
+    font-weight: 700;
+    font-size: 1.15rem;
+    margin-bottom: 0.25rem;
+    letter-spacing: -0.01em;
+  }
+  .modal-sub {
+    font-size: 0.8rem;
+    color: var(--ink-mute);
+    margin-bottom: 1rem;
+  }
+  .field {
+    margin-bottom: 0.85rem;
+  }
+  .field label {
+    display: block;
+    font-size: 0.65rem;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--ink-mute);
+    font-weight: 700;
+    margin-bottom: 0.3rem;
+  }
+  .field input {
+    width: 100%;
+    padding: 0.65rem 0.8rem;
+    border: 1.5px solid var(--line);
+    background: var(--bg);
+    border-radius: 10px;
+    font-size: 0.92rem;
+    font-family: inherit;
+    color: var(--ink);
+    transition: border 0.15s;
+  }
+  .field input:focus {
+    outline: none;
+    border-color: var(--gold);
+  }
+  .modal-actions {
+    display: flex;
+    gap: 0.5rem;
+    margin-top: 0.85rem;
+  }
+  .btn {
+    flex: 1;
+    padding: 0.75rem;
+    border-radius: 10px;
+    border: 1.5px solid transparent;
+    font-weight: 700;
+    font-size: 0.82rem;
+    cursor: pointer;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    font-family: inherit;
+  }
+  .btn-primary {
+    background: var(--gold);
+    color: var(--card);
+  }
+  .btn-primary:active { background: var(--gold-deep); }
+  .btn-secondary {
+    background: var(--card);
+    color: var(--ink);
+    border-color: var(--line);
+  }
+  .btn-reset-ex {
+    background: none;
+    color: var(--ink-mute);
+    border: none;
+    font-size: 0.72rem;
+    text-decoration: underline;
+    cursor: pointer;
+    margin-top: 0.5rem;
+    width: 100%;
+    padding: 0.4rem;
+  }
+  .ex.checked .ex-check {
+    background: var(--gold);
+    color: var(--card);
+  }
+  .ex.checked .ex-name {
+    text-decoration: line-through;
+    color: var(--ink-mute);
+  }
+  .ex.checked .ex-sets { opacity: 0.5; }
+  .ex.disabled {
+    cursor: default;
+    opacity: 0.7;
+  }
+  .ex.disabled .ex-check {
+    border-color: var(--ink-mute);
+    opacity: 0.4;
+  }
+
+  /* KPIs del día seleccionado */
+  .day-kpis {
+    display: flex;
+    gap: 0.5rem;
+    padding: 0.85rem 1rem;
+    background: var(--accent-soft);
+    border-bottom: 1px solid var(--line);
+  }
+  .day-kpi {
+    flex: 1;
+    text-align: center;
+    padding: 0.4rem 0.3rem;
+    background: var(--card);
+    border-radius: 10px;
+    border: 1px solid var(--line);
+  }
+  .day-kpi .kpi-num {
+    font-family: 'Space Grotesk', sans-serif;
+    font-weight: 900;
+    font-size: 1.15rem;
+    line-height: 1;
+    color: var(--gold-deep);
+    margin-bottom: 0.15rem;
+  }
+  .day-kpi .kpi-label {
+    font-size: 0.55rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--ink-mute);
+    font-weight: 700;
+  }
+
+  /* Barra de progreso del día */
+  .progress-bar {
+    height: 6px;
+    background: var(--line);
+    border-radius: 3px;
+    overflow: hidden;
+    margin: 0 1rem 0.85rem;
+  }
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--gold), var(--gold-deep));
+    transition: width 0.3s ease;
+    border-radius: 3px;
+  }
+
+  /* REST MESSAGE */
+  .rest-message {
+    padding: 1.5rem 1rem;
+    text-align: center;
+    font-family: 'Space Grotesk', sans-serif;
+    
+    color: var(--ink-soft);
+    font-size: 1.05rem;
+    line-height: 1.4;
+  }
+  .rest-message strong {
+    display: block;
+    font-style: normal;
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: var(--ink);
+    margin-bottom: 0.3rem;
+  }
+
+  /* FUTURE MESSAGE */
+  .future-message {
+    padding: 1.5rem 1rem;
+    text-align: center;
+    color: var(--ink-soft);
+    font-size: 0.9rem;
+    line-height: 1.5;
+  }
+  .future-message strong { color: var(--ink); }
+
+  /* FOOTER NOTE */
+  .footer-note {
+    margin-top: 1.75rem;
+    text-align: center;
+    font-family: 'Space Grotesk', sans-serif;
+    
+    font-size: 0.92rem;
+    color: var(--ink-mute);
+    padding: 0 1rem;
+  }
+
+  /* MAIN TABS (Rutina / Progreso) */
+  .main-tabs {
+    display: flex;
+    gap: 0.4rem;
+    margin-bottom: 1.25rem;
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 0.3rem;
+  }
+  .main-tab {
+    flex: 1;
+    padding: 0.65rem;
+    border-radius: 9px;
+    text-align: center;
+    font-weight: 700;
+    font-size: 0.82rem;
+    cursor: pointer;
+    color: var(--ink-mute);
+    transition: all 0.2s;
+  }
+  .main-tab.active {
+    background: var(--ink);
+    color: var(--card);
+  }
+
+  .view-section { display: none; }
+  .view-section.active { display: block; animation: in 0.3s ease; }
+  @keyframes in { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
+
+  /* MONTH CALENDAR */
+  .month-nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1rem;
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 0.5rem 0.7rem;
+  }
+  .month-title {
+    font-family: 'Space Grotesk', sans-serif;
+    font-weight: 700;
+    font-size: 1.05rem;
+    text-transform: capitalize;
+  }
+
+  .month-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 0.3rem;
+    margin-bottom: 1.25rem;
+  }
+  .month-dow {
+    text-align: center;
+    font-size: 0.6rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--ink-mute);
+    font-weight: 700;
+    padding: 0.3rem 0;
+  }
+  .month-day {
+    aspect-ratio: 1;
+    background: var(--card);
+    border: 1.5px solid var(--line);
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Space Grotesk', sans-serif;
+    font-weight: 700;
+    font-size: 0.95rem;
+    color: var(--ink);
+    cursor: pointer;
+    position: relative;
+    transition: all 0.15s;
+  }
+  .month-day:active { transform: scale(0.93); }
+  .month-day.empty {
+    background: transparent;
+    border: none;
+    cursor: default;
+  }
+  .month-day.empty:active { transform: none; }
+  .month-day.outside { opacity: 0.25; cursor: default; }
+  .month-day.outside:active { transform: none; }
+
+  .month-day.green {
+    background: #d4dfb8;
+    border-color: #8b9d6b;
+    color: #4a5832;
+  }
+  .month-day.orange {
+    background: #f4d8a8;
+    border-color: var(--gold);
+    color: var(--gold-deep);
+  }
+  .month-day.red {
+    background: #e8c4b0;
+    border-color: #b88060;
+    color: #6a3a20;
+  }
+  .month-day.rest {
+    background: var(--bg);
+    color: var(--rest);
+    border-style: dashed;
+  }
+  .month-day.today {
+    box-shadow: 0 0 0 2px var(--ink);
+  }
+  .month-day .status-dot {
+    position: absolute;
+    bottom: 4px;
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+  }
+
+  /* LEYENDA */
+  .legend {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 0.85rem 1rem;
+    margin-bottom: 1rem;
+  }
+  .legend-title {
+    font-size: 0.6rem;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    color: var(--ink-mute);
+    font-weight: 700;
+    margin-bottom: 0.6rem;
+  }
+  .legend-row {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.3rem 0;
+    font-size: 0.82rem;
+  }
+  .legend-dot {
+    width: 18px;
+    height: 18px;
+    border-radius: 5px;
+    border: 1.5px solid;
+    flex: 0 0 18px;
+  }
+  .legend-dot.green { background: #d4dfb8; border-color: #8b9d6b; }
+  .legend-dot.orange { background: #f4d8a8; border-color: var(--gold); }
+  .legend-dot.red { background: #e8c4b0; border-color: #b88060; }
+  .legend-dot.rest { background: var(--bg); border-color: var(--rest); border-style: dashed; }
+
+  /* RESUMEN MES */
+  .month-summary {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.5rem;
+    margin-bottom: 1.25rem;
+  }
+  .ms-card {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 0.85rem 0.5rem;
+    text-align: center;
+  }
+  .ms-num {
+    font-family: 'Space Grotesk', sans-serif;
+    font-weight: 900;
+    font-size: 1.6rem;
+    line-height: 1;
+    margin-bottom: 0.2rem;
+  }
+  .ms-num.green { color: #6b7d4b; }
+  .ms-num.orange { color: var(--gold-deep); }
+  .ms-num.red { color: #8a4520; }
+  .ms-label {
+    font-size: 0.58rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--ink-mute);
+    font-weight: 700;
+  }
+
+  /* RESET BUTTON */
+  .reset {
+    margin-top: 1rem;
+    text-align: center;
+  }
+  .reset button {
+    background: none;
+    border: none;
+    color: var(--ink-mute);
+    font-size: 0.72rem;
+    text-decoration: underline;
+    cursor: pointer;
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="tag">Mi recuperación</div>
+  <h1>Rutina <em>Andrea</em></h1>
+</div>
+
+<!-- MAIN TABS -->
+<div class="main-tabs">
+  <div class="main-tab active" data-section="rutina">Rutina</div>
+  <div class="main-tab" data-section="progreso">Progreso</div>
+</div>
+
+<!-- ============ SECCIÓN RUTINA ============ -->
+<div class="view-section active" data-section="rutina">
+
+<!-- SUMMARY -->
+<div class="summary">
+  <div class="stat">
+    <div class="num accent" id="statDone">0</div>
+    <div class="label">Hechas</div>
+  </div>
+  <div class="stat">
+    <div class="num" id="statStreak">0</div>
+    <div class="label">Racha</div>
+  </div>
+  <div class="stat">
+    <div class="num green" id="statPct">0%</div>
+    <div class="label">Semana</div>
+  </div>
+</div>
+
+<!-- WEEK NAVIGATION -->
+<div class="week-nav">
+  <button class="nav-btn" id="prevWeek">‹</button>
+  <div class="nav-title">
+    <div class="num" id="weekNum">Semana 1</div>
+    <div class="desc" id="weekDesc">Arranque</div>
+    <div class="range" id="weekRange">—</div>
+  </div>
+  <button class="nav-btn" id="nextWeek">›</button>
+</div>
+
+<!-- CALENDAR -->
+<div class="calendar" id="calendar"></div>
+
+<!-- SELECTED DAY ROUTINE -->
+<div class="selected-routine" id="selectedRoutine">
+  <!-- contenido dinámico -->
+</div>
+
+<div class="footer-note">
+  "Volver no es apurar. Es llegar entera."
+</div>
+
+</div>
+<!-- ============ FIN SECCIÓN RUTINA ============ -->
+
+<!-- ============ SECCIÓN PROGRESO ============ -->
+<div class="view-section" data-section="progreso">
+
+  <div class="month-nav">
+    <button class="nav-btn" id="prevMonth">‹</button>
+    <div class="month-title" id="monthTitle">—</div>
+    <button class="nav-btn" id="nextMonth">›</button>
+  </div>
+
+  <div class="month-summary">
+    <div class="ms-card">
+      <div class="ms-num green" id="msGreen">0</div>
+      <div class="ms-label">Completos</div>
+    </div>
+    <div class="ms-card">
+      <div class="ms-num orange" id="msOrange">0</div>
+      <div class="ms-label">Parciales</div>
+    </div>
+    <div class="ms-card">
+      <div class="ms-num red" id="msRed">0</div>
+      <div class="ms-label">Perdidos</div>
+    </div>
+  </div>
+
+  <div class="month-grid" id="monthGrid"></div>
+
+  <div class="legend">
+    <div class="legend-title">Referencia</div>
+    <div class="legend-row"><div class="legend-dot green"></div><span>Día completo (todos los ejercicios)</span></div>
+    <div class="legend-row"><div class="legend-dot orange"></div><span>Día parcial (algunos ejercicios)</span></div>
+    <div class="legend-row"><div class="legend-dot red"></div><span>Día pasado sin hacer</span></div>
+    <div class="legend-row"><div class="legend-dot rest"></div><span>Día de descanso</span></div>
+  </div>
+
+</div>
+<!-- ============ FIN SECCIÓN PROGRESO ============ -->
+
+<div class="reset">
+  <button id="resetBtn">Borrar todos los ticks</button>
+</div>
+
+<!-- MODAL DE EDICIÓN -->
+<div class="modal-overlay" id="modal">
+  <div class="modal">
+    <div class="modal-title" id="modalTitle">Editar ejercicio</div>
+    <div class="modal-sub" id="modalSub">Personalizá series, reps o peso</div>
+    <div class="field">
+      <label>Nombre</label>
+      <input type="text" id="editName" />
+    </div>
+    <div class="field">
+      <label>Series / repeticiones</label>
+      <input type="text" id="editSets" placeholder="ej: 3 × 10" />
+    </div>
+    <div class="field">
+      <label>Peso (opcional)</label>
+      <input type="text" id="editLoad" placeholder="ej: 5 kg" />
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-secondary" id="cancelBtn">Cancelar</button>
+      <button class="btn btn-primary" id="saveBtn">Guardar</button>
+    </div>
+    <button class="btn-reset-ex" id="resetExBtn">Restaurar valores originales</button>
+  </div>
+</div>
+
+<script>
+  // ============================================================
+  // CONFIG
+  // ============================================================
+  // El plan arranca el lunes de la primera vez que se abre la app.
+  // Esa fecha se guarda en localStorage y NUNCA cambia después.
+  // Si querés forzar una fecha distinta, descomentá la línea de abajo
+  // (mes 0-indexed: enero=0, mayo=4, diciembre=11)
+  // const FORCED_START_DATE = new Date(2026, 4, 18);
+
+  function getMondayOfCurrentWeek() {
+    const now = new Date();
+    const utc = now.getTime() + now.getTimezoneOffset() * 60000;
+    const ar = new Date(utc + (-3) * 3600000);
+    const dow = (ar.getDay() + 6) % 7; // Lun=0, Dom=6
+    const monday = new Date(ar.getFullYear(), ar.getMonth(), ar.getDate() - dow);
+    return monday;
+  }
+
+  function getOrCreateStartDate() {
+    // Si hay una fecha forzada, usarla siempre
+    if (typeof FORCED_START_DATE !== 'undefined') {
+      return FORCED_START_DATE;
+    }
+    // Sino, leer de localStorage o crear y persistir
+    try {
+      const saved = localStorage.getItem('rutina_start_date');
+      if (saved) {
+        return new Date(saved);
+      }
+    } catch (e) {}
+    const monday = getMondayOfCurrentWeek();
+    try {
+      localStorage.setItem('rutina_start_date', monday.toISOString());
+    } catch (e) {}
+    return monday;
+  }
+
+  const START_DATE = getOrCreateStartDate();
+  const TOTAL_WEEKS = 8;
+
+  const weeks = [
+    { num: 1, desc: 'Arranque' },
+    { num: 2, desc: 'Consolidación' },
+    { num: 3, desc: 'Más carga' },
+    { num: 4, desc: 'Mini-test trote' },
+    { num: 5, desc: 'Walk-Run' },
+    { num: 6, desc: 'Más trote' },
+    { num: 7, desc: 'Trote largo' },
+    { num: 8, desc: 'Corredora' },
+  ];
+
+  const dayPattern = ['a', 'b', 'a', 'rest', 'a', 'b', 'rest'];
+  const dowLabels = ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom'];
+  const monthLabels = ['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
+
+  // ============================================================
+  // ROUTINES DATA
+  // ============================================================
+  // Pesos progresivos por semana (índice 0 = semana 1)
+  // Si un ejercicio no tiene entry, usa el sets fijo
+  const weeklyLoad = {
+    'Sentadilla búlgara':       ['3 kg', '5 kg', '6 kg', '7 kg', '8 kg', '10 kg', '10 kg', '12 kg'],
+    'Peso muerto a una pierna': ['5 kg', '7 kg', '9 kg', '10 kg', '12 kg', '14 kg', '14 kg', '15 kg'],
+    'Bajadas de talón · rodilla recta':   ['sin peso', 'mochila 3 kg', 'mochila 5 kg', 'mochila 5 kg', 'mochila 7 kg', 'mochila 8 kg', 'mochila 10 kg', 'mochila 10 kg'],
+    'Bajadas de talón · rodilla doblada': ['sin peso', 'mochila 3 kg', 'mochila 5 kg', 'mochila 5 kg', 'mochila 7 kg', 'mochila 8 kg', 'mochila 10 kg', 'mochila 10 kg'],
+    'Elevaciones con peso lento': ['mancuernas 3 kg', 'mancuernas 5 kg', 'mancuernas 7 kg', 'mancuernas 8 kg', 'mancuernas 10 kg', 'mancuernas 12 kg', 'mancuernas 12 kg', 'mancuernas 14 kg'],
+  };
+
+  function getLoadForWeek(exName, weekNum) {
+    const arr = weeklyLoad[exName];
+    if (!arr) return null;
+    return arr[weekNum - 1] || arr[arr.length - 1];
+  }
+
+  const routineA = [
+    { block: 'Entrada en calor', time: '10 min', exercises: [
+      { name: 'Bici suave', sets: '6 minutos', how: 'Bici fija con resistencia baja, ritmo cómodo. El objetivo es entrar en temperatura, no transpirar. Tendrías que poder mantener una conversación.' },
+      { name: 'Movilidad de tobillo', sets: '10 por lado', how: 'Parada frente a una pared. Llevá la rodilla a tocar la pared sin que se despegue el talón del piso. Si llegás fácil, alejá el pie un poco más.' },
+      { name: 'Puente de glúteos', sets: '15 reps', how: 'Acostada boca arriba, rodillas dobladas, pies apoyados. Subí la cadera apretando los glúteos arriba. Bajá despacio. Sin arquear la zona lumbar.' },
+    ]},
+    { block: 'Fuerza', time: '35 min', exercises: [
+      { name: 'Sentadilla búlgara', sets: '3 × 10 · pierna derecha', how: 'Pie izquierdo apoyado atrás sobre un banco o silla. Con mancuernas en cada mano, bajás flexionando la rodilla derecha hasta que el muslo quede paralelo al piso. Subís controlado. El peso lo hace la pierna de adelante.' },
+      { name: 'Peso muerto a una pierna', sets: '3 × 8 · derecha', how: 'Parada en la pierna derecha. Mancuerna en la mano izquierda. Inclinás el tronco hacia adelante extendiendo la pierna izquierda hacia atrás, formando una T. Volvés despacio. Si te cuesta el equilibrio, apoyate con un dedo en la pared.' },
+      { name: 'Curl de isquios', sets: '3 × 8', how: 'En máquina del gimnasio, boca abajo o sentada según el equipo. Si no hay máquina: nordic curl asistido — de rodillas con alguien que te sostenga los tobillos, te dejás caer hacia adelante lo más lento posible.' },
+      { name: 'Puente a una pierna', sets: '3 × 12 · derecha', how: 'Como el puente del calentamiento, pero apoyando solo el pie derecho. La pierna izquierda queda estirada en el aire. Subís la cadera apretando el glúteo derecho.' },
+      { name: 'Step-up al banco', sets: '3 × 10 · derecha', how: 'Parada frente a un banco o escalón firme. Subís apoyando primero el pie derecho — la fuerza la hace esa pierna, no te empujes con la izquierda. Bajás despacio.' },
+    ]},
+    { block: 'Core', time: '10 min', exercises: [
+      { name: 'Plancha frontal', sets: '3 × 30s', how: 'Apoyada sobre los codos y las puntas de los pies. Cuerpo recto como una tabla, panza y glúteos apretados. No dejes que se hunda la cadera.' },
+      { name: 'Plancha lateral', sets: '2 × 25s por lado', how: 'De costado, apoyada sobre un codo. La cadera levantada, cuerpo en línea recta. Si es muy duro, apoyá la rodilla de abajo.' },
+      { name: 'Bird-dog', sets: '2 × 10 por lado', how: 'En cuatro patas. Extendés el brazo derecho hacia adelante y la pierna izquierda hacia atrás al mismo tiempo. Mantenés 2 segundos sin que se mueva la cadera, y cambiás al otro lado.' },
+    ]},
+    { block: 'Estiramiento', time: '5 min', exercises: [
+      { name: 'Isquios, glúteos, cuádriceps', sets: '30s por zona', how: 'Suave, sin rebotes. Respiración tranquila. Llevás cada estiramiento hasta sentir tensión, no dolor.' },
+    ]},
+  ];
+
+  const routineB = [
+    { block: 'Entrada en calor', time: '10 min', exercises: [
+      { name: 'Bici suave', sets: '6 minutos', how: 'Ritmo cómodo, resistencia baja. Que el tobillo y el tendón se preparen para trabajar.' },
+      { name: 'Movilidad de tobillo', sets: '10 por lado', how: 'Misma que en Sesión A: rodilla hacia la pared sin despegar el talón.' },
+      { name: 'Elevaciones de talones', sets: '2 × 20 dos piernas', how: 'Parada, te ponés en puntas de pie despacio y bajás. Tipo balletazo suave. Sirve para activar gemelos y tendón.' },
+    ]},
+    { block: 'Tendón', time: '25 min', exercises: [
+      { name: 'Bajadas de talón · rodilla recta', sets: '3 × 15 · izquierda', how: 'Parada en el borde de un escalón con las dos piernas en puntas. Pasás todo el peso a la pierna izquierda y bajás muy lento (4 segundos) hasta que el talón quede por debajo del escalón. Subís usando las dos piernas. Este es EL ejercicio que cura el tendón.' },
+      { name: 'Bajadas de talón · rodilla doblada', sets: '3 × 15 · izquierda', how: 'Igual que el anterior pero con la rodilla un poco doblada durante toda la bajada. Trabaja una parte distinta del tendón.' },
+      { name: 'Elevaciones con peso lento', sets: '3 × 10 · dos piernas', how: 'Con mancuernas en las manos o mochila con peso. Subís a puntas en 3 segundos, bajás en 3 segundos. Lento y controlado — el tendón se hace fuerte con peso y lentitud, no con velocidad.' },
+      { name: 'Equilibrio en almohadón', sets: '3 × 30s por lado', how: 'Parada en una pierna sobre un almohadón o una colchoneta enrollada. Mantené el equilibrio. Si te resulta fácil, cerrá los ojos para hacerlo más exigente.' },
+    ]},
+    { block: 'Control', time: '15 min', exercises: [
+      { name: 'Sentadilla a una pierna asistida', sets: '3 × 8 · derecha', how: 'Bajás en cuclillas apoyando solo el pie derecho, sosteniéndote con las manos en algo (palo, marco de puerta, TRX). Bajás hasta donde puedas controlar, y subís.' },
+      { name: 'Saltos verticales suaves', sets: '3 × 10', how: 'Saltos cortos sin altura. Lo importante NO es saltar alto sino aterrizar suave y parejo, con las dos piernas absorbiendo el impacto por igual. Imaginá que aterrizás sobre un suelo de cristal.' },
+      { name: 'Bajada lenta del escalón', sets: '3 × 10 · derecha', how: 'Parada arriba de un escalón. Bajás muy lento tocando el suelo con el talón izquierdo y volvés a subir. La pierna derecha hace todo el trabajo del control.' },
+    ]},
+    { block: 'Estiramiento', time: '10 min', exercises: [
+      { name: 'Gemelos y sóleo', sets: '45s por pierna', how: 'Contra la pared, una pierna estirada atrás con el talón pegado al piso (gemelo). Para sóleo: misma posición pero con la rodilla un poco doblada.' },
+      { name: 'Isquios y cuádriceps', sets: '30s por zona', how: 'Suave, sin rebotes. Llevás cada estiramiento hasta sentir tensión, no dolor.' },
+    ]},
+  ];
+
+  // ============================================================
+  // STATE
+  // ============================================================
+  let done = {};
+  let exDone = {}; // ejercicios chequeados
+  let exCustom = {}; // ejercicios editados por el usuario: { "a_0_2": {name, sets, load} }
+  try {
+    const saved = localStorage.getItem('rutina_done_v4');
+    if (saved) {
+      const parsed = JSON.parse(saved);
+      done = parsed.done || {};
+      exDone = parsed.exDone || {};
+      exCustom = parsed.exCustom || {};
+    }
+  } catch (e) {}
+
+  function save() {
+    try { localStorage.setItem('rutina_done_v4', JSON.stringify({ done, exDone, exCustom })); } catch (e) {}
+  }
+
+  function exKey(weekNum, dayIdx, blockIdx, exIdx) {
+    return `w${weekNum}d${dayIdx}_b${blockIdx}_e${exIdx}`;
+  }
+
+  // Clave de personalización (independiente de semana/día, vale para todas las ocurrencias)
+  function customKey(kind, blockIdx, exIdx) {
+    return `${kind}_${blockIdx}_${exIdx}`;
+  }
+
+  function getExerciseDisplay(kind, blockIdx, exIdx, weekNum) {
+    const routine = kind === 'a' ? routineA : routineB;
+    const original = routine[blockIdx].exercises[exIdx];
+    const custom = exCustom[customKey(kind, blockIdx, exIdx)];
+    const name = custom?.name || original.name;
+    const sets = custom?.sets || original.sets;
+    // load: si hay custom, usa el custom; si no, usa el progresivo
+    let load;
+    if (custom?.load !== undefined) {
+      load = custom.load || null;
+    } else {
+      load = getLoadForWeek(original.name, weekNum);
+    }
+    return { name, sets, load, isCustom: !!custom };
+  }
+
+  // ============================================================
+  // FECHA AR
+  // ============================================================
+  function getNowAR() {
+    const now = new Date();
+    const utc = now.getTime() + now.getTimezoneOffset() * 60000;
+    return new Date(utc + (-3) * 3600000);
+  }
+  function getTodayAR() {
+    const ar = getNowAR();
+    return new Date(ar.getFullYear(), ar.getMonth(), ar.getDate());
+  }
+  function daysBetween(a, b) {
+    return Math.round((b.getTime() - a.getTime()) / 86400000);
+  }
+  function planPositionFor(date) {
+    const start = new Date(START_DATE.getFullYear(), START_DATE.getMonth(), START_DATE.getDate());
+    const diff = daysBetween(start, date);
+    if (diff < 0) return { week: null, dayIdx: null, beforeStart: true };
+    const week = Math.floor(diff / 7) + 1;
+    const dayIdx = diff % 7;
+    if (week > TOTAL_WEEKS) return { week: null, dayIdx: null, afterEnd: true };
+    return { week, dayIdx };
+  }
+  function dateForWeekDay(weekNum, dayIdx) {
+    const start = new Date(START_DATE.getFullYear(), START_DATE.getMonth(), START_DATE.getDate());
+    const d = new Date(start);
+    d.setDate(d.getDate() + (weekNum - 1) * 7 + dayIdx);
+    return d;
+  }
+  function isSameDate(a, b) {
+    return a.getFullYear() === b.getFullYear() &&
+           a.getMonth() === b.getMonth() &&
+           a.getDate() === b.getDate();
+  }
+  function key(weekNum, dayIdx) {
+    return `w${weekNum}d${dayIdx}`;
+  }
+
+  // ============================================================
+  // NAVIGATION STATE
+  // ============================================================
+  const today = getTodayAR();
+  const todayPos = planPositionFor(today);
+
+  let currentWeek = 1;
+  let selectedWeek, selectedDay;
+
+  if (todayPos.week !== null) {
+    currentWeek = todayPos.week;
+    selectedWeek = todayPos.week;
+    selectedDay = todayPos.dayIdx;
+  } else if (todayPos.beforeStart) {
+    currentWeek = 1;
+    selectedWeek = 1;
+    selectedDay = 0;
+  } else {
+    currentWeek = TOTAL_WEEKS;
+    selectedWeek = TOTAL_WEEKS;
+    selectedDay = 4; // viernes
+  }
+
+  // ============================================================
+  // RENDER
+  // ============================================================
+  function dayTypeLabel(kind) {
+    if (kind === 'a') return 'A';
+    if (kind === 'b') return 'B';
+    return '·';
+  }
+
+  function renderWeek() {
+    const w = weeks[currentWeek - 1];
+    document.getElementById('weekNum').textContent = `Semana ${w.num}`;
+    document.getElementById('weekDesc').textContent = w.desc;
+
+    const firstDay = dateForWeekDay(w.num, 0);
+    const lastDay = dateForWeekDay(w.num, 6);
+    document.getElementById('weekRange').textContent =
+      `${firstDay.getDate()} ${monthLabels[firstDay.getMonth()]} — ${lastDay.getDate()} ${monthLabels[lastDay.getMonth()]}`;
+
+    document.getElementById('prevWeek').disabled = currentWeek === 1;
+    document.getElementById('nextWeek').disabled = currentWeek === TOTAL_WEEKS;
+
+    const cal = document.getElementById('calendar');
+    cal.innerHTML = '';
+
+    for (let i = 0; i < 7; i++) {
+      const kind = dayPattern[i];
+      const date = dateForWeekDay(w.num, i);
+      const el = document.createElement('div');
+      el.className = `day ${kind}`;
+
+      const k = key(w.num, i);
+      const isToday = isSameDate(date, today);
+      const isFuture = date > today;
+      const isDone = !!done[k];
+      const isSelected = (selectedWeek === w.num && selectedDay === i);
+
+      if (isToday) el.classList.add('today');
+      if (isFuture) el.classList.add('future');
+      if (isDone) el.classList.add('done');
+      if (isSelected) el.classList.add('selected');
+
+      el.innerHTML = `
+        <div class="dow">${dowLabels[i]}</div>
+        <div class="dnum">${date.getDate()}</div>
+      `;
+
+      // Cualquier día se puede seleccionar
+      el.addEventListener('click', () => {
+        selectedWeek = w.num;
+        selectedDay = i;
+        renderAll();
+      });
+
+      cal.appendChild(el);
+    }
+  }
+
+  function renderSelectedRoutine() {
+    const container = document.getElementById('selectedRoutine');
+    const w = selectedWeek;
+    const d = selectedDay;
+    const kind = dayPattern[d];
+    const date = dateForWeekDay(w, d);
+    const k = key(w, d);
+    const isDone = !!done[k];
+    const isFuture = date > today;
+    const isToday = isSameDate(date, today);
+
+    // Header común
+    const headerClass = kind === 'a' ? 'a' : kind === 'b' ? 'b' : 'rest';
+    let labelText = isToday ? 'Hoy' : (isFuture ? 'Próximo' : 'Pasado');
+
+    let titleHtml, subText;
+    if (kind === 'a') {
+      titleHtml = `Sesión <em>A</em> · Fuerza`;
+      subText = `Semana ${w} · ${weeks[w-1].desc}`;
+    } else if (kind === 'b') {
+      titleHtml = `Sesión <em>B</em> · Tendón`;
+      subText = `Semana ${w} · ${weeks[w-1].desc}`;
+    } else {
+      titleHtml = `Día de <em>descanso</em>`;
+      subText = `Semana ${w}`;
+    }
+
+    let html = `
+      <div class="sr-header ${headerClass}">
+        <div class="sr-date">
+          <div class="dow">${dowLabels[d]}</div>
+          <div class="dnum">${date.getDate()}</div>
+        </div>
+        <div class="sr-info">
+          <div class="sr-label">${labelText}</div>
+          <div class="sr-title">${titleHtml}</div>
+          <div class="sr-sub">${subText}</div>
+        </div>
+      </div>
+    `;
+
+    if (kind === 'rest') {
+      html += `
+        <div class="rest-message">
+          <strong>Día libre</strong>
+          Hoy descansás. Caminata suave o nada — el cuerpo también se construye en el descanso.
+        </div>
+      `;
+    } else {
+      const routine = kind === 'a' ? routineA : routineB;
+
+      // Calcular KPIs del día
+      let totalEx = 0, doneEx = 0, totalMin = 0;
+      routine.forEach((b, bi) => {
+        const mins = parseInt(b.time) || 0;
+        totalMin += mins;
+        b.exercises.forEach((e, ei) => {
+          totalEx++;
+          if (exDone[exKey(w, d, bi, ei)]) doneEx++;
+        });
+      });
+      const pct = totalEx === 0 ? 0 : Math.round((doneEx / totalEx) * 100);
+
+      // KPIs
+      html += `
+        <div class="day-kpis">
+          <div class="day-kpi">
+            <div class="kpi-num">${doneEx}/${totalEx}</div>
+            <div class="kpi-label">Ejercicios</div>
+          </div>
+          <div class="day-kpi">
+            <div class="kpi-num">${pct}%</div>
+            <div class="kpi-label">Avance</div>
+          </div>
+          <div class="day-kpi">
+            <div class="kpi-num">${totalMin}'</div>
+            <div class="kpi-label">Duración</div>
+          </div>
+        </div>
+        <div class="progress-bar"><div class="progress-fill" style="width:${pct}%"></div></div>
+      `;
+
+      // Botón marcar (solo si no es futuro)
+      if (!isFuture) {
+        html += `
+          <button class="mark-btn ${isDone ? 'done' : ''}" id="markBtn">
+            ${isDone ? '✓ Hecha — Tocá para deshacer' : 'Marcar día como hecho'}
+          </button>
+        `;
+      } else {
+        html += `
+          <div class="future-message">
+            <strong>Día futuro</strong><br>
+            Esta es la rutina que te va a tocar.
+          </div>
+        `;
+      }
+
+      // Body con ejercicios tickeables
+      html += `<div class="sr-body">`;
+      routine.forEach((b, bi) => {
+        html += `
+          <div class="block">
+            <div class="block-name">${b.block} <span class="time">${b.time}</span></div>
+            ${b.exercises.map((e, ei) => {
+              const ek = exKey(w, d, bi, ei);
+              const checked = !!exDone[ek];
+              const disp = getExerciseDisplay(kind, bi, ei, w);
+              const loadBadge = disp.load ? `<span class="ex-load">${disp.load}</span>` : '';
+              const editedTag = disp.isCustom ? `<span class="ex-edited">editado</span>` : '';
+              const howText = e.how || '';
+              const hasHow = howText.length > 0;
+              return `
+                <div class="ex ${checked ? 'checked' : ''} ${isFuture ? 'disabled' : ''}" data-exkey="${ek}" data-kind="${kind}" data-bi="${bi}" data-ei="${ei}">
+                  <div class="ex-check">✓</div>
+                  <div class="ex-text">
+                    <div class="ex-name">${disp.name}${editedTag}</div>
+                    <div class="ex-sets">${disp.sets}${loadBadge}</div>
+                  </div>
+                  ${hasHow ? `<div class="ex-info" data-info="1">?</div>` : ''}
+                  <div class="ex-menu" data-edit="1">⋯</div>
+                  ${hasHow ? `<div class="ex-how">${howText}</div>` : ''}
+                </div>
+              `;
+            }).join('')}
+          </div>
+        `;
+      });
+      html += `</div>`;
+    }
+
+    container.innerHTML = html;
+
+    // Listener del botón marcar
+    const btn = document.getElementById('markBtn');
+    if (btn) {
+      btn.addEventListener('click', () => {
+        const routine = kind === 'a' ? routineA : routineB;
+        const willBeDone = !done[k]; // estado al que vamos
+        done[k] = willBeDone;
+        if (!willBeDone) delete done[k];
+
+        // Tildar/destildar todos los ejercicios del día
+        routine.forEach((b, bi) => {
+          b.exercises.forEach((e, ei) => {
+            const exK = exKey(w, d, bi, ei);
+            if (willBeDone) {
+              exDone[exK] = true;
+            } else {
+              delete exDone[exK];
+            }
+          });
+        });
+
+        save();
+        renderAll();
+      });
+    }
+
+    // Listeners de cada ejercicio
+    container.querySelectorAll('.ex[data-exkey]').forEach(elx => {
+      const ek = elx.dataset.exkey;
+      const kind = elx.dataset.kind;
+      const bi = parseInt(elx.dataset.bi);
+      const ei = parseInt(elx.dataset.ei);
+
+      // Área principal: check + text → marcar/desmarcar
+      const checkEl = elx.querySelector('.ex-check');
+      const textEl = elx.querySelector('.ex-text');
+      const toggleDone = (event) => {
+        event.stopPropagation();
+        if (isFuture) return;
+        exDone[ek] = !exDone[ek];
+        if (!exDone[ek]) delete exDone[ek];
+        save();
+        renderAll();
+      };
+      if (checkEl) checkEl.addEventListener('click', toggleDone);
+      if (textEl) textEl.addEventListener('click', toggleDone);
+
+      // Botón info "?"
+      const infoBtn = elx.querySelector('[data-info]');
+      if (infoBtn) {
+        infoBtn.addEventListener('click', (event) => {
+          event.stopPropagation();
+          elx.classList.toggle('info-open');
+        });
+      }
+
+      // Botón menú "⋯"
+      const editBtn = elx.querySelector('[data-edit]');
+      if (editBtn) {
+        editBtn.addEventListener('click', (event) => {
+          event.stopPropagation();
+          openEditModal(kind, bi, ei, w);
+        });
+      }
+    });
+  }
+
+  function updateStats() {
+    document.getElementById('statDone').textContent = Object.keys(done).length;
+
+    let streak = 0;
+    let consecutive = 0;
+    for (let w = 1; w <= TOTAL_WEEKS; w++) {
+      for (let d = 0; d < 7; d++) {
+        if (dayPattern[d] === 'rest') continue;
+        const date = dateForWeekDay(w, d);
+        if (date > today) break;
+        if (done[key(w, d)]) {
+          consecutive++;
+          if (consecutive > streak) streak = consecutive;
+        } else {
+          consecutive = 0;
+        }
+      }
+    }
+    document.getElementById('statStreak').textContent = streak;
+
+    let weekDone = 0, weekTotal = 0;
+    for (let d = 0; d < 7; d++) {
+      if (dayPattern[d] === 'rest') continue;
+      weekTotal++;
+      if (done[key(currentWeek, d)]) weekDone++;
+    }
+    document.getElementById('statPct').textContent =
+      (weekTotal === 0 ? 0 : Math.round((weekDone / weekTotal) * 100)) + '%';
+  }
+
+  function renderAll() {
+    renderWeek();
+    renderSelectedRoutine();
+    updateStats();
+  }
+
+  // ============================================================
+  // MODAL EDICIÓN
+  // ============================================================
+  let editingCtx = null; // { kind, blockIdx, exIdx, weekNum }
+
+  function openEditModal(kind, blockIdx, exIdx, weekNum) {
+    editingCtx = { kind, blockIdx, exIdx, weekNum };
+    const disp = getExerciseDisplay(kind, blockIdx, exIdx, weekNum);
+    document.getElementById('modalTitle').textContent = 'Editar ejercicio';
+    const sesion = kind === 'a' ? 'Sesión A · Fuerza' : 'Sesión B · Tendón';
+    document.getElementById('modalSub').textContent = sesion + (disp.isCustom ? ' · Editado' : '');
+    document.getElementById('editName').value = disp.name;
+    document.getElementById('editSets').value = disp.sets;
+    document.getElementById('editLoad').value = disp.load || '';
+    document.getElementById('modal').classList.add('open');
+  }
+
+  function closeEditModal() {
+    document.getElementById('modal').classList.remove('open');
+    editingCtx = null;
+  }
+
+  document.getElementById('cancelBtn').addEventListener('click', closeEditModal);
+  document.getElementById('modal').addEventListener('click', (e) => {
+    if (e.target.id === 'modal') closeEditModal();
+  });
+
+  document.getElementById('saveBtn').addEventListener('click', () => {
+    if (!editingCtx) return;
+    const { kind, blockIdx, exIdx } = editingCtx;
+    const ck = customKey(kind, blockIdx, exIdx);
+    const newName = document.getElementById('editName').value.trim();
+    const newSets = document.getElementById('editSets').value.trim();
+    const newLoad = document.getElementById('editLoad').value.trim();
+    exCustom[ck] = {
+      name: newName,
+      sets: newSets,
+      load: newLoad, // string vacío = sin peso
+    };
+    save();
+    closeEditModal();
+    renderAll();
+  });
+
+  document.getElementById('resetExBtn').addEventListener('click', () => {
+    if (!editingCtx) return;
+    const { kind, blockIdx, exIdx } = editingCtx;
+    const ck = customKey(kind, blockIdx, exIdx);
+    delete exCustom[ck];
+    save();
+    closeEditModal();
+    renderAll();
+  });
+
+  // ============================================================
+  // CALENDARIO MENSUAL (Progreso)
+  // ============================================================
+  let displayMonth = new Date(today.getFullYear(), today.getMonth(), 1);
+
+  function getDayStatus(date) {
+    // Devuelve: 'green' | 'orange' | 'red' | 'rest' | 'future' | 'outside'
+    const pos = planPositionFor(date);
+    if (pos.beforeStart || pos.afterEnd) return 'outside';
+    const kind = dayPattern[pos.dayIdx];
+    if (kind === 'rest') return 'rest';
+
+    const routine = kind === 'a' ? routineA : routineB;
+    let totalEx = 0, doneEx = 0;
+    routine.forEach((b, bi) => {
+      b.exercises.forEach((e, ei) => {
+        totalEx++;
+        if (exDone[exKey(pos.week, pos.dayIdx, bi, ei)]) doneEx++;
+      });
+    });
+
+    const isFuture = date > today;
+    if (isFuture) return 'future';
+
+    if (totalEx > 0 && doneEx === totalEx) return 'green';
+    if (doneEx > 0) return 'orange';
+    return 'red';
+  }
+
+  function renderMonth() {
+    const year = displayMonth.getFullYear();
+    const month = displayMonth.getMonth();
+    const monthName = displayMonth.toLocaleDateString('es-AR', { month: 'long', year: 'numeric' });
+    document.getElementById('monthTitle').textContent = monthName;
+
+    // Día de la semana del primero del mes (Lun=0)
+    const firstDay = new Date(year, month, 1);
+    let firstDow = (firstDay.getDay() + 6) % 7;
+    const daysInMonth = new Date(year, month + 1, 0).getDate();
+
+    const grid = document.getElementById('monthGrid');
+    grid.innerHTML = '';
+
+    // Encabezados de días
+    dowLabels.forEach(d => {
+      const el = document.createElement('div');
+      el.className = 'month-dow';
+      el.textContent = d;
+      grid.appendChild(el);
+    });
+
+    // Celdas vacías antes del primer día
+    for (let i = 0; i < firstDow; i++) {
+      const el = document.createElement('div');
+      el.className = 'month-day empty';
+      grid.appendChild(el);
+    }
+
+    // Días del mes
+    let mGreen = 0, mOrange = 0, mRed = 0;
+    for (let d = 1; d <= daysInMonth; d++) {
+      const date = new Date(year, month, d);
+      const status = getDayStatus(date);
+      const el = document.createElement('div');
+      el.className = 'month-day';
+
+      if (isSameDate(date, today)) el.classList.add('today');
+
+      if (status === 'green') { el.classList.add('green'); mGreen++; }
+      else if (status === 'orange') { el.classList.add('orange'); mOrange++; }
+      else if (status === 'red') { el.classList.add('red'); mRed++; }
+      else if (status === 'rest') el.classList.add('rest');
+      else if (status === 'outside') el.classList.add('outside');
+      // future: queda neutro
+
+      el.textContent = d;
+
+      // Click → ir a la semana y día en la sección Rutina
+      const pos = planPositionFor(date);
+      if (pos.week !== null && !isFuture(date)) {
+        el.addEventListener('click', () => {
+          currentWeek = pos.week;
+          selectedWeek = pos.week;
+          selectedDay = pos.dayIdx;
+          switchSection('rutina');
+          renderAll();
+        });
+      } else if (pos.week !== null) {
+        // futuro: permitir igual ver el día
+        el.addEventListener('click', () => {
+          currentWeek = pos.week;
+          selectedWeek = pos.week;
+          selectedDay = pos.dayIdx;
+          switchSection('rutina');
+          renderAll();
+        });
+      }
+
+      grid.appendChild(el);
+    }
+
+    document.getElementById('msGreen').textContent = mGreen;
+    document.getElementById('msOrange').textContent = mOrange;
+    document.getElementById('msRed').textContent = mRed;
+  }
+
+  function isFuture(date) {
+    return date > today;
+  }
+
+  document.getElementById('prevMonth').addEventListener('click', () => {
+    displayMonth = new Date(displayMonth.getFullYear(), displayMonth.getMonth() - 1, 1);
+    renderMonth();
+  });
+  document.getElementById('nextMonth').addEventListener('click', () => {
+    displayMonth = new Date(displayMonth.getFullYear(), displayMonth.getMonth() + 1, 1);
+    renderMonth();
+  });
+
+  // ============================================================
+  // SWITCH ENTRE SECCIONES
+  // ============================================================
+  function switchSection(name) {
+    document.querySelectorAll('.main-tab').forEach(t => {
+      t.classList.toggle('active', t.dataset.section === name);
+    });
+    document.querySelectorAll('.view-section').forEach(s => {
+      s.classList.toggle('active', s.dataset.section === name);
+    });
+    if (name === 'progreso') renderMonth();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  document.querySelectorAll('.main-tab').forEach(t => {
+    t.addEventListener('click', () => switchSection(t.dataset.section));
+  });
+
+  // ============================================================
+  // EVENTS
+  // ============================================================
+  document.getElementById('prevWeek').addEventListener('click', () => {
+    if (currentWeek > 1) { currentWeek--; renderAll(); }
+  });
+  document.getElementById('nextWeek').addEventListener('click', () => {
+    if (currentWeek < TOTAL_WEEKS) { currentWeek++; renderAll(); }
+  });
+
+  document.getElementById('resetBtn').addEventListener('click', () => {
+    if (confirm('¿Borrar todos los ticks?')) {
+      done = {};
+      exDone = {};
+      save();
+      renderAll();
+    }
+  });
+
+  // ============================================================
+  // AUTO-REFRESH AL CAMBIAR DE DÍA (hora Argentina)
+  // ============================================================
+  // localStorage persiste a través de location.reload(), por lo que
+  // los ticks NO se pierden. La fecha de inicio del plan también está
+  // guardada (no se mueve aunque pasen los días).
+  let lastDayCheck = today.toDateString();
+
+  function checkDayChange() {
+    const nowToday = getTodayAR();
+    if (nowToday.toDateString() !== lastDayCheck) {
+      lastDayCheck = nowToday.toDateString();
+      // Guardamos por las dudas antes de recargar
+      save();
+      location.reload();
+    }
+  }
+
+  // Chequeo cada minuto (cuando la pestaña está activa)
+  setInterval(checkDayChange, 60000);
+
+  // Chequeo al volver a la pestaña (cuando estuvo en background)
+  document.addEventListener('visibilitychange', () => {
+    if (!document.hidden) checkDayChange();
+  });
+  window.addEventListener('focus', checkDayChange);
+
+  renderAll();
+</script>
+
+</body>
+</html>
