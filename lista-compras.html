@@ -104,9 +104,12 @@ const DEFAULT = [
   {cat:"Almacén", items:["Nachos sin TACC","Papas Lay's Rústicas","Aceitunas","Garbanzos","Salsa de soja","Mantequilla de maní","Miel","Aceite de oliva","Vinagre"]},
   {cat:"Lácteos y condimentos", items:["Manteca","Humo líquido o pimentón ahumado","Sal","Pimienta negra","Curry","Cúrcuma","Comino","Condimentos a elección"]}
 ];
+const QTY = {"Coliflor":"7","Brócoli":"3","Paltas":"7","Remolacha":"2 kg","Zanahorias":"2 kg","Morrones rojos":"6","Cebollas":"2 kg","Papas":"3 kg","Batatas":"2 kg","Tomates perita":"2 kg","Ajo":"2 cabezas","Romero fresco":"2 atados","Menta o albahaca":"2 atados","Limón":"6","Lima":"6",
+  "Nachos sin TACC":"1","Papas Lay's Rústicas":"1","Aceitunas":"1","Garbanzos":"1","Salsa de soja":"1","Mantequilla de maní":"1","Miel":"1","Aceite de oliva":"2 L","Vinagre":"1",
+  "Manteca":"2 × 200 g","Humo líquido o pimentón ahumado":"1","Sal":"1","Pimienta negra":"1","Curry":"1","Cúrcuma":"1","Comino":"1","Condimentos a elección":"1"};
 const KEY = "le-marche-v2";
 let uid = 0;
-const mk = (cats) => cats.map(c => ({id:++uid, cat:c.cat, items:c.items.map(n => ({id:++uid, name:n, done:false}))}));
+const mk = (cats) => cats.map(c => ({id:++uid, cat:c.cat, items:c.items.map(n => ({id:++uid, name:n, done:false, qty:QTY[n]||""}))}));
 
 let data;
 try { data = JSON.parse(localStorage.getItem(KEY)); } catch(e) {}
@@ -124,6 +127,13 @@ try {
     if (l) ["Curry","Cúrcuma","Comino"].forEach(n => { if (!has(l,n)) l.items.push({id:++uid,name:n,done:false}); });
   }
   localStorage.setItem(KEY+"-m","3");
+} catch(e) {}
+// Migración v4: cantidades sugeridas para 7 personas (sin pisar las cargadas)
+try {
+  if (localStorage.getItem(KEY+"-q") !== "4") {
+    data.forEach(c => c.items.forEach(i => { if (!i.qty && QTY[i.name]) i.qty = QTY[i.name]; }));
+    localStorage.setItem(KEY, JSON.stringify(data)); localStorage.setItem(KEY+"-q","4");
+  }
 } catch(e) {}
 const save = () => { try { localStorage.setItem(KEY, JSON.stringify(data)); } catch(e) {} };
 
