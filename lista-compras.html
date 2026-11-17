@@ -100,11 +100,11 @@
 
 <script>
 const DEFAULT = [
-  {cat:"Verdulería y aromáticas", items:["Coliflor","Brócoli","Paltas","Remolacha","Zanahorias","Morrones rojos","Cebollas","Papas","Batatas","Tomates perita","Ajo","Romero fresco","Menta o albahaca","Limón","Lima"]},
+  {cat:"Verdulería y aromáticas", items:["Coliflor","Brócoli","Paltas","Remolacha","Zanahorias","Morrones rojos","Morrones verdes","Cebollas","Papas","Batatas","Tomates perita","Ajo","Romero fresco","Menta o albahaca","Limón","Lima"]},
   {cat:"Almacén", items:["Nachos sin TACC","Papas Lay's Rústicas","Aceitunas","Garbanzos","Salsa de soja","Mantequilla de maní","Miel","Aceite de oliva","Vinagre"]},
   {cat:"Lácteos y condimentos", items:["Manteca","Humo líquido o pimentón ahumado","Sal","Pimienta negra","Curry","Cúrcuma","Comino","Condimentos a elección"]}
 ];
-const QTY = {"Coliflor":"7","Brócoli":"3","Paltas":"7","Remolacha":"2 kg","Zanahorias":"2 kg","Morrones rojos":"6","Cebollas":"2 kg","Papas":"3 kg","Batatas":"2 kg","Tomates perita":"2 kg","Ajo":"2 cabezas","Romero fresco":"2 atados","Menta o albahaca":"2 atados","Limón":"6","Lima":"6",
+const QTY = {"Coliflor":"7","Brócoli":"2","Paltas":"3","Remolacha":"2 kg","Zanahorias":"2 kg","Morrones rojos":"2","Morrones verdes":"2","Cebollas":"2 kg","Papas":"2 kg","Batatas":"1 kg","Tomates perita":"2 kg","Ajo":"2 cabezas","Romero fresco":"2 atados","Menta o albahaca":"2 atados","Limón":"1,5 kg","Lima":"4",
   "Nachos sin TACC":"1","Papas Lay's Rústicas":"1","Aceitunas":"1","Garbanzos":"1","Salsa de soja":"1","Mantequilla de maní":"1","Miel":"1","Aceite de oliva":"2 L","Vinagre":"1",
   "Manteca":"2 × 200 g","Humo líquido o pimentón ahumado":"1","Sal":"1","Pimienta negra":"1","Curry":"1","Cúrcuma":"1","Comino":"1","Condimentos a elección":"1"};
 const KEY = "le-marche-v2";
@@ -133,6 +133,19 @@ try {
   if (localStorage.getItem(KEY+"-q") !== "4") {
     data.forEach(c => c.items.forEach(i => { if (!i.qty && QTY[i.name]) i.qty = QTY[i.name]; }));
     localStorage.setItem(KEY, JSON.stringify(data)); localStorage.setItem(KEY+"-q","4");
+  }
+} catch(e) {}
+// Migración v5: ajustes de cantidades + morrones verdes
+try {
+  if (localStorage.getItem(KEY+"-u") !== "5") {
+    const v = data.find(c => c.cat === "Verdulería y aromáticas");
+    if (v && !v.items.some(i => i.name === "Morrones verdes")) {
+      const ix = v.items.findIndex(i => i.name === "Morrones rojos");
+      v.items.splice(ix >= 0 ? ix + 1 : v.items.length, 0, {id:++uid, name:"Morrones verdes", done:false, qty:""});
+    }
+    const SET = {"Brócoli":"2","Paltas":"3","Morrones rojos":"2","Morrones verdes":"2","Limón":"1,5 kg","Lima":"4","Papas":"2 kg","Batatas":"1 kg","Zanahorias":"2 kg"};
+    data.forEach(c => c.items.forEach(i => { if (SET[i.name]) i.qty = SET[i.name]; }));
+    localStorage.setItem(KEY, JSON.stringify(data)); localStorage.setItem(KEY+"-u","5");
   }
 } catch(e) {}
 const save = () => { try { localStorage.setItem(KEY, JSON.stringify(data)); } catch(e) {} };
