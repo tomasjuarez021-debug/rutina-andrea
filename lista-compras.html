@@ -43,6 +43,11 @@
   .item.done .chk::after{transform:rotate(45deg) translate(-1px,-1px) scale(1)}
   .name{flex:1;font-size:16.5px;outline:none;transition:color .2s}
   .item.done .name{color:var(--muted);text-decoration:line-through;text-decoration-color:var(--gold)}
+  .qty{width:74px;flex-shrink:0;background:transparent;border:1px solid transparent;border-bottom:1px solid var(--line);
+    color:var(--gold2);font:500 15px var(--sans);text-align:right;padding:6px 4px;outline:none;border-radius:6px}
+  .qty::placeholder{color:#4a443a}
+  .qty:focus{border-color:var(--gold);background:var(--bg)}
+  .item.done .qty{color:var(--muted)}
   .del{display:none;background:none;border:0;color:var(--red);font-size:22px;line-height:1;padding:0 2px}
   .handle{display:none;color:var(--muted);font-size:14px;letter-spacing:-2px}
 
@@ -151,8 +156,12 @@ function render(){
     sec.items.forEach(it => {
       const row = document.createElement("div");
       row.className = "item" + (it.done ? " done" : "");
-      row.innerHTML = `<div class="chk"></div><div class="name">${esc(it.name)}</div><button class="del" aria-label="Borrar">×</button>`;
+      row.innerHTML = `<div class="chk"></div><div class="name">${esc(it.name)}</div><input class="qty" placeholder="cant." value="${esc(it.qty||"")}" enterkeyhint="done"><button class="del" aria-label="Borrar">×</button>`;
       const name = row.querySelector(".name");
+      const qty = row.querySelector(".qty");
+      qty.onclick = e => e.stopPropagation();
+      qty.oninput = () => { it.qty = qty.value; save(); };
+      qty.onkeydown = e => { if (e.key === "Enter") qty.blur(); };
       name.contentEditable = isEdit();
       row.onclick = e => {
         if (isEdit()) return;
@@ -212,7 +221,7 @@ $("#clearBtn").onclick = () => {
   data.forEach(s => s.items.forEach(i => i.done = false)); save(); render(); toast("Lista reiniciada");
 };
 $("#shareBtn").onclick = async () => {
-  const txt = data.map(s => `*${s.cat}*\n` + s.items.filter(i => !i.done).map(i => `• ${i.name}`).join("\n")).join("\n\n");
+  const txt = data.map(s => `*${s.cat}*\n` + s.items.filter(i => !i.done).map(i => `• ${i.name}${i.qty ? " — " + i.qty : ""}`).join("\n")).join("\n\n");
   try {
     if (navigator.share) await navigator.share({title:"Lista de compras", text:txt});
     else { await navigator.clipboard.writeText(txt); toast("Copiada al portapapeles"); }
