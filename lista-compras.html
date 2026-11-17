@@ -95,9 +95,9 @@
 
 <script>
 const DEFAULT = [
-  {cat:"Verdulería y aromáticas", items:["Coliflor","Paltas","Remolacha","Zanahorias","Morrones rojos","Cebollas","Papas","Batatas","Tomates perita o cherry","Ajo","Romero fresco","Menta o albahaca","Limón"]},
+  {cat:"Verdulería y aromáticas", items:["Coliflor","Brócoli","Paltas","Remolacha","Zanahorias","Morrones rojos","Cebollas","Papas","Batatas","Tomates perita","Ajo","Romero fresco","Menta o albahaca","Limón","Lima"]},
   {cat:"Almacén", items:["Nachos sin TACC","Papas Lay's Rústicas","Aceitunas","Garbanzos","Salsa de soja","Mantequilla de maní","Miel","Aceite de oliva","Vinagre"]},
-  {cat:"Lácteos y condimentos", items:["Manteca","Humo líquido o pimentón ahumado","Sal","Pimienta","Condimentos a elección"]}
+  {cat:"Lácteos y condimentos", items:["Manteca","Humo líquido o pimentón ahumado","Sal","Pimienta negra","Curry","Cúrcuma","Comino","Condimentos a elección"]}
 ];
 const KEY = "le-marche-v2";
 let uid = 0;
@@ -107,6 +107,19 @@ let data;
 try { data = JSON.parse(localStorage.getItem(KEY)); } catch(e) {}
 if (!Array.isArray(data)) data = mk(DEFAULT);
 uid = Math.max(0, ...data.flatMap(c => [c.id, ...c.items.map(i => i.id)]));
+// Migración v3: agrega ítems nuevos a listas ya guardadas
+try {
+  if (localStorage.getItem(KEY) && localStorage.getItem(KEY+"-m") !== "3") {
+    const find = n => data.find(c => c.cat === n);
+    const has = (c, n) => c.items.some(i => i.name.toLowerCase() === n.toLowerCase());
+    const ren = (c, a, b) => c && c.items.forEach(i => { if (i.name === a) i.name = b; });
+    const v = find("Verdulería y aromáticas"), l = find("Lácteos y condimentos");
+    ren(v, "Tomates perita o cherry", "Tomates perita"); ren(l, "Pimienta", "Pimienta negra");
+    if (v) { if (!has(v,"Brócoli")) v.items.splice(1,0,{id:++uid,name:"Brócoli",done:false}); if (!has(v,"Lima")) v.items.push({id:++uid,name:"Lima",done:false}); }
+    if (l) ["Curry","Cúrcuma","Comino"].forEach(n => { if (!has(l,n)) l.items.push({id:++uid,name:n,done:false}); });
+  }
+  localStorage.setItem(KEY+"-m","3");
+} catch(e) {}
 const save = () => { try { localStorage.setItem(KEY, JSON.stringify(data)); } catch(e) {} };
 
 const $ = s => document.querySelector(s);
