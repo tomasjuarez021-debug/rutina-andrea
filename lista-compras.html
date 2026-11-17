@@ -3,96 +3,215 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Lista de compras</title>
+<meta name="theme-color" content="#0f0e0c">
+<title>Le Marché — Lista de compras</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
-  :root{--bg:#f6f5f1;--card:#fff;--ink:#1f2421;--muted:#8a8f8a;--accent:#2f7d4f;--line:#e7e4dc}
-  @media (prefers-color-scheme:dark){:root{--bg:#141614;--card:#1d201d;--ink:#e9ebe7;--muted:#7d837d;--accent:#5bbd82;--line:#2a2e2a}}
+  :root{
+    --bg:#0f0e0c;--card:#181613;--card2:#1f1c18;--ink:#f1ead9;--muted:#8b8272;
+    --gold:#c9a45c;--gold2:#e6c98a;--line:#2c2822;--red:#c2574a;
+    --serif:'Cormorant Garamond',Georgia,serif;--sans:'Inter',-apple-system,system-ui,sans-serif;
+  }
   *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-  body{margin:0;font-family:-apple-system,system-ui,Segoe UI,Roboto,sans-serif;background:var(--bg);color:var(--ink);padding:0 0 calc(110px + env(safe-area-inset-bottom))}
-  header{position:sticky;top:0;background:var(--bg);padding:16px 18px 10px;z-index:2;border-bottom:1px solid var(--line)}
-  h1{margin:0;font-size:22px}
-  .bar{height:6px;background:var(--line);border-radius:4px;margin-top:10px;overflow:hidden}
-  .fill{height:100%;background:var(--accent);width:0;transition:width .25s}
-  .count{font-size:13px;color:var(--muted);margin-top:6px}
-  section{margin:16px 12px 0;background:var(--card);border-radius:14px;overflow:hidden;border:1px solid var(--line)}
-  h2{margin:0;padding:12px 16px;font-size:14px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);display:flex;justify-content:space-between}
-  label{display:flex;align-items:center;gap:14px;padding:14px 16px;border-top:1px solid var(--line);font-size:17px;cursor:pointer;user-select:none}
-  input{appearance:none;width:24px;height:24px;border:2px solid var(--muted);border-radius:7px;flex-shrink:0;display:grid;place-content:center;margin:0}
-  input:checked{background:var(--accent);border-color:var(--accent)}
-  input:checked::after{content:"";width:6px;height:12px;border:solid #fff;border-width:0 3px 3px 0;transform:rotate(45deg) translate(-1px,-1px)}
-  input:checked + span{text-decoration:line-through;color:var(--muted)}
-  .actions{position:fixed;bottom:0;left:0;right:0;display:flex;gap:10px;padding:12px 12px calc(12px + env(safe-area-inset-bottom));background:var(--bg);border-top:1px solid var(--line)}
-  button{flex:1;padding:13px;border-radius:12px;border:1px solid var(--line);background:var(--card);color:var(--ink);font-size:15px;font-weight:600}
-  button.on{background:var(--accent);color:#fff;border-color:var(--accent)}
-  body.hide label.done{display:none}
+  html{background:var(--bg)}
+  body{margin:0;font-family:var(--sans);color:var(--ink);padding:0 0 calc(120px + env(safe-area-inset-bottom));
+    background:radial-gradient(120% 60% at 50% -10%,#2a2318 0%,var(--bg) 60%) fixed}
+  header{position:sticky;top:0;z-index:5;padding:calc(18px + env(safe-area-inset-top)) 22px 14px;
+    background:linear-gradient(var(--bg) 75%,transparent);backdrop-filter:blur(6px)}
+  .eyebrow{font-size:11px;letter-spacing:.32em;text-transform:uppercase;color:var(--gold)}
+  h1{font-family:var(--serif);font-weight:500;font-size:40px;margin:2px 0 0;line-height:1}
+  h1 i{color:var(--gold2)}
+  .progress{display:flex;align-items:center;gap:12px;margin-top:14px}
+  .bar{flex:1;height:2px;background:var(--line);position:relative;overflow:hidden}
+  .fill{position:absolute;inset:0 auto 0 0;width:0;background:linear-gradient(90deg,var(--gold),var(--gold2));transition:width .4s ease}
+  .count{font-family:var(--serif);font-size:18px;color:var(--gold2);min-width:58px;text-align:right}
+  .ornament{text-align:center;color:var(--gold);opacity:.5;letter-spacing:.6em;font-size:10px;margin:6px 0 0}
+
+  section{margin:18px 14px 0;background:linear-gradient(180deg,var(--card2),var(--card));
+    border:1px solid var(--line);border-radius:18px;overflow:hidden;box-shadow:0 10px 30px -18px #000}
+  .sec-head{display:flex;align-items:baseline;justify-content:space-between;padding:16px 18px 10px;gap:10px}
+  .sec-title{font-family:var(--serif);font-size:24px;font-weight:600;font-style:italic;color:var(--ink);outline:none;flex:1}
+  .sec-count{font-size:11px;letter-spacing:.2em;color:var(--muted)}
+  .sec-del{display:none;background:none;border:0;color:var(--red);font-size:13px;padding:4px}
+
+  .item{display:flex;align-items:center;gap:14px;padding:13px 18px;border-top:1px solid var(--line);transition:background .2s}
+  .item:active{background:#ffffff06}
+  .chk{width:22px;height:22px;border:1.5px solid var(--gold);border-radius:50%;flex-shrink:0;display:grid;place-content:center;transition:all .2s}
+  .chk::after{content:"";width:5px;height:10px;border:solid var(--bg);border-width:0 2px 2px 0;transform:rotate(45deg) translate(-1px,-1px) scale(0);transition:transform .2s}
+  .item.done .chk{background:var(--gold)}
+  .item.done .chk::after{transform:rotate(45deg) translate(-1px,-1px) scale(1)}
+  .name{flex:1;font-size:16.5px;outline:none;transition:color .2s}
+  .item.done .name{color:var(--muted);text-decoration:line-through;text-decoration-color:var(--gold)}
+  .del{display:none;background:none;border:0;color:var(--red);font-size:22px;line-height:1;padding:0 2px}
+  .handle{display:none;color:var(--muted);font-size:14px;letter-spacing:-2px}
+
+  .add-row{display:none;padding:10px 14px 14px;border-top:1px dashed var(--line);gap:8px}
+  .add-row input,.new-cat input{flex:1;background:var(--bg);border:1px solid var(--line);border-radius:10px;
+    color:var(--ink);font:inherit;font-size:15px;padding:11px 12px;outline:none}
+  .add-row input:focus,.new-cat input:focus{border-color:var(--gold)}
+  .add-row button,.new-cat button{background:var(--gold);color:var(--bg);border:0;border-radius:10px;font-weight:600;padding:0 16px;font-size:20px}
+
+  .new-cat{display:none;margin:18px 14px 0;gap:8px}
+
+  body.edit .add-row,body.edit .new-cat{display:flex}
+  body.edit .del,body.edit .sec-del{display:block}
+  body.edit .chk{opacity:.25;pointer-events:none}
+  body.edit .name,body.edit .sec-title{border-bottom:1px dotted var(--muted)}
+  body.edit .sec-count{display:none}
+  body.hide .item.done{display:none}
+
+  .dock{position:fixed;left:12px;right:12px;bottom:calc(12px + env(safe-area-inset-bottom));z-index:6;
+    display:flex;gap:6px;padding:6px;background:#1a1814ee;border:1px solid var(--line);border-radius:18px;backdrop-filter:blur(12px);
+    box-shadow:0 12px 30px -10px #000}
+  .dock button{flex:1;background:none;border:0;color:var(--ink);font:500 12px var(--sans);letter-spacing:.06em;
+    padding:10px 4px;border-radius:12px;display:flex;flex-direction:column;align-items:center;gap:3px}
+  .dock button span{font-size:18px}
+  .dock button.on{background:var(--gold);color:var(--bg)}
+  .toast{position:fixed;left:50%;bottom:calc(92px + env(safe-area-inset-bottom));transform:translateX(-50%) translateY(20px);
+    background:var(--ink);color:var(--bg);padding:9px 16px;border-radius:20px;font-size:13px;opacity:0;transition:all .25s;pointer-events:none;z-index:7}
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+  .empty{padding:14px 18px;color:var(--muted);font-size:14px;font-style:italic;border-top:1px solid var(--line)}
 </style>
 </head>
 <body>
 <header>
-  <h1>🛒 Lista de compras</h1>
-  <div class="bar"><div class="fill" id="fill"></div></div>
-  <div class="count" id="count"></div>
+  <div class="eyebrow">Le Marché · Mise en place</div>
+  <h1>La <i>lista</i></h1>
+  <div class="progress"><div class="bar"><div class="fill" id="fill"></div></div><div class="count" id="count"></div></div>
 </header>
-<main id="list"></main>
-<div class="actions">
-  <button id="hideBtn">Ocultar comprados</button>
-  <button id="resetBtn">Reiniciar</button>
-</div>
-<script>
-const DATA = {
-  "Verdulería y aromáticas": ["Coliflor","Paltas","Remolacha","Zanahorias","Morrones rojos","Cebollas","Papas","Batatas","Tomates perita o cherry","Ajo","Romero fresco","Menta o albahaca","Limón"],
-  "Almacén": ["Nachos sin TACC","Papas Lay's Rústicas","Aceitunas","Garbanzos","Salsa de soja","Mantequilla de maní","Miel","Aceite de oliva","Vinagre"],
-  "Lácteos y condimentos": ["Manteca","Humo líquido o pimentón ahumado","Sal","Pimienta","Condimentos a elección"]
-};
-const KEY = "lista-compras-v1";
-let state = {};
-try { state = JSON.parse(localStorage.getItem(KEY)) || {}; } catch(e) {}
-const save = () => { try { localStorage.setItem(KEY, JSON.stringify(state)); } catch(e) {} };
 
-const list = document.getElementById("list");
-Object.entries(DATA).forEach(([cat, items]) => {
-  const sec = document.createElement("section");
-  sec.innerHTML = `<h2><span>${cat}</span><span class="c"></span></h2>`;
-  items.forEach(item => {
-    const id = cat + "|" + item;
-    const l = document.createElement("label");
-    l.innerHTML = `<input type="checkbox"><span>${item}</span>`;
-    const cb = l.querySelector("input");
-    cb.checked = !!state[id];
-    l.classList.toggle("done", cb.checked);
-    cb.addEventListener("change", () => {
-      state[id] = cb.checked; save();
-      l.classList.toggle("done", cb.checked);
-      update();
+<main id="list"></main>
+<div class="new-cat"><input id="newCat" placeholder="Nueva sección (ej. Carnicería)"><button id="addCat">+</button></div>
+<div class="ornament">✦ ✦ ✦</div>
+
+<nav class="dock">
+  <button id="editBtn"><span>✎</span>Editar</button>
+  <button id="hideBtn"><span>◐</span>Ocultar</button>
+  <button id="clearBtn"><span>↺</span>Destildar</button>
+  <button id="shareBtn"><span>↗</span>Compartir</button>
+</nav>
+<div class="toast" id="toast"></div>
+
+<script>
+const DEFAULT = [
+  {cat:"Verdulería y aromáticas", items:["Coliflor","Paltas","Remolacha","Zanahorias","Morrones rojos","Cebollas","Papas","Batatas","Tomates perita o cherry","Ajo","Romero fresco","Menta o albahaca","Limón"]},
+  {cat:"Almacén", items:["Nachos sin TACC","Papas Lay's Rústicas","Aceitunas","Garbanzos","Salsa de soja","Mantequilla de maní","Miel","Aceite de oliva","Vinagre"]},
+  {cat:"Lácteos y condimentos", items:["Manteca","Humo líquido o pimentón ahumado","Sal","Pimienta","Condimentos a elección"]}
+];
+const KEY = "le-marche-v2";
+let uid = 0;
+const mk = (cats) => cats.map(c => ({id:++uid, cat:c.cat, items:c.items.map(n => ({id:++uid, name:n, done:false}))}));
+
+let data;
+try { data = JSON.parse(localStorage.getItem(KEY)); } catch(e) {}
+if (!Array.isArray(data)) data = mk(DEFAULT);
+uid = Math.max(0, ...data.flatMap(c => [c.id, ...c.items.map(i => i.id)]));
+const save = () => { try { localStorage.setItem(KEY, JSON.stringify(data)); } catch(e) {} };
+
+const $ = s => document.querySelector(s);
+const list = $("#list");
+const esc = s => s.replace(/[&<>"]/g, m => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[m]));
+
+function render(){
+  list.innerHTML = "";
+  data.forEach(sec => {
+    const el = document.createElement("section");
+    el.innerHTML = `
+      <div class="sec-head">
+        <div class="sec-title">${esc(sec.cat)}</div>
+        <span class="sec-count"></span>
+        <button class="sec-del">Eliminar sección</button>
+      </div>
+      <div class="items"></div>
+      <div class="add-row"><input placeholder="Agregar a ${esc(sec.cat)}…"><button>+</button></div>`;
+    const title = el.querySelector(".sec-title");
+    title.contentEditable = isEdit();
+    title.onblur = () => { const v = title.textContent.trim(); if (v) { sec.cat = v; save(); } else title.textContent = sec.cat; };
+    title.onkeydown = e => { if (e.key === "Enter") { e.preventDefault(); title.blur(); } };
+    el.querySelector(".sec-del").onclick = () => {
+      if (confirm(`¿Eliminar "${sec.cat}" y sus ${sec.items.length} ítems?`)) { data = data.filter(s => s !== sec); save(); render(); }
+    };
+
+    const box = el.querySelector(".items");
+    if (!sec.items.length) box.innerHTML = `<div class="empty">Sin ítems todavía</div>`;
+    sec.items.forEach(it => {
+      const row = document.createElement("div");
+      row.className = "item" + (it.done ? " done" : "");
+      row.innerHTML = `<div class="chk"></div><div class="name">${esc(it.name)}</div><button class="del" aria-label="Borrar">×</button>`;
+      const name = row.querySelector(".name");
+      name.contentEditable = isEdit();
+      row.onclick = e => {
+        if (isEdit()) return;
+        it.done = !it.done; row.classList.toggle("done", it.done);
+        if (navigator.vibrate) navigator.vibrate(8);
+        save(); update();
+      };
+      name.onblur = () => { const v = name.textContent.trim(); if (v) { it.name = v; save(); } else name.textContent = it.name; };
+      name.onkeydown = e => { if (e.key === "Enter") { e.preventDefault(); name.blur(); } };
+      row.querySelector(".del").onclick = e => {
+        e.stopPropagation(); sec.items = sec.items.filter(x => x !== it); save(); render(); toast("Eliminado");
+      };
+      box.appendChild(row);
     });
-    sec.appendChild(l);
+
+    const inp = el.querySelector(".add-row input");
+    const add = () => {
+      const v = inp.value.trim(); if (!v) return;
+      sec.items.push({id:++uid, name:v, done:false}); save(); render();
+      const again = [...list.querySelectorAll("section")][data.indexOf(sec)].querySelector(".add-row input");
+      again.focus();
+    };
+    el.querySelector(".add-row button").onclick = add;
+    inp.onkeydown = e => { if (e.key === "Enter") add(); };
+    list.appendChild(el);
   });
-  list.appendChild(sec);
-});
+  update();
+}
 
 function update(){
-  const all = document.querySelectorAll("input");
-  const done = [...all].filter(c => c.checked).length;
-  document.getElementById("fill").style.width = (done/all.length*100) + "%";
-  document.getElementById("count").textContent = `${done} de ${all.length} comprados`;
-  document.querySelectorAll("section").forEach(s => {
-    const cbs = s.querySelectorAll("input");
-    s.querySelector(".c").textContent = `${[...cbs].filter(c=>c.checked).length}/${cbs.length}`;
+  const all = data.flatMap(s => s.items);
+  const done = all.filter(i => i.done).length;
+  $("#fill").style.width = all.length ? (done / all.length * 100) + "%" : "0";
+  $("#count").textContent = `${done}/${all.length}`;
+  [...list.querySelectorAll("section")].forEach((el, i) => {
+    const its = data[i].items;
+    el.querySelector(".sec-count").textContent = `${its.filter(x => x.done).length} / ${its.length}`;
   });
 }
-update();
 
-const hideBtn = document.getElementById("hideBtn");
-hideBtn.onclick = () => {
+const isEdit = () => document.body.classList.contains("edit");
+function toast(t){ const el = $("#toast"); el.textContent = t; el.classList.add("show"); clearTimeout(el._t); el._t = setTimeout(() => el.classList.remove("show"), 1400); }
+
+$("#editBtn").onclick = () => {
+  document.body.classList.toggle("edit");
+  $("#editBtn").classList.toggle("on", isEdit());
+  $("#editBtn").innerHTML = isEdit() ? "<span>✓</span>Listo" : "<span>✎</span>Editar";
+  render();
+};
+$("#hideBtn").onclick = () => {
   document.body.classList.toggle("hide");
-  hideBtn.classList.toggle("on");
-  hideBtn.textContent = document.body.classList.contains("hide") ? "Mostrar todos" : "Ocultar comprados";
+  $("#hideBtn").classList.toggle("on");
+  toast(document.body.classList.contains("hide") ? "Ocultando comprados" : "Mostrando todo");
 };
-document.getElementById("resetBtn").onclick = () => {
-  state = {}; save();
-  document.querySelectorAll("input").forEach(c => { c.checked = false; c.closest("label").classList.remove("done"); });
-  update();
+$("#clearBtn").onclick = () => {
+  if (!confirm("¿Destildar todos los ítems?")) return;
+  data.forEach(s => s.items.forEach(i => i.done = false)); save(); render(); toast("Lista reiniciada");
 };
+$("#shareBtn").onclick = async () => {
+  const txt = data.map(s => `*${s.cat}*\n` + s.items.filter(i => !i.done).map(i => `• ${i.name}`).join("\n")).join("\n\n");
+  try {
+    if (navigator.share) await navigator.share({title:"Lista de compras", text:txt});
+    else { await navigator.clipboard.writeText(txt); toast("Copiada al portapapeles"); }
+  } catch(e) {}
+};
+$("#addCat").onclick = () => {
+  const v = $("#newCat").value.trim(); if (!v) return;
+  data.push({id:++uid, cat:v, items:[]}); $("#newCat").value = ""; save(); render(); toast("Sección creada");
+};
+$("#newCat").onkeydown = e => { if (e.key === "Enter") $("#addCat").click(); };
+
+render();
 </script>
 </body>
 </html>
