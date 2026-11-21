@@ -51,8 +51,13 @@ svg.z1 .town,svg.z1 .peak.t2{display:inline}
 @keyframes pulse{0%{transform:scale(.6);opacity:.45}100%{transform:scale(2.2);opacity:0}}
 .card{position:absolute;z-index:20;width:340px;background:var(--card);border:1px solid #b9965c;border-radius:6px;overflow:hidden;box-shadow:0 14px 40px rgba(80,50,15,.45);opacity:0;transform:translateY(6px) scale(.98);transition:opacity .15s,transform .15s;visibility:hidden}
 .card.show{opacity:1;transform:none;visibility:visible}
-.card .scene{height:150px;position:relative;filter:sepia(.3) saturate(.9)}
-.card .scene svg{width:100%;height:100%;display:block}
+.card .scene{height:180px;position:relative;background:#d9c49a;overflow:hidden}
+.card .scene svg{width:100%;height:100%;display:block;filter:sepia(.3) saturate(.9)}
+.card .scene img.photo{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity .35s;filter:saturate(1.05) contrast(1.03)}
+.card .scene img.photo.on{opacity:1}
+.card .scene:after{content:'';position:absolute;inset:0;background:linear-gradient(to bottom,rgba(0,0,0,.25),transparent 35%,transparent 75%,rgba(0,0,0,.35));pointer-events:none}
+.card .credit{position:absolute;right:8px;bottom:6px;z-index:2;font:10.5px Inter;color:rgba(255,255,255,.9);text-decoration:none;text-shadow:0 1px 2px rgba(0,0,0,.6)}
+.card .tag,.card .close{z-index:2}
 .card .tag{position:absolute;top:10px;left:10px;color:#fff;font:600 11px Inter;letter-spacing:1px;text-transform:uppercase;padding:4px 9px;border-radius:999px}
 .card .close{position:absolute;top:8px;right:8px;width:26px;height:26px;border-radius:50%;border:0;background:rgba(0,0,0,.4);color:#fff;cursor:pointer;display:none}
 .card.pinned .close{display:block}
@@ -91,10 +96,10 @@ aside .hint{font-size:12.5px;color:var(--muted);margin:0 0 14px}
   .islands button{flex:none;padding:9px 14px;font-size:16px}
   .loading{bottom:calc(64px + env(safe-area-inset-bottom))}
   .listBtn{display:block;position:absolute;z-index:6;top:12px;right:14px;border:1px solid rgba(59,42,23,.45);background:rgba(246,234,208,.85);color:var(--ink);font:16px 'IM Fell English SC',serif;padding:8px 14px;border-radius:4px}
-  .card{position:fixed;left:0 !important;right:0;top:auto !important;bottom:0;width:auto;max-height:80dvh;overflow-y:auto;border-radius:14px 14px 0 0;transform:translateY(100%);transition:transform .25s ease,opacity .2s;padding-bottom:env(safe-area-inset-bottom)}
+  .card{position:fixed;left:0 !important;right:0;top:auto !important;bottom:0;width:auto;max-height:64dvh;overflow-y:auto;border-radius:14px 14px 0 0;transform:translateY(100%);transition:transform .25s ease,opacity .2s;padding-bottom:env(safe-area-inset-bottom)}
   .card.show{transform:none}
   .card .close{display:block;width:34px;height:34px;font-size:16px}
-  .card .scene{height:180px}
+  .card .scene{height:210px}
   .card:before{content:'';position:absolute;top:6px;left:50%;width:40px;height:4px;margin-left:-20px;border-radius:2px;background:rgba(255,255,255,.7);z-index:2}
   .links a{padding:11px 4px;font-size:13px}
   aside{position:fixed;inset:auto 0 0 0;z-index:30;max-height:72dvh;border-left:0;border-top:1px solid #b9965c;border-radius:14px 14px 0 0;transform:translateY(100%);transition:transform .25s;box-shadow:0 -10px 30px rgba(80,50,15,.35);padding-bottom:calc(18px + env(safe-area-inset-bottom))}
@@ -494,7 +499,9 @@ function zoomTo(v){cancelAnimationFrame(anim);const from=cur.slice(),t0=performa
 /* ---------- Ficha ---------- */
 const card=document.getElementById('card'),wrap=document.getElementById('mapwrap');
 const islName=i=>ISL_FULL[i]||i;
+let curSpot=null;
 function render(s){
+  curSpot=s;
   const q=encodeURIComponent(s.n.replace(/·/g,' ')+' '+s.i+' Hawaii');
   card.innerHTML=`<div class="scene">${scene(s.sc)}<span class="tag" style="background:${CAT[s.c].color}">${CAT[s.c].label}</span><button class="close" aria-label="Cerrar">✕</button></div>
   <div class="body"><h3>${s.n}</h3><div class="isl">${islName(s.i)}</div><p>${s.d}</p>
@@ -504,6 +511,7 @@ function render(s){
   <div class="links"><a href="https://www.google.com/search?tbm=isch&q=${q}" target="_blank" rel="noopener">📷 Fotos</a><a style="background:#2f6b3a" href="https://www.google.com/maps/search/?api=1&query=${s.lat},${s.lon}" target="_blank" rel="noopener">📍 Maps</a><a style="background:#e60023" href="https://www.pinterest.com/search/pins/?q=${q}" target="_blank" rel="noopener">Pinterest</a></div>
   <div class="links" style="margin-top:6px"><a style="background:#ff0033" href="https://www.youtube.com/results?search_query=${q}+shorts" target="_blank" rel="noopener">▶ YouTube</a><a style="background:#111" href="https://www.tiktok.com/search/video?q=${q}" target="_blank" rel="noopener">♪ TikTok</a></div></div>`;
   card.querySelector('.close').onclick=e=>{e.stopPropagation();unpin();};
+  ensurePhoto(s);
 }
 function place(s){
   if(mobile()){card.style.left='';card.style.top='';return;}
@@ -516,7 +524,48 @@ function place(s){
 }
 function show(idx){const s=SPOTS[idx];render(s);card.classList.add('show');place(s);mark(idx);}
 function hide(){card.classList.remove('show');mark(null);}
-function pin(idx){pinned=idx;show(idx);card.classList.add('pinned');}
+function pin(idx,pan=true){pinned=idx;show(idx);card.classList.add('pinned');if(pan&&mobile())setTimeout(()=>panToSpot(SPOTS[idx]),40);}
+// en el celu: mover el mapa para que el punto quede visible arriba de la ficha
+function panToSpot(s){
+  if(!mobile())return;
+  const r=svgEl.getBoundingClientRect(),ch=card.offsetHeight,top=r.top+110,vis=Math.max(80,r.bottom-ch-top);
+  const pt=svgEl.createSVGPoint();[pt.x,pt.y]=P(s.lon,s.lat);const sp=pt.matrixTransform(svgEl.getScreenCTM()),k=upp();
+  zoomTo([cur[0]+(sp.x-(r.left+r.width/2))*k,cur[1]+(sp.y-(top+vis/2))*k,cur[2],cur[3]]);
+}
+/* ---------- Fotos reales (Wikipedia / Wikimedia Commons) ---------- */
+const WIKI=["Kalalau Trail", "Kōkeʻe State Park", "Waimea Canyon State Park", "Nounou Mountain", "Wailua River", "Nā Pali Coast State Wilderness Park", "Hanalei Bay", "Poipu, Hawaii", "Hāʻena State Park", "Polihale State Park", "Kīlauea Point National Wildlife Refuge", "Diamond Head, Hawaii", "Koko Head", "Lanikai Beach", "Koʻolau Range", "Mānoa Falls", "Makapuʻu Point", "Kaʻena Point", "Banzai Pipeline", "Waimea Bay", "Laniakea Beach", "Waikiki", "Mākaha, Hawaii", "Hanauma Bay", "Kailua Beach Park", "Waimānalo Beach", "Shark's Cove", "Kualoa Ranch", "Haleakalā", "Haleakalā National Park", "Waimoku Falls", "West Maui Mountains", "ʻĪao Valley", "Waiʻānapanapa State Park", "Makena State Park", "Kāʻanapali", "Honolua Bay", "Peʻahi", "Hoʻokipa Beach Park", "Launiupoko, Hawaii", "Molokini", "Humpback whale", "Nakalele Point", "Halemaʻumaʻu", "Kīlauea Iki", "Chain of Craters Road", "Mauna Kea", "Mauna Loa", "Kaumana Caves", "Waipiʻo Valley", "Pololū Valley", "ʻAkaka Falls State Park", "Papakōlea Beach", "Punaluʻu Beach", "Hāpuna Beach State Recreation Area", "Kekaha Kai State Park", "Puʻuhonua o Hōnaunau National Historical Park", "Kealakekua Bay", "Reef manta ray", "Ka Lae", "Honoliʻi", "Kailua-Kona, Hawaii"];
+const API='https://en.wikipedia.org/w/api.php?format=json&origin=*&action=query&prop=pageimages&piprop=thumbnail&pithumbsize=900&pilimit=50';
+const okImg=u=>u&&!/\.svg|map|locator|location|seal|flag|logo/i.test(u);
+let photosP=null;
+function loadPhotos(){
+  if(photosP)return photosP;
+  const chunks=[];for(let i=0;i<WIKI.length;i+=40)chunks.push(WIKI.slice(i,i+40));
+  photosP=Promise.all(chunks.map(c=>fetch(API+'&redirects=1&titles='+encodeURIComponent(c.join('|'))).then(r=>r.json()).then(j=>{
+    const q=j.query||{},alias={};(q.normalized||[]).forEach(n=>alias[n.from]=n.to);(q.redirects||[]).forEach(n=>alias[n.from]=n.to);
+    const byT={};Object.values(q.pages||{}).forEach(p=>byT[p.title]=p);
+    c.forEach(t=>{let f=t;for(let k=0;k<3&&alias[f];k++)f=alias[f];const p=byT[f];const i=WIKI.indexOf(t);
+      if(p&&p.thumbnail&&okImg(p.thumbnail.source)){SPOTS[i].img=p.thumbnail.source;SPOTS[i].wt=p.title;}});
+  }).catch(()=>{}))).then(()=>{});
+  return photosP;
+}
+function searchPhoto(s){
+  const q=encodeURIComponent(s.n.replace(/[·(),]/g,' ')+' '+s.i.replace('ʻ','')+' Hawaii');
+  return fetch(API+'&generator=search&gsrlimit=3&gsrsearch='+q).then(r=>r.json()).then(j=>{
+    const ps=Object.values((j.query||{}).pages||{}).sort((a,b)=>a.index-b.index);
+    const p=ps.find(p=>p.thumbnail&&okImg(p.thumbnail.source));if(p){s.img=p.thumbnail.source;s.wt=p.title;}else s.img=null;
+  }).catch(()=>{s.img=null;});
+}
+async function ensurePhoto(s){
+  if(s.img===undefined){await loadPhotos();if(s.img===undefined&&!s.searched){s.searched=true;await searchPhoto(s);}}
+  if(!s.img||curSpot!==s)return;
+  const sc=card.querySelector('.scene');if(!sc||sc.querySelector('img.photo'))return;
+  const im=new Image();im.className='photo';im.alt=s.n;im.referrerPolicy='no-referrer';
+  im.onload=()=>im.classList.add('on');im.onerror=()=>{im.remove();cr.remove();};im.src=s.img;
+  sc.insertBefore(im,sc.firstChild.nextSibling);
+  const cr=document.createElement('a');cr.className='credit';cr.target='_blank';cr.rel='noopener';
+  cr.href='https://en.wikipedia.org/wiki/'+encodeURIComponent(s.wt.replace(/ /g,'_'));cr.textContent='Foto: Wikimedia Commons';sc.appendChild(cr);
+}
+setTimeout(loadPhotos,800);
 function unpin(){pinned=null;card.classList.remove('pinned');hide();}
 function mark(idx){SPOTS.forEach((s,k)=>{s.el.classList.toggle('sel',k===idx);s.li&&s.li.classList.toggle('sel',k===idx);});}
 wrap.addEventListener('click',()=>{if(moved){moved=false;return;}if(pinned!==null)unpin();});
@@ -546,7 +595,7 @@ const list=document.getElementById('list'),aside=document.querySelector('aside')
   SPOTS.forEach((s,idx)=>{if(s.i!==isl)return;
     const it=document.createElement('div');it.className='item';it.innerHTML=`<span class="dot" style="background:${CAT[s.c].color}"></span>${s.n}<small>${CAT[s.c].label}</small>`;
     it.onmouseenter=()=>{if(pinned===null&&!mobile())show(idx);};it.onmouseleave=()=>{if(pinned===null&&!mobile())hide();};
-    it.onclick=()=>{aside.classList.remove('open');ib.querySelectorAll('button').forEach(x=>x.classList.toggle('active',x.textContent===s.i));zoomTo(fitView(ISL_VIEW[s.i]));pin(idx);setTimeout(()=>place(s),700);};
+    it.onclick=()=>{aside.classList.remove('open');ib.querySelectorAll('button').forEach(x=>x.classList.toggle('active',x.textContent===s.i));zoomTo(fitView(ISL_VIEW[s.i]));pin(idx,false);setTimeout(()=>{place(s);panToSpot(s);},700);};
     grp.appendChild(it);s.li=it;});
   list.appendChild(grp);
 });
