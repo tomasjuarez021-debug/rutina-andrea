@@ -165,6 +165,14 @@ aside h2 button{margin-left:auto;background:none;border:0;color:var(--muted);fon
 #loader .lb{width:220px;height:3px;border-radius:2px;background:rgba(255,255,255,.12);overflow:hidden}
 #loader .lb i{display:block;height:100%;width:0;background:linear-gradient(90deg,#b8924a,var(--gold));transition:width .3s}
 #loader .ls{font-size:11px;letter-spacing:3px;text-transform:uppercase;color:var(--muted)}
+#loader>*{position:relative;z-index:1}
+#bolt{position:absolute!important;inset:0;width:100%;height:100%;z-index:0!important;pointer-events:none}
+#flash{position:fixed;inset:0;z-index:70;background:radial-gradient(ellipse at 50% 30%,rgba(230,240,255,.95),rgba(170,200,255,.55) 45%,rgba(120,160,255,0) 80%);opacity:0;pointer-events:none}
+#flash.on{animation:flash .9s ease-out}
+@keyframes flash{0%{opacity:0}6%{opacity:1}14%{opacity:.25}22%{opacity:.85}100%{opacity:0}}
+#loader .lt.hit{animation:hit .5s ease-out}
+@keyframes hit{0%{transform:translate(0,0);text-shadow:0 0 40px #cfe3ff,0 0 80px #8fb8ff;color:#fff}20%{transform:translate(-3px,2px)}40%{transform:translate(3px,-2px)}60%{transform:translate(-2px,1px)}100%{transform:none;text-shadow:none}}
+@media (prefers-reduced-motion:reduce){#flash.on,#loader .lt.hit{animation:none}}
 
 @media (max-width:820px),(hover:none){
   .brand{font-size:21px;letter-spacing:4px}
@@ -215,7 +223,8 @@ aside h2 button{margin-left:auto;background:none;border:0;color:var(--muted);fon
     <p class="note">Costas reales (Natural Earth 1:10m). El relieve se genera a partir de la altura y posición real de cada volcán: es aproximado. Fotos de Wikimedia Commons. Permisos, cierres y reservas cambian seguido: verificá antes de ir (NPS, DLNR Hawaiʻi, USGS HVO).</p>
   </aside>
   <div id="lb" hidden><div class="lbstage" id="lbStage"><img id="lbImg" alt=""></div><button class="lbx" aria-label="Cerrar">✕</button><button class="lbp" aria-label="Anterior">‹</button><button class="lbn" aria-label="Siguiente">›</button><div id="lbCap"></div></div>
-  <div id="loader"><div class="lt">HAWAIʻI</div><div class="lb"><i id="lbar"></i></div><div class="ls" id="lmsg">Generando relieve</div></div>
+  <div id="flash"></div>
+  <div id="loader"><canvas id="bolt"></canvas><div class="lt">HAWAIʻI</div><div class="lb"><i id="lbar"></i></div><div class="ls" id="lmsg">Generando relieve</div></div>
 </div>
 
 <script id="wk" type="text/js-worker">
@@ -1074,8 +1083,37 @@ function startBake(){
   else{const bake=new Function(src.replace(/self\.onmessage[\s\S]*$/,'')+';return bake;')();
     (async()=>{for(const j of jobs){await new Promise(r=>setTimeout(r,10));await finish(j.name,bake(j).buffer);}})();}
 }
+/* =================== Rayo al actualizar / abrir la app =================== */
+const Bolt=(()=>{const c=document.getElementById('bolt'),g=c.getContext('2d');let bolts=[],raf=0,timer=0;
+  const size=()=>{const d=Math.min(2,devicePixelRatio||1);c.width=innerWidth*d;c.height=innerHeight*d;g.setTransform(d,0,0,d,0,0);};
+  function path(x1,y1,x2,y2,disp,out){if(disp<3){out.push([x2,y2]);return;}const mx=(x1+x2)/2+(Math.random()-.5)*disp,my=(y1+y2)/2+(Math.random()-.5)*disp*.35;
+    path(x1,y1,mx,my,disp/2,out);path(mx,my,x2,y2,disp/2,out);}
+  function make(tx,ty,big){const x0=tx+(Math.random()-.5)*innerWidth*.5,pts=[[x0,-20]];path(x0,-20,tx,ty,big?260:180,pts);
+    const br=[];for(let k=0;k<(big?5:3);k++){const i=4+Math.floor(Math.random()*(pts.length*.7));const [bx,by]=pts[i];const b=[[bx,by]];
+      path(bx,by,bx+(Math.random()-.5)*220,by+60+Math.random()*160,90,b);br.push(b);}
+    return {pts,br,t:0,life:big?.55:.4,big};}
+  function draw(){g.clearRect(0,0,innerWidth,innerHeight);
+    bolts=bolts.filter(b=>(b.t+=1/60)<b.life);
+    for(const b of bolts){const k=1-b.t/b.life,fl=Math.random()<.35?.4:1;const a=k*fl;
+      g.lineCap='round';g.lineJoin='round';
+      const line=(pts,w,col,blur)=>{g.save();g.shadowColor='#9cc2ff';g.shadowBlur=blur;g.strokeStyle=col;g.lineWidth=w;g.beginPath();pts.forEach(([x,y],i)=>i?g.lineTo(x,y):g.moveTo(x,y));g.stroke();g.restore();};
+      line(b.pts,(b.big?9:6)*k+2,`rgba(150,190,255,${a*.35})`,30);
+      line(b.pts,(b.big?3.2:2.2),`rgba(245,250,255,${a})`,18);
+      b.br.forEach(br=>line(br,1.3,`rgba(220,235,255,${a*.7})`,10));}
+    raf=bolts.length?requestAnimationFrame(draw):0;}
+  function strike(big){if(matchMedia('(prefers-reduced-motion: reduce)').matches)return;size();
+    const lt=document.querySelector('#loader .lt'),r=lt?lt.getBoundingClientRect():{left:innerWidth/2,top:innerHeight/2,width:0,height:0};
+    bolts.push(make(r.left+r.width*(.2+Math.random()*.6),r.top+r.height*.4,big));if(big)setTimeout(()=>bolts.push(make(r.left+r.width*Math.random(),r.top+r.height*.5,false)),90);
+    const f=document.getElementById('flash');f.classList.remove('on');void f.offsetWidth;f.classList.add('on');
+    if(lt){lt.classList.remove('hit');void lt.offsetWidth;lt.classList.add('hit');}
+    if(navigator.vibrate)try{navigator.vibrate(big?[30,40,60]:20);}catch(e){}
+    if(!raf)raf=requestAnimationFrame(draw);}
+  return {start(){setTimeout(()=>strike(true),250);timer=setInterval(()=>strike(false),1300);},
+          finale(){clearInterval(timer);strike(true);}};})();
+Bolt.start();
 function ready(){
-  const L=document.getElementById('loader');L.classList.add('done');setTimeout(()=>L.remove(),800);
+  const L=document.getElementById('loader');Bolt.finale();
+  setTimeout(()=>{L.classList.add('done');setTimeout(()=>L.remove(),800);},380);
   const o=overview();flyTo(o.x,o.y,o.z);
 }
 
