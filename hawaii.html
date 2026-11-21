@@ -40,6 +40,21 @@ button{font:inherit;color:inherit}
 .hbtn:hover{background:rgba(20,36,48,.92)}
 .hbtn:active{transform:scale(.96)}
 .hbtn:focus-visible,.pin:focus-visible,#islandBar button:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+.tourBtn{background:linear-gradient(135deg,rgba(233,201,127,.95),rgba(214,160,80,.95));color:#1b1408;border-color:rgba(255,230,170,.8)}
+.tourBtn:hover{background:linear-gradient(135deg,#f3d995,#e0ac5c)}
+#tourBar{position:absolute;z-index:30;left:50%;top:calc(14px + env(safe-area-inset-top));transform:translateX(-50%);width:min(340px,calc(100% - 28px));padding:10px 12px;border-radius:16px;background:var(--panel);border:1px solid var(--line);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);box-shadow:0 10px 30px rgba(0,0,0,.45)}
+#tourBar[hidden]{display:none}
+.tb-t{display:flex;align-items:baseline;gap:8px;margin-bottom:7px}
+.tb-t b{font:700 14px var(--display);color:var(--gold);letter-spacing:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tb-t span{margin-left:auto;font:600 11px var(--ui);color:var(--muted);font-variant-numeric:tabular-nums}
+.tb-p{height:3px;border-radius:2px;background:rgba(255,255,255,.12);overflow:hidden;margin-bottom:8px}
+.tb-p i{display:block;height:100%;width:0;background:linear-gradient(90deg,#b8924a,var(--gold))}
+.tb-c{display:flex;gap:6px;justify-content:center}
+.tb-c button{flex:1;height:34px;border-radius:10px;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.06);color:var(--text);cursor:pointer;font-size:13px}
+.tb-c button:hover{background:rgba(255,255,255,.14)}
+body.touring .tl,body.touring .tr,body.touring #islandBar{opacity:0;pointer-events:none}
+.tl,.tr,#islandBar{transition:opacity .3s}
+.links a.sv{grid-column:1/-1;background:linear-gradient(135deg,rgba(79,179,255,.25),rgba(61,242,200,.18));border-color:rgba(120,210,255,.45);font-size:13px}
 .hbtn .cnt{background:var(--gold);color:#1b1408;border-radius:999px;padding:1px 7px;font-size:11px}
 .hbtn .chev{opacity:.7;transition:transform .2s}
 .hbtn[aria-expanded="true"] .chev{transform:rotate(180deg)}
@@ -137,8 +152,8 @@ button{font:inherit;color:inherit}
 .card h3{font:700 22px/1.15 var(--display);color:var(--gold);margin:0 0 4px;text-wrap:balance}
 .card .isl{color:var(--muted);font-size:12px;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:12px}
 .card p{font-size:13.5px;line-height:1.55;margin:0 0 12px;color:var(--text)}
-.sport{margin:0 0 12px;padding:12px;border-radius:12px;background:linear-gradient(135deg,color-mix(in srgb,var(--c) 18%,transparent),rgba(255,255,255,.03));border:1px solid color-mix(in srgb,var(--c) 45%,transparent)}
-.sport h5{margin:0 0 8px;font:700 12px var(--ui);letter-spacing:1.5px;text-transform:uppercase;color:var(--c)}
+.sportbox{margin:0 0 12px;padding:12px;border-radius:12px;background:linear-gradient(135deg,color-mix(in srgb,var(--c) 18%,transparent),rgba(255,255,255,.03));border:1px solid color-mix(in srgb,var(--c) 45%,transparent)}
+.sportbox h5{margin:0 0 8px;font:700 12px var(--ui);letter-spacing:1.5px;text-transform:uppercase;color:var(--c)}
 .sg{display:grid;grid-template-columns:1fr 1fr;gap:8px 12px}
 .sg div{font-size:12.5px;line-height:1.35;min-width:0}
 .sg b{display:block;font-size:9.5px;letter-spacing:1px;text-transform:uppercase;color:var(--muted);margin-bottom:1px}
@@ -190,6 +205,9 @@ aside h2 button{margin-left:auto;background:none;border:0;color:var(--muted);fon
   .brand small{font-size:10px}
   #compass{width:46px;height:46px;top:calc(64px + env(safe-area-inset-top))}
   #coords{display:none}
+  .tourBtn{padding:9px 12px}
+  .tourBtn .x{display:none}
+  #tourBar{top:calc(10px + env(safe-area-inset-top))}
   #islandBar{transition:opacity .25s,transform .25s}
   body.cardOpen #islandBar,body.cardOpen .br{opacity:0;pointer-events:none}
   body.cardOpen #islandBar{transform:translate(-50%,24px)}
@@ -218,7 +236,8 @@ aside h2 button{margin-left:auto;background:none;border:0;color:var(--muted);fon
     <div id="filterWrap"><button class="hbtn" id="filterBtn" aria-expanded="false" aria-controls="filterPanel">Filtros <span class="cnt" id="fcount">6</span><span class="chev">▾</span></button>
     <div class="panel closed" id="filterPanel"></div></div>
   </div>
-  <div class="hud tr"><button class="hbtn" id="listBtn">☰ Spots</button></div>
+  <div class="hud tr"><button class="hbtn tourBtn" id="tourBtn">▶ Tour<span class="x"> épico</span></button><button class="hbtn" id="listBtn">☰ Spots</button></div>
+  <div id="tourBar" hidden><div class="tb-t"><b id="tbName">Tour</b><span id="tbStep"></span></div><div class="tb-p"><i id="tbProg"></i></div><div class="tb-c"><button id="tbPrev" aria-label="Anterior">◀</button><button id="tbPlay" aria-label="Pausa">❚❚</button><button id="tbNext" aria-label="Siguiente">▶</button><button id="tbExit" aria-label="Salir">✕</button></div></div>
   <svg id="compass" viewBox="-50 -50 100 100" aria-hidden="true">
     <circle r="40" fill="rgba(9,20,29,.7)" stroke="rgba(233,201,127,.5)" stroke-width="1.5"/>
     <circle r="33" fill="none" stroke="rgba(233,201,127,.25)" stroke-width="1"/>
@@ -625,6 +644,13 @@ const SPOTS=[
 
 
 const SPORT={"Hanalei Bay": ["Norte–noroeste (invierno)", "Alisios del este: lado-afuera a la mañana", "Arrecife afuera, arena adentro", "Mañana, invierno", "Longboard adentro · shortboard/step-up en el Bowl", "El swell grande se pone serio y hay corriente"], "Poʻipū": ["Sur (verano)", "Alisios: afuera en la mañana", "Arrecife", "Mañana", "Longboard / soft-top", "Focas monje en la arena: no acercarse"], "North Shore · Pipeline": ["Oeste–noroeste a norte", "Alisios del este: lado-afuera", "Arrecife de lava muy poco profundo", "Mañana, nov–feb", "Shortboard / step-up / gun", "Arrecife filoso, crowd y locales"], "Waimea Bay": ["Noroeste gigante (6 m+)", "Alisios: lado-afuera", "Arrecife y rocas; shorebreak en la arena", "Días de swell XXL", "Gun de 9 a 12 pies", "Hold-downs largos y corriente fuerte"], "Laniakea · Chun’s": ["Noroeste–norte", "Alisios: lado-afuera a la mañana", "Arrecife", "Mañana", "Shortboard / funboard", "Tortugas en el agua y en la arena"], "Waikīkī": ["Sur (verano)", "Alisios: afuera", "Arrecife profundo y parejo", "Amanecer", "Longboard / soft-top", "Mucha gente y tablas sueltas"], "Mākaha": ["Oeste–noroeste (invierno) y sur (verano)", "Alisios: afuera", "Arrecife; backwash en la orilla", "Mañana", "Longboard / shortboard", "El backwash y la corriente"], "Honolua Bay": ["Norte–noroeste", "Alisios del noreste: afuera", "Arrecife y roca", "Mañana, invierno", "Shortboard / step-up", "Rocas en la entrada y crowd"], "Peʻahi · Jaws": ["Norte–noroeste gigante (10–20 m)", "Alisios: lado-afuera", "Arrecife profundo", "Swells XXL de invierno", "Tow-in / gun", "Ola de clase mundial: solo profesionales"], "Hoʻokipa": ["Norte–noroeste", "Sin viento a la mañana; alisios fuertes de lado a la tarde (windsurf)", "Arrecife y roca", "Surf hasta el mediodía, windsurf después", "Shortboard · windsurf de olas", "Rocas, corriente y regla horaria surf/windsurf"], "Launiupoko": ["Sur", "Sin viento a la mañana", "Arrecife plano y arena", "Mañana", "Longboard / soft-top", "Fondo de piedras en marea baja"], "Honoliʻi (Hilo)": ["Norte–noreste y este", "Sin viento a la mañana", "Arena y roca en la boca del río", "Mañana", "Shortboard / funboard", "Agua marrón después de lluvias y locales"], "Banyans · Kona": ["Noroeste–oeste", "Sin viento a la mañana; brisa marina a la tarde", "Arrecife", "Mañana", "Shortboard", "Crowd local, arrecife poco profundo"], "Sunset Beach": ["Oeste–noroeste a norte", "Alisios del este: afuera", "Arrecife extenso", "Mañana, invierno", "Step-up / gun", "Corriente y series que rompen afuera de golpe"], "Haleʻiwa · Puaʻena Point": ["Noroeste", "Alisios: lado-afuera", "Arrecife", "Mañana", "Longboard / funboard", "Corriente del canal del puerto"], "Ala Moana Bowls": ["Sur (verano)", "Alisios: afuera", "Arrecife", "Mañana", "Shortboard", "Crowd y canal con botes"], "Sandy Beach": ["Este–sur", "Alisios: lado-tierra", "Arena con shorebreak", "Amanecer", "Bodyboard / bodysurf", "Lesiones de cuello y columna"], "Kalapakī Bay": ["Este (swell de viento)", "Mejor sin viento a la mañana", "Arena", "Mañana", "Longboard / soft-top", "Botes en la zona del puerto"], "Cove Park · Kīhei": ["Sur", "Glassy a la mañana; viento fuerte a la tarde", "Arena y arrecife", "Mañana", "Longboard / soft-top", "Mucha gente en las clases"], "Pine Trees · Kona": ["Noroeste–oeste", "Sin viento a la mañana", "Arrecife", "Mañana", "Shortboard / funboard", "Locales y camino de acceso"], "Kahaluʻu Bay": ["Oeste–noroeste moderado", "Sin viento a la mañana", "Arrecife", "Mañana", "Soft-top / longboard", "Corriente hacia el canal"], "Pohoiki": ["Este–sureste", "Alisios: lado-tierra", "Roca de lava y arrecife", "Mañana", "Shortboard", "Rocas y zona remota"], "Kanahā · Kite Beach": ["Chop y olas chicas en el arrecife", "Alisios del noreste, 15–25 nudos, lado-tierra", "Arena y arrecife", "Mediodía y tarde", "Kite 7–12 m · twin tip o surfkite", "Zona del aeropuerto, arrecife en marea baja"], "Kailua · kite": ["Agua plana adentro, olas afuera", "Alisios del noreste, lado-tierra", "Arena", "Mediodía y tarde", "Kite 9–12 m · twin tip", "Bañistas, kayaks y arrecife exterior"], "Diamond Head · kite": ["Sur (verano): wave riding", "Alisios: lado-afuera", "Arrecife poco profundo", "Tarde con alisios", "Kite 7–10 m · surfkite direccional", "Lado-afuera: si fallás, el viento te lleva mar adentro"], "Mokulēʻia": ["Norte: olas para saltar", "Alisios: de lado", "Arena y arrecife", "Tarde", "Kite 9–12 m · twin tip/surfkite", "Sin guardavidas y lejos de todo"], "ʻAnini": ["Laguna plana", "Alisios del este", "Arena poco profunda", "Mediodía", "Windsurf de iniciación · kite 10–12 m", "Corriente fuera del arrecife"]};
+// puntos con Street View cerca (rutas, miradores y parques de playa)
+const SV={"North Shore · Pipeline":[21.6646,-158.0497],"Waimea Bay":[21.6417,-158.0656],"Sunset Beach":[21.6786,-158.0408],"Waikīkī":[21.2766,-157.827],
+ "Diamond Head (Lēʻahi)":[21.2559,-157.803],"Hanauma Bay":[21.2694,-157.6938],"Hoʻokipa":[20.9347,-156.357],"Peʻahi · Jaws":[20.9347,-156.357],
+ "Haleakalā · amanecer":[20.7097,-156.2533],"Kīlauea · Halemaʻumaʻu":[19.4209,-155.2873],"Waipiʻo Valley":[20.1175,-155.5833],
+ "Kalalau Trail · Nā Pali":[22.1514,-159.6464],"Waimea Canyon":[22.0712,-159.6618],"Hanalei Bay":[22.2121,-159.4993],"Honolua Bay":[21.0124,-156.6385],
+ "Mauna Kea":[19.7612,-155.4559],"Kanahā · Kite Beach":[20.8985,-156.4385],"Kailua · kite":[21.3975,-157.7275]};
+const TOUR=["Kalalau Trail · Nā Pali","Hanalei Bay","North Shore · Pipeline","Waimea Bay","Waikīkī","Honolua Bay","Peʻahi · Jaws","Kanahā · Kite Beach","Haleakalā · amanecer","Kīlauea · Halemaʻumaʻu","Mauna Kea"];
 const ISL_FULL={"Hawaiʻi":"Hawaiʻi (Big Island)"};
 
 const ISL_VIEW={"Kauaʻi":[95,5,135,100],"Oʻahu":[365,105,150,115],"Maui":[655,240,150,115],"Hawaiʻi":[750,345,270,300]};
@@ -744,7 +770,7 @@ const CLOUD=(()=>{const mk=(seed,dark)=>{const c=document.createElement('canvas'
   for(let i=0;i<26;i++){const x=60+r()*200,y=70+r()*60,rad=24+r()*42;const gr=g.createRadialGradient(x,y,0,x,y,rad);
     gr.addColorStop(0,dark?'rgba(0,18,30,.55)':'rgba(255,255,255,.95)');gr.addColorStop(.6,dark?'rgba(0,18,30,.25)':'rgba(248,250,252,.55)');gr.addColorStop(1,'rgba(255,255,255,0)');g.fillStyle=gr;g.beginPath();g.arc(x,y,rad,0,7);g.fill();}
   return c;};return [1,2,3].map(s=>({l:mk(s*977,false),d:mk(s*977,true)}));})();
-const clouds=Array.from({length:12},(_,i)=>{const r=k=>((Math.sin(i*91.7+k*13.3)*43758.5)%1+1)%1;return {x:-150+r(1)*1350,y:-120+r(2)*900,s:.45+r(3)*.6,v:CLOUD[i%3],vis:1};});
+const clouds=Array.from({length:8},(_,i)=>{const r=k=>((Math.sin(i*91.7+k*13.3)*43758.5)%1+1)%1;return {x:-150+r(1)*1350,y:-120+r(2)*900,s:.45+r(3)*.6,v:CLOUD[i%3],vis:1};});
 // que ninguna nube arranque tapando una isla
 setTimeout(()=>{for(const c of clouds){for(let t=0;t<40;t++){const w=288*c.s,h=180*c.s,cx=c.x+w/2,cy=c.y+h/2;
   if(!ISL_C.some(o=>Math.hypot(cx-o.x,cy-o.y)<o.r+w*.4))break;c.x=-250+Math.random()*1450;c.y=-200+Math.random()*1000;}}},0);
@@ -791,12 +817,13 @@ function drawSurf(z){
   ctx.globalCompositeOperation=g;
   // líneas de swell que avanzan hacia la orilla
   const zr=z/z0;
+  const la=sstep(1.5,2.2,zr);if(la<=.01){ctx.restore();return;}
   // viento (alisios del noreste) sobre las zonas de kite
   for(const zn of SURFZ){if(!zn.kite)continue;for(let i=0;i<9;i++){const f=((tNow*.35)+i*.137)%1,ox=((i*37)%19-9)*1.4,oy=((i*53)%13-6)*1.4;
-    const x=zn.cx+ox+(f-.5)*26*.92,y=zn.cy+oy-(f-.5)*26*-.38;ctx.strokeStyle=`rgba(230,255,248,${Math.sin(Math.PI*f)*.75})`;ctx.lineWidth=Math.max(.3,1.3/z*Math.min(2,zr*.7));
+    const x=zn.cx+ox+(f-.5)*26*.92,y=zn.cy+oy-(f-.5)*26*-.38;ctx.strokeStyle=`rgba(230,255,248,${Math.sin(Math.PI*f)*.75*la})`;ctx.lineWidth=Math.max(.3,1.3/z*Math.min(2,zr*.7));
     ctx.beginPath();ctx.moveTo(x,y);ctx.quadraticCurveTo(x-3,y+1.8,x-6.5,y+2.2);ctx.stroke();}}
   for(const zn of SURFZ){if(zn.kite)continue;const n=zn.l+1;for(let i=0;i<n;i++){const f=((tNow*(.12+zn.l*.03))+i/n)%1;const off=1+(1-f)*(10+zn.l*4);
-    ctx.strokeStyle=`rgba(235,252,255,${Math.sin(Math.PI*f)*(.35+zn.l*.15)})`;ctx.lineWidth=Math.max(.35,(1.1+zn.l*.35)/z*Math.min(2.2,zr*.7));zline(zn,off);ctx.stroke();}}
+    ctx.strokeStyle=`rgba(235,252,255,${Math.sin(Math.PI*f)*(.35+zn.l*.15)*la})`;ctx.lineWidth=Math.max(.35,(1.1+zn.l*.35)/z*Math.min(2.2,zr*.7));zline(zn,off);ctx.stroke();}}
   ctx.restore();
 }
 function drawSurfLabels(zr){
@@ -845,10 +872,10 @@ function draw(){
   // zonas de olas grandes: degradé en el agua + líneas de swell que llegan a la costa
   drawSurf(z);
   // nubes (se disipan al acercarse)
-  const ca=.55*(1-sstep(z0*1.05,z0*1.6,z));
+  const ca=.4*(1-sstep(z0*1.0,z0*1.4,z));
   if(ca>0){for(const c of clouds){const w=320*c.s*.9,h=200*c.s*.9;ctx.globalAlpha=ca*.5*c.vis;ctx.drawImage(c.v.d,c.x+14,c.y+20,w,h);}
     for(const c of clouds){const w=320*c.s*.9,h=200*c.s*.9;ctx.globalAlpha=ca*c.vis;ctx.drawImage(c.v.l,c.x,c.y,w,h);}ctx.globalAlpha=1;}
-  drawGlints(z);
+
   // etiquetas en pantalla
   ctx.setTransform(DPR,0,0,DPR,0,0);
   const zr=z/z0;
@@ -930,7 +957,7 @@ function frame(t){
   const cx=Math.max(-60,Math.min(1090,tgt.x)),cy=Math.max(-60,Math.min(740,tgt.y));if(cx!==tgt.x||cy!==tgt.y){tgt.x=cx;tgt.y=cy;}
   // las nubes circulan alrededor de las islas en vez de taparlas
   for(const c of clouds){const w=320*c.s*.9,h=200*c.s*.9,cx=c.x+w/2,cy=c.y+h/2,cr=w*.32;let vis=1;
-    c.vx=c.vx??-3.2;c.vy=c.vy??1.4;let ax=(-3.2-c.vx)*.5,ay=(1.4-c.vy)*.5;
+    c.vx=c.vx??-11;c.vy=c.vy??4.5;let ax=(-11-c.vx)*.6,ay=(4.5-c.vy)*.6;
     for(const o of ISL_C){const dx=cx-o.x,dy=cy-o.y,d=Math.hypot(dx,dy)||1,R=o.r+cr;
       if(d<R){const f=(R-d)/R;ax+=dx/d*f*26;ay+=dy/d*f*26;}vis=Math.min(vis,.25+.75*sstep(o.r*.7,R,d));}
     c.vx+=ax*dt;c.vy+=ay*dt;c.x+=c.vx*dt;c.y+=c.vy*dt;c.vis+=(vis-(c.vis??1))*Math.min(1,dt*2);
@@ -941,7 +968,7 @@ function frame(t){
 
 /* =================== Interacción =================== */
 const ptrs=new Map();let drag=false,moved=0,pinch=null,lastMove=null,downT=0,lastTap=0;
-cv.addEventListener('pointerdown',e=>{cv.setPointerCapture(e.pointerId);ptrs.set(e.pointerId,{x:e.clientX,y:e.clientY});anchor=null;vel.x=vel.y=0;
+cv.addEventListener('pointerdown',e=>{if(tour)tourPause(true);cv.setPointerCapture(e.pointerId);ptrs.set(e.pointerId,{x:e.clientX,y:e.clientY});anchor=null;vel.x=vel.y=0;
   drag=true;moved=0;downT=performance.now();cv.classList.add('grab');tgt.x=cam.x;tgt.y=cam.y;tgt.z=cam.z;closeFilters();
   if(ptrs.size===2){const [a,b]=[...ptrs.values()];pinch={d:Math.hypot(a.x-b.x,a.y-b.y),z:cam.z,mx:(a.x+b.x)/2,my:(a.y+b.y)/2};}
   lastMove={x:e.clientX,y:e.clientY,t:performance.now()};});
@@ -982,6 +1009,7 @@ function tap(sx,sy){
 let coordsEl=document.getElementById('coords');
 function showCoords(sx,sy){const [wx,wy]=s2w(sx,sy);const lon=wx/180-160.4,lat=22.35-wy/192.6;coordsEl.textContent=`${lat.toFixed(3)}° N  ${(-lon).toFixed(3)}° O`;}
 addEventListener('keydown',e=>{if(e.target.closest('input'))return;
+  if(e.key==='Escape'&&tour){tourEnd();return;}
   if(e.key==='Escape'){if(card.classList.contains('show'))closeCard();else if(aside.classList.contains('open'))aside.classList.remove('open');else flyHome();}
   if(e.key==='+'||e.key==='=')zoomAt(VW/2,VH/2,1.5);if(e.key==='-')zoomAt(VW/2,VH/2,1/1.5);
   const st=120/cam.z;if(e.key==='ArrowLeft')tgt.x-=st;if(e.key==='ArrowRight')tgt.x+=st;if(e.key==='ArrowUp')tgt.y-=st;if(e.key==='ArrowDown')tgt.y+=st;});
@@ -996,20 +1024,20 @@ function render(s){
   card.innerHTML=`<div class="scene">${scene(s.sc)}<span class="tag">${ICON[s.c]}${CAT[s.c].label}</span><button class="close" aria-label="Cerrar">✕</button></div>
   <div class="body"><h3>${s.n}</h3><div class="isl">${islName(s.i)}</div><p>${s.d}</p>
   <div class="facts"><div class="fact"><b>Nivel</b>${s.lvl}</div><div class="fact"><b>Duración</b>${s.dur}</div></div>
-  ${SPORT[s.n]?`<div class="sport"><h5>${s.c==='kite'?'🪁':'🏄'} Ficha deportiva</h5><div class="sg">${['Swell / agua','Viento','Fondo','Mejor momento',s.c==='kite'?'Equipo':'Tabla','Ojo con'].map((l,k)=>`<div class="${k===5?'warn':''}"><b>${l}</b>${SPORT[s.n][k]}</div>`).join('')}</div></div>`:''}
+  ${SPORT[s.n]?`<div class="sportbox"><h5>${s.c==='kite'?'🪁':'🏄'} Ficha deportiva</h5><div class="sg">${['Swell / agua','Viento','Fondo','Mejor momento',s.c==='kite'?'Equipo':'Tabla','Ojo con'].map((l,k)=>`<div class="${k===5?'warn':''}"><b>${l}</b>${SPORT[s.n][k]}</div>`).join('')}</div></div>`:''}
   <div class="season ${s.fm[0]}"><b>Feb–Mar:</b> ${s.fm[1]}</div>
   <p class="tip"><b>Tip:</b> ${s.tip}</p>
   <div class="links"><a href="https://www.google.com/search?tbm=isch&q=${q}" target="_blank" rel="noopener">📷 Fotos</a><a href="https://www.google.com/maps/search/?api=1&query=${s.lat},${s.lon}" target="_blank" rel="noopener">📍 Maps</a><a href="https://www.pinterest.com/search/pins/?q=${q}" target="_blank" rel="noopener">Pinterest</a></div>
-  <div class="links two"><a href="https://www.youtube.com/results?search_query=${q}+shorts" target="_blank" rel="noopener">▶ YouTube</a><a href="https://www.tiktok.com/search/video?q=${q}" target="_blank" rel="noopener">♪ TikTok</a></div></div>`;
+  <div class="links two"><a class="sv" href="https://www.google.com/maps/@?api=1&map_action=pano&viewpoint=${(SV[s.n]||[s.lat,s.lon]).join(',')}" target="_blank" rel="noopener">🚶 Recorrer en 360° (Street View)</a><a href="https://www.youtube.com/results?search_query=${q}+shorts" target="_blank" rel="noopener">▶ YouTube</a><a href="https://www.tiktok.com/search/video?q=${q}" target="_blank" rel="noopener">♪ TikTok</a></div></div>`;
   card.querySelector('.close').onclick=e=>{e.stopPropagation();closeCard();};
   card.scrollTop=0;loadGallery(s);
 }
-function openSpot(i){
+function openSpot(i,zMin){
   const s=SPOTS[i];pinned=i;lastPin='';render(s);document.body.classList.add('cardOpen');card.classList.add('show');currentIsl=s.i;
   SPOTS.forEach((o,k)=>{o.el.classList.toggle('sel',k===i);o.li&&o.li.classList.toggle('sel',k===i);});
-  const z=Math.max(cam.z,tgt.z,z0*3.2);
+  const z=Math.max(cam.z,tgt.z,z0*3.2,zMin||0);
   let ox=0,oy=0;
-  if(mobile()){const ch=Math.min(VH*.66,card.offsetHeight||VH*.6);oy=((TOP()+(VH-ch))/2)-VH/2;}
+  if(mobile()){const ch=Math.min(VH*.66,card.offsetHeight||VH*.6),top=tour?130:TOP();oy=((top+(VH-ch))/2)-VH/2+20;}
   else ox=-(card.offsetWidth+28)/2;
   flyTo(s.x-ox/z,s.y-oy/z,z);
 }
@@ -1149,6 +1177,34 @@ const list=document.getElementById('list');
   list.appendChild(grp);});
 document.getElementById('listBtn').onclick=e=>{e.stopPropagation();closeCard();aside.classList.toggle('open');};
 document.getElementById('asideClose').onclick=()=>aside.classList.remove('open');
+
+
+/* =================== Tour épico =================== */
+const tourEl=document.getElementById('tourBar');
+let tour=null;
+function tourStop(i){return SPOTS.findIndex(s=>s.n===TOUR[i]);}
+function tourGo(k){if(!tour)return;tour.k=(k+TOUR.length)%TOUR.length;tour.t0=performance.now();tour.el=0;clearTimeout(tour.tm);
+  const i=tourStop(tour.k),s=SPOTS[i];document.getElementById('tbName').textContent=s.n;document.getElementById('tbStep').textContent=`${tour.k+1} / ${TOUR.length}`;
+  closeCard();active[s.c]=true;applyFilters();
+  const far=Math.hypot(s.x-cam.x,s.y-cam.y)>60/z0;
+  if(far){const mx=(s.x+cam.x)/2,my=(s.y+cam.y)/2;anchor=null;tgt.x=mx;tgt.y=my;tgt.z=Math.max(zmin(),Math.min(cam.z,z0*1.5));}
+  tour.tm=setTimeout(()=>{if(!tour)return;currentIsl=s.i;anchor=null;tgt.z=z0*(mobile()?5:4.2);openSpot(i,tgt.z);},far?1300:200);}
+function tourTick(){if(!tour)return;const now=performance.now();if(!tour.paused){tour.el+=now-(tour.last||now);}tour.last=now;
+  const D=9000,f=Math.min(1,tour.el/D);document.getElementById('tbProg').style.width=(f*100)+'%';
+  // pasar fotos solas durante el tour
+  const g=card.querySelector('.gal');if(g&&!tour.paused){const n=g.children.length,want=Math.min(n-1,Math.floor(tour.el/2600));if(n>1&&want!==tour.ph){tour.ph=want;g.scrollTo({left:want*g.clientWidth,behavior:'smooth'});}}
+  if(f>=1&&!tour.paused){tour.ph=-1;tourGo(tour.k+1);}
+  requestAnimationFrame(tourTick);}
+function tourStart(){aside.classList.remove('open');closeFilters();tour={k:0,el:0,paused:false,ph:-1};tourEl.hidden=false;document.body.classList.add('touring');
+  document.getElementById('tbPlay').textContent='❚❚';tourGo(0);requestAnimationFrame(tourTick);}
+function tourEnd(){if(!tour)return;clearTimeout(tour.tm);tour=null;tourEl.hidden=true;document.body.classList.remove('touring');}
+function tourPause(p){if(!tour)return;tour.paused=p;document.getElementById('tbPlay').textContent=p?'▶':'❚❚';}
+document.getElementById('tourBtn').onclick=e=>{e.stopPropagation();tourStart();};
+document.getElementById('tbPlay').onclick=()=>tourPause(!tour.paused);
+document.getElementById('tbNext').onclick=()=>{tour.ph=-1;tourGo(tour.k+1);};
+document.getElementById('tbPrev').onclick=()=>{tour.ph=-1;tourGo(tour.k-1);};
+document.getElementById('tbExit').onclick=()=>{tourEnd();closeCard();flyHome();};
+tourEl.addEventListener('pointerdown',e=>e.stopPropagation());
 
 /* =================== Relieve (workers en paralelo) =================== */
 const VOL={
