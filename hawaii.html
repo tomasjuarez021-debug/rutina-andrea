@@ -42,9 +42,10 @@ svg.z1 .town,svg.z1 .peak.t2{display:inline}
 .peak text{font:11px 'IM Fell English SC',serif;fill:#2a1c0c;paint-order:stroke;stroke:rgba(239,220,174,.85);stroke-width:2.5px}
 .peak .el{font:italic 9.5px 'IM Fell English',serif}
 .spot{cursor:pointer}
-.spot .halo{opacity:.25;animation:pulse 2.4s ease-out infinite;transform-box:fill-box;transform-origin:center}
-.spot circle.core{stroke:#f6ead0;stroke-width:2}
-.spot:hover circle.core,.spot.sel circle.core{stroke-width:3.5;stroke:#fff}
+.spot .halo{opacity:0;transform-box:fill-box;transform-origin:center}
+.spot:hover .halo,.spot.sel .halo{animation:pulse 2s ease-out infinite}
+.spot circle.core{stroke:rgba(246,234,208,.9);stroke-width:1.2;opacity:.8;transition:opacity .15s}
+.spot:hover circle.core,.spot.sel circle.core{stroke-width:1.8;stroke:#fff;opacity:1}
 .spot.hidden{display:none}
 .spot .hit{fill:transparent}
 @keyframes pulse{0%{transform:scale(.6);opacity:.45}100%{transform:scale(2.2);opacity:0}}
@@ -468,7 +469,7 @@ const active={trek:true,volcan:true,surf:true,playa:true,aventura:true};
 let pinned=null;
 SPOTS.forEach((s,idx)=>{
   const [x,y]=P(s.lon,s.lat);const g=scG(x,y,'spot',spotsG);g.dataset.idx=idx;
-  g.innerHTML=`<circle class="hit" r="15"/><circle class="halo" r="9" fill="${CAT[s.c].color}"/><circle class="core" r="6.5" fill="${CAT[s.c].color}"/>`;
+  g.innerHTML=`<circle class="hit" r="12"/><circle class="halo" r="7" fill="${CAT[s.c].color}"/><circle class="core" r="4" fill="${CAT[s.c].color}"/>`;
   g.addEventListener('mouseenter',()=>{if(pinned===null&&!mobile())show(idx);});
   g.addEventListener('mouseleave',()=>{if(pinned===null&&!mobile())hide();});
   g.addEventListener('click',e=>{e.stopPropagation();pin(idx);});
