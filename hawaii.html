@@ -28,20 +28,23 @@ html,body{margin:0;height:100%;overflow:hidden;background:var(--bg);color:var(--
 button{font:inherit;color:inherit}
 
 /* ---------- HUD ---------- */
-.hud{position:absolute;z-index:10;display:flex;gap:8px;align-items:flex-start}
+.hud{position:absolute;z-index:10;display:flex;gap:8px;align-items:flex-start;pointer-events:none}
+.hud>*{pointer-events:auto}
+.hud .brand{pointer-events:none}
 .tl{top:calc(14px + env(safe-area-inset-top));left:calc(14px + env(safe-area-inset-left));flex-direction:column}
+#filterWrap{position:relative}
 .tr{top:calc(14px + env(safe-area-inset-top));right:calc(14px + env(safe-area-inset-right))}
 .brand{font:700 26px/1 var(--display);letter-spacing:5px;color:var(--gold);text-shadow:0 2px 12px rgba(0,0,0,.6);pointer-events:none}
 .brand small{display:block;font:500 11px var(--ui);letter-spacing:2.5px;color:var(--muted);text-transform:uppercase;margin-top:6px}
 .hbtn{display:inline-flex;align-items:center;gap:8px;padding:9px 14px;border-radius:999px;border:1px solid var(--line);background:var(--panel);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);font:600 13px var(--ui);cursor:pointer;box-shadow:0 6px 20px rgba(0,0,0,.35);transition:transform .15s,background .15s}
 .hbtn:hover{background:rgba(20,36,48,.92)}
 .hbtn:active{transform:scale(.96)}
-.hbtn:focus-visible,.pin:focus-visible,.badge:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+.hbtn:focus-visible,.pin:focus-visible,#islandBar button:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
 .hbtn .cnt{background:var(--gold);color:#1b1408;border-radius:999px;padding:1px 7px;font-size:11px}
 .hbtn .chev{opacity:.7;transition:transform .2s}
 .hbtn[aria-expanded="true"] .chev{transform:rotate(180deg)}
 .panel{background:var(--panel);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border:1px solid var(--line);border-radius:14px;box-shadow:0 16px 40px rgba(0,0,0,.45)}
-#filterPanel{width:250px;padding:8px;transform-origin:top left;transition:opacity .18s,transform .18s}
+#filterPanel{position:absolute;top:100%;left:0;margin-top:8px;width:250px;padding:8px;transform-origin:top left;transition:opacity .18s,transform .18s}
 #filterPanel.closed{opacity:0;transform:translateY(-6px) scale(.97);pointer-events:none}
 .frow{display:flex;align-items:center;gap:10px;width:100%;padding:9px 10px;border:0;background:none;border-radius:10px;cursor:pointer;text-align:left;font-size:14px}
 .frow:hover{background:var(--panel2)}
@@ -54,9 +57,12 @@ button{font:inherit;color:inherit}
 .frow[aria-pressed="true"] .sw:after{transform:translateX(12px)}
 .fsep{height:1px;background:rgba(255,255,255,.08);margin:6px 4px}
 .fhint{font-size:11.5px;color:var(--muted);padding:4px 10px 6px;line-height:1.4}
-#backBtn{position:absolute;z-index:10;left:calc(14px + env(safe-area-inset-left));bottom:calc(16px + env(safe-area-inset-bottom));transition:opacity .25s,transform .25s}
-#backBtn.off{opacity:0;transform:translateY(10px);pointer-events:none}
-.br{right:calc(14px + env(safe-area-inset-right));bottom:calc(16px + env(safe-area-inset-bottom));flex-direction:column;align-items:flex-end;pointer-events:none}
+#islandBar{position:absolute;z-index:10;left:50%;transform:translateX(-50%);bottom:calc(14px + env(safe-area-inset-bottom));display:flex;gap:4px;padding:5px;border-radius:999px;background:var(--panel);border:1px solid var(--line);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);box-shadow:0 10px 30px rgba(0,0,0,.45);max-width:calc(100% - 20px);overflow-x:auto;scrollbar-width:none}
+#islandBar::-webkit-scrollbar{display:none}
+#islandBar button{flex:none;border:0;background:none;padding:9px 15px;border-radius:999px;font:700 13px var(--display);letter-spacing:1.5px;color:var(--text);cursor:pointer;transition:background .2s,color .2s}
+#islandBar button:hover{background:var(--panel2)}
+#islandBar button.on{background:var(--gold);color:#1b1408}
+.br{right:calc(14px + env(safe-area-inset-right));bottom:calc(18px + env(safe-area-inset-bottom));flex-direction:column;align-items:flex-end;pointer-events:none}
 #scale{display:flex;flex-direction:column;align-items:flex-end;gap:4px;font:600 11px var(--ui);color:var(--text);text-shadow:0 1px 3px #000}
 #scale .bar{height:6px;border:2px solid var(--text);border-top:0;box-shadow:0 1px 2px rgba(0,0,0,.6)}
 #coords{font:500 11px var(--ui);color:var(--muted);font-variant-numeric:tabular-nums;text-shadow:0 1px 3px #000}
@@ -64,11 +70,11 @@ button{font:inherit;color:inherit}
 
 /* ---------- Pins ---------- */
 #pins{position:absolute;inset:0;z-index:5;pointer-events:none}
-.pin,.badge{position:absolute;left:0;top:0;pointer-events:auto;will-change:transform}
-.pin{width:0;height:0;border:0;background:none;padding:0;cursor:pointer}
+.pin{position:absolute;left:0;top:0;pointer-events:auto;will-change:transform;width:0;height:0;border:0;background:none;padding:0;cursor:pointer}
+.pin .b:before{content:'';position:absolute;inset:-9px;border-radius:50%}
 .pin .b{position:absolute;left:0;top:-34px;width:34px;height:34px;border-radius:50% 50% 50% 0;transform:rotate(-45deg) scale(.2);transform-origin:0% 100%;background:radial-gradient(circle at 60% 40%,#1d3242,#0b1620);border:2px solid var(--c);box-shadow:0 4px 12px rgba(0,0,0,.55),0 0 0 3px rgba(0,0,0,.18);opacity:0;transition:transform .35s cubic-bezier(.3,1.6,.5,1) var(--d,0s),opacity .2s var(--d,0s)}
 .pin .b svg{position:absolute;left:50%;top:50%;width:17px;height:17px;margin:-8.5px 0 0 -8.5px;transform:rotate(45deg);color:var(--c)}
-.pin .dot{position:absolute;left:-2.5px;top:-2.5px;width:5px;height:5px;border-radius:50%;background:var(--c);box-shadow:0 0 0 2px rgba(0,0,0,.45);opacity:0;transition:opacity .2s var(--d,0s)}
+.pin .dot{position:absolute;left:-2px;top:-2px;width:4px;height:4px;border-radius:50%;background:var(--c);box-shadow:0 0 0 1px rgba(0,0,0,.5);opacity:.85;transition:opacity .2s var(--d,0s)}
 .pin .nm{position:absolute;left:0;top:6px;transform:translateX(-50%);white-space:nowrap;font:600 11.5px var(--ui);color:#fff;text-shadow:0 1px 3px #000,0 0 8px rgba(0,0,0,.8);opacity:0;transition:opacity .2s;pointer-events:none}
 #pins.zin .pin .b{transform:rotate(-45deg) scale(1);opacity:1}
 #pins.zin .pin .dot{opacity:1}
@@ -77,17 +83,17 @@ button{font:inherit;color:inherit}
 .pin:hover .nm,.pin.sel .nm{opacity:1}
 .pin.sel{z-index:3}
 .pin.hidden{display:none}
+.pin.cl .b{opacity:0!important;transform:rotate(-45deg) scale(.3)!important;pointer-events:none}
+.pin.cl .nm{opacity:0!important}
+.clu{position:absolute;left:-19px;top:-40px;width:38px;height:38px;border-radius:50%;border:0;padding:3px;background:var(--ring);cursor:pointer;pointer-events:auto;box-shadow:0 4px 14px rgba(0,0,0,.55);will-change:transform}
+.clu span{animation:pop .3s cubic-bezier(.3,1.6,.5,1);display:grid;place-items:center;width:100%;height:100%;border-radius:50%;background:radial-gradient(circle at 60% 40%,#1d3242,#0b1620);font:700 14px var(--ui);color:#fff}
+.clu:before{content:'';position:absolute;inset:-8px;border-radius:50%}
+.clu:hover{filter:brightness(1.15)}
+@keyframes pop{from{transform:scale(.3);opacity:0}}
 @media (hover:hover){#pins:not(.zin) .pin{pointer-events:none}}
 #pins:not(.zin) .pin{pointer-events:none}
-.badge{display:flex;align-items:center;gap:6px;transform-origin:center;padding:6px 11px 6px 8px;border-radius:999px;border:1px solid var(--line);background:var(--panel);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);font:600 12px var(--ui);cursor:pointer;white-space:nowrap;box-shadow:0 6px 18px rgba(0,0,0,.4);transition:opacity .25s;margin-left:0}
-.badge .dots{display:flex;gap:3px}
-.badge .dots i{width:7px;height:7px;border-radius:50%;background:var(--c)}
-.badge b{color:var(--gold)}
-.badge .bn{font:700 14px var(--display);letter-spacing:3px;color:#f3ead3}
-#pins.zin .badge{opacity:0;pointer-events:none}
-
 /* ---------- Ficha ---------- */
-.card{position:absolute;z-index:20;top:calc(64px + env(safe-area-inset-top));right:14px;bottom:14px;width:370px;overflow-y:auto;overscroll-behavior:contain;transform:translateX(calc(100% + 30px));transition:transform .4s cubic-bezier(.2,.85,.25,1);scrollbar-width:thin}
+.card{position:absolute;z-index:20;top:calc(64px + env(safe-area-inset-top));right:14px;max-height:calc(100% - 80px - env(safe-area-inset-top));width:370px;overflow-y:auto;overscroll-behavior:contain;transform:translateX(calc(100% + 30px));transition:transform .4s cubic-bezier(.2,.85,.25,1);scrollbar-width:thin}
 .card.show{transform:none}
 .card .scene{height:200px;position:relative;background:#16283a;overflow:hidden;border-radius:14px 14px 0 0}
 .card .scene svg{width:100%;height:100%;display:block}
@@ -141,6 +147,11 @@ aside h2 button{margin-left:auto;background:none;border:0;color:var(--muted);fon
   .brand small{font-size:10px}
   #compass{width:46px;height:46px;top:calc(64px + env(safe-area-inset-top))}
   #coords{display:none}
+  #islandBar{transition:opacity .25s,transform .25s}
+  body.cardOpen #islandBar,body.cardOpen .br{opacity:0;pointer-events:none}
+  body.cardOpen #islandBar{transform:translate(-50%,24px)}
+  .br{bottom:calc(76px + env(safe-area-inset-bottom))}
+  #islandBar button{padding:9px 12px;font-size:12.5px;letter-spacing:1px}
   .card{left:0;right:0;top:auto;bottom:0;width:auto;max-height:66dvh;border-radius:18px 18px 0 0;transform:translateY(105%);padding-bottom:env(safe-area-inset-bottom)}
   .card .scene{height:190px;border-radius:18px 18px 0 0}
   .card:before{content:'';position:absolute;top:7px;left:50%;width:40px;height:4px;margin-left:-20px;border-radius:2px;background:rgba(255,255,255,.6);z-index:4}
@@ -148,9 +159,7 @@ aside h2 button{margin-left:auto;background:none;border:0;color:var(--muted);fon
   .pin .b{transform:rotate(-45deg) scale(.2)}
   #pins.zin .pin .b{transform:rotate(-45deg) scale(.82)}
   .pin:hover .b,.pin.sel .b{transform:rotate(-45deg) scale(1)!important}
-  .badge{padding:5px 9px 5px 7px;font-size:11px}
-  .badge .bn{font-size:11.5px;letter-spacing:2px}
-  aside{top:auto;width:auto;right:0;max-height:72dvh;border-radius:18px 18px 0 0;transform:translateY(105%);padding-bottom:calc(18px + env(safe-area-inset-bottom))}
+      aside{top:auto;width:auto;right:0;max-height:72dvh;border-radius:18px 18px 0 0;transform:translateY(105%);padding-bottom:calc(18px + env(safe-area-inset-bottom))}
   .item{padding:11px 8px;font-size:15px}
 }
 @media (prefers-reduced-motion:reduce){*{transition-duration:.01s!important}}
@@ -162,8 +171,8 @@ aside h2 button{margin-left:auto;background:none;border:0;color:var(--muted);fon
   <div id="pins"></div>
   <div class="hud tl">
     <div class="brand">HAWAIʻI<small>Mapa de aventura</small></div>
-    <button class="hbtn" id="filterBtn" aria-expanded="false" aria-controls="filterPanel">Filtros <span class="cnt" id="fcount">5</span><span class="chev">▾</span></button>
-    <div class="panel closed" id="filterPanel"></div>
+    <div id="filterWrap"><button class="hbtn" id="filterBtn" aria-expanded="false" aria-controls="filterPanel">Filtros <span class="cnt" id="fcount">5</span><span class="chev">▾</span></button>
+    <div class="panel closed" id="filterPanel"></div></div>
   </div>
   <div class="hud tr"><button class="hbtn" id="listBtn">☰ Spots</button></div>
   <svg id="compass" viewBox="-50 -50 100 100" aria-hidden="true">
@@ -173,7 +182,7 @@ aside h2 button{margin-left:auto;background:none;border:0;color:var(--muted);fon
     <path d="M-28 0 0 4 0-4Z M28 0 0 4 0-4Z" fill="#8b98a0"/>
     <text y="-41" text-anchor="middle" font-family="Cinzel,serif" font-size="13" font-weight="700" fill="#e9c97f" dy="-1">N</text>
   </svg>
-  <button class="hbtn off" id="backBtn">◀ Archipiélago</button>
+  <nav id="islandBar" aria-label="Islas"><button data-i="all" class="on">Todas</button><button data-i="Kauaʻi">Kauaʻi</button><button data-i="Oʻahu">Oʻahu</button><button data-i="Maui">Maui</button><button data-i="Hawaiʻi">Hawaiʻi</button></nav>
   <div class="hud br"><div id="coords"></div><div id="scale"><span id="scaleTxt">50 km</span><div class="bar" id="scaleBar"></div></div></div>
   <div class="card panel" id="card"></div>
   <aside class="panel" id="aside">
@@ -566,7 +575,7 @@ let VW=0,VH=0,DPR=1,z0=1;
 const cam={x:515,y:330,z:1},tgt={x:515,y:330,z:1},vel={x:0,y:0};
 let anchor=null,dirty=true,pinned=null,curSpot=null,currentIsl=null;
 const active={trek:true,volcan:true,surf:true,playa:true,aventura:true};
-const TOP=()=>mobile()?125:90, BOT=()=>mobile()?70:60;
+const TOP=()=>mobile()?125:90, BOT=()=>mobile()?95:80;
 
 function smooth(pts){const p=pts.map(a=>P(...a));const n=p.length;let d=`M${p[0][0]},${p[0][1]}`;
   for(let k=0;k<n;k++){const p0=p[(k-1+n)%n],p1=p[k],p2=p[(k+1)%n],p3=p[(k+2)%n];
@@ -652,7 +661,7 @@ function draw(){
   label('OCÉANO PACÍFICO',...w2s(230,380),18,.35*aBig,{ls:14,rot:.22,fill:'#cfe6f0',stroke:'rgba(0,0,0,0)'});
   for(const [t,lo,la,r] of CHANNELS){const [x,y]=P(lo,la);label(t.toUpperCase(),...w2s(x,y),10.5,.45*aBig*sstep(.9,1.2,zr),{font:"500 {s}px Cinzel, serif",ls:4,rot:r*Math.PI/180,fill:'#cfe6f0',stroke:'rgba(0,0,0,0)'});}
   const aIn=sstep(1.6,1.9,zr)*(1-sstep(2.6,3.4,zr));
-  for(const [t,lo,la,fs] of ILABELS){const [x,y]=P(lo,la);const [sx,sy]=w2s(x,y);const main=fs>=20;const a=main?aIn:(mobile()?sstep(1.3,1.7,zr)*(1-sstep(3,4,zr)):aBig);label(t.toUpperCase(),sx,sy,mobile()&&!main?11:Math.round(fs*1.05),.95*a,{ls:fs>16?6:3,lw:5});}
+  for(const [t,lo,la,fs] of ILABELS){const [x,y]=P(lo,la);const [sx,sy]=w2s(x,y);const main=fs>=20;const a=main?(1-sstep(2.6,3.4,zr)):(mobile()?sstep(1.3,1.7,zr)*(1-sstep(3,4,zr)):aBig);label(t.toUpperCase(),sx,sy,mobile()&&!main?11:Math.round(fs*1.05),.95*a,{ls:fs>16?6:3,lw:5});}
   if(aDet>0)for(const [t,h,lo,la,tier] of PEAKS){const [sx,sy]=w2s(...P(lo,la));const a=tier===1?Math.max(aDet,.0):aDet*sstep(2.6,3.4,zr);if(a<=.01)continue;
     ctx.globalAlpha=a;ctx.fillStyle='#f3ead3';ctx.strokeStyle='rgba(4,14,22,.8)';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(sx,sy-6);ctx.lineTo(sx+5.5,sy+3.5);ctx.lineTo(sx-5.5,sy+3.5);ctx.closePath();ctx.stroke();ctx.fill();ctx.globalAlpha=1;
     label(t,sx,sy+15,12,a,{font:"700 {s}px Cinzel, serif",ls:1,lw:3.5});label(h,sx,sy+29,10.5,a*.85,{font:"500 {s}px Inter, sans-serif",lw:3,fill:'#cfdde3'});}
@@ -668,12 +677,32 @@ SPOTS.forEach((s,i)=>{[s.x,s.y]=P(s.lon,s.lat);
   b.innerHTML=`<span class="dot"></span><span class="b">${ICON[s.c]}</span><span class="nm">${s.n}</span>`;
   b.addEventListener('click',e=>{e.stopPropagation();openSpot(i);});
   pinsEl.appendChild(b);s.el=b;pinEls.push(b);});
-const BADGES=["Kauaʻi","Oʻahu","Maui","Hawaiʻi"].map(n=>{const ss=SPOTS.filter(s=>s.i===n);const lab=ILABELS.find(l=>l[0].toUpperCase().replace(/[ʻ]/g,'')===n.toUpperCase().replace(/[ʻ]/g,''))||ILABELS[0];
-  const b=document.createElement('button');b.className='badge';
-  const cats=[...new Set(ss.map(s=>s.c))];b.innerHTML=`<span class="bn">${n.replace('ʻ','ʻ').toUpperCase()}</span><span class="dots">${cats.map(c=>`<i style="--c:${COLOR[c]}"></i>`).join('')}</span><b>${ss.length}</b>`;
-  b.addEventListener('click',e=>{e.stopPropagation();flyIsland(n);});pinsEl.appendChild(b);
-  const [x,y]=P(lab[1],lab[2]);return {el:b,x,y,n};});
 let lastPin='';
+/* Agrupar pines que se pisan: un círculo con número que al tocarlo acerca el mapa */
+const clPool=[];
+function clEl(k){if(clPool[k])return clPool[k];const b=document.createElement('button');b.className='clu';
+  b.addEventListener('click',e=>{e.stopPropagation();zoomCluster(b._m);});pinsEl.appendChild(b);return clPool[k]=b;}
+function zoomCluster(m){if(!m)return;let cx=0,cy=0,md=1e9;m.forEach(s=>{cx+=s.x;cy+=s.y;});cx/=m.length;cy/=m.length;
+  for(let a=0;a<m.length;a++)for(let b=a+1;b<m.length;b++)md=Math.min(md,Math.hypot(m[a].x-m[b].x,m[a].y-m[b].y));
+  const need=(mobile()?40:36)/Math.max(md,.05);anchor=null;flyTo(cx,cy,Math.max(cam.z*1.8,Math.min(need*1.05,zmax())));}
+function clusterPins(zin){
+  const R=mobile()?30:27,groups=[];
+  if(zin)for(const s of SPOTS){if(!active[s.c]||s.el===SPOTS[pinned]?.el)continue;
+    let g=groups.find(g=>Math.hypot(g.x-s.sx,g.y-s.sy)<R);
+    if(g){g.m.push(s);g.x=(g.x*(g.m.length-1)+s.sx)/g.m.length;g.y=(g.y*(g.m.length-1)+s.sy)/g.m.length;}else groups.push({x:s.sx,y:s.sy,m:[s]});}
+  const inCl=new Set();let k=0;
+  const canZoom=cam.z<zmax()*.9;
+  for(const g of groups){if(g.m.length<2)continue;
+    if(!canZoom){// zoom al máximo: abrir en abanico
+      const r=R*.8;g.m.forEach((s,j)=>{const an=-Math.PI/2+j*2*Math.PI/g.m.length;s.el.style.transform=`translate3d(${(g.x+Math.cos(an)*r).toFixed(1)}px,${(g.y+Math.sin(an)*r+12).toFixed(1)}px,0)`;});continue;}
+    g.m.forEach(s=>inCl.add(s));
+    const b=clEl(k++);b._m=g.m;b.hidden=false;b.style.transform=`translate3d(${g.x.toFixed(1)}px,${g.y.toFixed(1)}px,0)`;
+    const sig=g.m.map(s=>s.c).join();if(b._sig!==sig){b._sig=sig;const cols=g.m.map(s=>COLOR[s.c]);const st=100/cols.length;
+      b.style.setProperty('--ring',`conic-gradient(${cols.map((c,i)=>`${c} ${i*st}% ${(i+1)*st}%`).join(',')})`);
+      b.innerHTML=`<span>${g.m.length}</span>`;b.setAttribute('aria-label',`${g.m.length} spots: ${g.m.map(s=>s.n).join(', ')}`);}}
+  for(;k<clPool.length;k++)clPool[k].hidden=true;
+  for(const s of SPOTS)s.el.classList.toggle('cl',inCl.has(s));
+}
 function updatePins(){
   const key=cam.x.toFixed(2)+cam.y.toFixed(2)+cam.z.toFixed(4)+VW+VH;if(key===lastPin)return;lastPin=key;
   const zr=cam.z/z0;
@@ -682,9 +711,9 @@ function updatePins(){
     // aparición escalonada desde el centro de la pantalla
     SPOTS.forEach(s=>{const [sx,sy]=w2s(s.x,s.y);s.el.style.setProperty('--d',zin?(Math.min(.35,Math.hypot(sx-VW/2,sy-VH/2)/2400)).toFixed(3)+'s':'0s');});}
   pinsEl.classList.toggle('named',cam.z>(mobile()?4.2:5.5));
-  for(const s of SPOTS){const [sx,sy]=w2s(s.x,s.y);s.el.style.transform=`translate3d(${sx.toFixed(1)}px,${sy.toFixed(1)}px,0)`;}
-  for(const b of BADGES){const [sx,sy]=w2s(b.x,b.y),w=b.el.offsetWidth;const x=Math.max(8,Math.min(VW-w-8,sx-w/2));b.el.style.transform=`translate3d(${x.toFixed(1)}px,${(sy-b.el.offsetHeight/2).toFixed(1)}px,0)`;}
-  document.getElementById('backBtn').classList.toggle('off',zr<1.4);
+  for(const s of SPOTS){const [sx,sy]=w2s(s.x,s.y);s.sx=sx;s.sy=sy;s.el.style.transform=`translate3d(${sx.toFixed(1)}px,${sy.toFixed(1)}px,0)`;}
+  clusterPins(zin);
+  const act=zr<1.4?'all':(currentIsl||'');document.querySelectorAll('#islandBar button').forEach(b=>b.classList.toggle('on',b.dataset.i===act));
   // escala
   const kmpp=.579/cam.z;let best=1;for(const k of [.5,1,2,5,10,20,50,100])if(k/kmpp<=130)best=k;
   document.getElementById('scaleBar').style.width=(best/kmpp).toFixed(0)+'px';document.getElementById('scaleTxt').textContent=best+' km';
@@ -742,6 +771,9 @@ function tap(sx,sy){
   const now=performance.now();
   if(now-lastTap<300){lastTap=0;zoomAt(sx,sy,2.2);return;}lastTap=now;
   const [wx,wy]=s2w(sx,sy);
+  if(pinsEl.classList.contains('zin')){for(const b of clPool){if(b.hidden||!b._m)continue;const m=b.style.transform.match(/([-\d.]+)px,\s*([-\d.]+)px/);if(m&&Math.hypot(+m[1]-sx,+m[2]-sy)<28){zoomCluster(b._m);return;}}
+    let bi=-1,bd=30;SPOTS.forEach((s,i)=>{if(!active[s.c]||s.el.classList.contains('cl'))return;const [px,py]=w2s(s.x,s.y);const d=Math.min(Math.hypot(px-sx,py-24-sy),Math.hypot(px-sx,py-sy));if(d<bd){bd=d;bi=i;}});
+    if(bi>=0){openSpot(bi);return;}}
   if(card.classList.contains('show')){closeCard();return;}
   for(const n in PATH){if(hitCtx.isPointInPath(PATH[n],wx,wy)){if(cam.z/z0<1.75||currentIsl!==n)flyIsland(n);return;}}
 }
@@ -751,7 +783,7 @@ addEventListener('keydown',e=>{if(e.target.closest('input'))return;
   if(e.key==='Escape'){if(card.classList.contains('show'))closeCard();else if(aside.classList.contains('open'))aside.classList.remove('open');else flyHome();}
   if(e.key==='+'||e.key==='=')zoomAt(VW/2,VH/2,1.5);if(e.key==='-')zoomAt(VW/2,VH/2,1/1.5);
   const st=120/cam.z;if(e.key==='ArrowLeft')tgt.x-=st;if(e.key==='ArrowRight')tgt.x+=st;if(e.key==='ArrowUp')tgt.y-=st;if(e.key==='ArrowDown')tgt.y+=st;});
-document.getElementById('backBtn').onclick=()=>{closeCard();flyHome();};
+document.querySelectorAll('#islandBar button').forEach(b=>b.onclick=e=>{e.stopPropagation();closeCard();closeFilters();if(b.dataset.i==='all')flyHome();else flyIsland(b.dataset.i);});
 
 /* =================== Ficha =================== */
 const islName=i=>ISL_FULL[i]||i;
@@ -770,7 +802,7 @@ function render(s){
   card.scrollTop=0;ensurePhoto(s);
 }
 function openSpot(i){
-  const s=SPOTS[i];pinned=i;render(s);card.classList.add('show');currentIsl=s.i;
+  const s=SPOTS[i];pinned=i;lastPin='';render(s);document.body.classList.add('cardOpen');card.classList.add('show');currentIsl=s.i;
   SPOTS.forEach((o,k)=>{o.el.classList.toggle('sel',k===i);o.li&&o.li.classList.toggle('sel',k===i);});
   const z=Math.max(cam.z,tgt.z,z0*3.2);
   let ox=0,oy=0;
@@ -778,7 +810,7 @@ function openSpot(i){
   else ox=-(card.offsetWidth+28)/2;
   flyTo(s.x-ox/z,s.y-oy/z,z);
 }
-function closeCard(){pinned=null;card.classList.remove('show');SPOTS.forEach(o=>{o.el.classList.remove('sel');o.li&&o.li.classList.remove('sel');});}
+function closeCard(){pinned=null;lastPin='';document.body.classList.remove('cardOpen');card.classList.remove('show');SPOTS.forEach(o=>{o.el.classList.remove('sel');o.li&&o.li.classList.remove('sel');});}
 card.addEventListener('pointerdown',e=>e.stopPropagation());
 let ty=null;card.addEventListener('touchstart',e=>{ty=card.scrollTop<=0?e.touches[0].clientY:null;},{passive:true});
 card.addEventListener('touchend',e=>{if(ty!==null&&e.changedTouches[0].clientY-ty>80)closeCard();ty=null;});
@@ -822,12 +854,12 @@ setTimeout(loadPhotos,800);
 const fBtn=document.getElementById('filterBtn'),fPanel=document.getElementById('filterPanel');
 function closeFilters(){fPanel.classList.add('closed');fBtn.setAttribute('aria-expanded','false');}
 fBtn.onclick=e=>{e.stopPropagation();const open=fPanel.classList.toggle('closed');fBtn.setAttribute('aria-expanded',String(!open));};
-function applyFilters(){SPOTS.forEach(s=>{const h=!active[s.c];s.el.classList.toggle('hidden',h);s.li&&s.li.classList.toggle('hidden',h);});
+function applyFilters(){lastPin='';SPOTS.forEach(s=>{const h=!active[s.c];s.el.classList.toggle('hidden',h);s.li&&s.li.classList.toggle('hidden',h);});
   document.getElementById('fcount').textContent=Object.values(active).filter(Boolean).length;
   fPanel.querySelectorAll('.frow[data-k]').forEach(r=>r.setAttribute('aria-pressed',String(active[r.dataset.k])));
   if(pinned!==null&&!active[SPOTS[pinned].c])closeCard();}
 fPanel.innerHTML=Object.entries(CAT).map(([k,v])=>`<button class="frow" data-k="${k}" aria-pressed="true" style="--c:${COLOR[k]}"><span class="ic">${ICON[k]}</span>${v.label}<span class="n">${SPOTS.filter(s=>s.c===k).length}</span><span class="sw"></span></button>`).join('')+
-  `<div class="fsep"></div><button class="frow" id="fAll" style="--c:var(--gold)">Mostrar todo</button><div class="fhint">Los spots aparecen al entrar a una isla. Tocá una isla o su cartel.</div>`;
+  `<div class="fsep"></div><button class="frow" id="fAll" style="--c:var(--gold)">Mostrar todo</button><div class="fhint">Los spots aparecen al entrar a una isla. Tocá una isla o elegila abajo.</div>`;
 fPanel.querySelectorAll('.frow[data-k]').forEach(r=>r.onclick=e=>{e.stopPropagation();active[r.dataset.k]=!active[r.dataset.k];applyFilters();});
 document.getElementById('fAll').onclick=e=>{e.stopPropagation();for(const k in active)active[k]=true;applyFilters();};
 fPanel.addEventListener('pointerdown',e=>e.stopPropagation());
