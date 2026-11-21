@@ -83,6 +83,11 @@ button{font:inherit;color:inherit}
 .pin:hover .nm,.pin.sel .nm{opacity:1}
 .pin.sel{z-index:3}
 .pin.hidden{display:none}
+#pins.zin .pin.sport .b{transform:rotate(-45deg) scale(1.14)}
+.pin.sport .b:after{content:'';position:absolute;inset:-6px;border-radius:50% 50% 50% 0;border:2px solid var(--c);opacity:0;animation:ring 2.4s ease-out infinite}
+#pins:not(.zin) .pin.sport .b:after{animation:none}
+@keyframes ring{0%{opacity:.7;transform:scale(.85)}100%{opacity:0;transform:scale(1.35)}}
+#pins:not(.zin) .pin.sport .dot{width:6px;height:6px;left:-3px;top:-3px;box-shadow:0 0 0 1px rgba(0,0,0,.5),0 0 8px var(--c)}
 .pin.cl .b{opacity:0!important;transform:rotate(-45deg) scale(.3)!important;pointer-events:none}
 .pin.cl .nm{opacity:0!important}
 .clu{position:absolute;left:-19px;top:-40px;width:38px;height:38px;border-radius:50%;border:0;padding:3px;background:var(--ring);cursor:pointer;pointer-events:auto;box-shadow:0 4px 14px rgba(0,0,0,.55);will-change:transform}
@@ -132,6 +137,12 @@ button{font:inherit;color:inherit}
 .card h3{font:700 22px/1.15 var(--display);color:var(--gold);margin:0 0 4px;text-wrap:balance}
 .card .isl{color:var(--muted);font-size:12px;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:12px}
 .card p{font-size:13.5px;line-height:1.55;margin:0 0 12px;color:var(--text)}
+.sport{margin:0 0 12px;padding:12px;border-radius:12px;background:linear-gradient(135deg,color-mix(in srgb,var(--c) 18%,transparent),rgba(255,255,255,.03));border:1px solid color-mix(in srgb,var(--c) 45%,transparent)}
+.sport h5{margin:0 0 8px;font:700 12px var(--ui);letter-spacing:1.5px;text-transform:uppercase;color:var(--c)}
+.sg{display:grid;grid-template-columns:1fr 1fr;gap:8px 12px}
+.sg div{font-size:12.5px;line-height:1.35;min-width:0}
+.sg b{display:block;font-size:9.5px;letter-spacing:1px;text-transform:uppercase;color:var(--muted);margin-bottom:1px}
+.sg .warn{grid-column:1/-1;color:#ffd9ad}
 .facts{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px}
 .fact{background:var(--panel2);border:1px solid rgba(255,255,255,.06);border-radius:10px;padding:8px 10px;font-size:12.5px}
 .fact b{display:block;font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;font-weight:600;margin-bottom:2px}
@@ -190,6 +201,7 @@ aside h2 button{margin-left:auto;background:none;border:0;color:var(--muted);fon
   .links a{padding:11px 4px;font-size:13px}
   .pin .b{transform:rotate(-45deg) scale(.2)}
   #pins.zin .pin .b{transform:rotate(-45deg) scale(.82)}
+  #pins.zin .pin.sport .b{transform:rotate(-45deg) scale(.95)}
   .pin:hover .b,.pin.sel .b{transform:rotate(-45deg) scale(1)!important}
       aside{top:auto;width:auto;right:0;max-height:72dvh;border-radius:18px 18px 0 0;transform:translateY(105%);padding-bottom:calc(18px + env(safe-area-inset-bottom))}
   .item{padding:11px 8px;font-size:15px}
@@ -203,7 +215,7 @@ aside h2 button{margin-left:auto;background:none;border:0;color:var(--muted);fon
   <div id="pins"></div>
   <div class="hud tl">
     <div class="brand">HAWAIʻI<small>Mapa de aventura</small></div>
-    <div id="filterWrap"><button class="hbtn" id="filterBtn" aria-expanded="false" aria-controls="filterPanel">Filtros <span class="cnt" id="fcount">5</span><span class="chev">▾</span></button>
+    <div id="filterWrap"><button class="hbtn" id="filterBtn" aria-expanded="false" aria-controls="filterPanel">Filtros <span class="cnt" id="fcount">6</span><span class="chev">▾</span></button>
     <div class="panel closed" id="filterPanel"></div></div>
   </div>
   <div class="hud tr"><button class="hbtn" id="listBtn">☰ Spots</button></div>
@@ -323,15 +335,18 @@ self.onmessage=e=>{const r=bake(e.data);self.postMessage({name:e.data.name,buf:r
 
 <script>
 const CAT={
+  surf:{label:'Surf',color:'#1f5f86'},
+  kite:{label:'Kite & Wind',color:'#16a38a'},
   trek:{label:'Trekking',color:'#3f6b2e'},
   volcan:{label:'Volcanes',color:'#b23a1a'},
-  surf:{label:'Surf',color:'#1f5f86'},
   playa:{label:'Playas',color:'#c08a1e'},
   aventura:{label:'Aventura',color:'#6d3f7a'}
 };
 
-const COLOR={trek:'#7bc86c',volcan:'#ff6b3d',surf:'#4fb3ff',playa:'#ffd166',aventura:'#c792ff'};
+const COLOR={surf:'#4fb3ff',kite:'#3df2c8',trek:'#7bc86c',volcan:'#ff6b3d',playa:'#ffd166',aventura:'#c792ff'};
+const SPORT_CATS=new Set(['surf','kite']);
 const ICON={
+ kite:'<svg viewBox="0 0 24 24"><path d="M14 2.5l7.5 7.5-7.5 7.5-7.5-7.5z" fill="currentColor"/><path d="M14 17.5c-1.5 2-4 2.2-5.5 1.2S5.6 16 3 18.5" stroke="currentColor" stroke-width="1.8" fill="none" stroke-linecap="round"/></svg>',
  trek:'<svg viewBox="0 0 24 24"><path d="M2.5 19.5l6.5-11 4.2 6.3 2.6-3.8 5.7 8.5z" fill="currentColor"/></svg>',
  volcan:'<svg viewBox="0 0 24 24"><path d="M2.5 20.5l6-10h7l6 10z" fill="currentColor"/><path d="M12 8.2V5.5M8.8 8 7.6 5.8M15.2 8l1.2-2.2" stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none"/></svg>',
  surf:'<svg viewBox="0 0 24 24"><path d="M2 18c2.6 0 3.4-2 6-2s3.4 2 6 2 3.4-2 6-2" stroke="currentColor" stroke-width="2.2" fill="none" stroke-linecap="round"/><path d="M4.5 13.5C4.5 8 9 4.2 14.5 4.2c-3.2 1.6-4.3 5-2.6 8.2" stroke="currentColor" stroke-width="2.2" fill="none" stroke-linecap="round"/></svg>',
@@ -532,10 +547,55 @@ const SPOTS=[
   lvl:"Intermedio",dur:"Sesión",tip:"Respetar el line-up local.",fm:["ok","Swell de invierno frecuente."]},
  {n:"Banyans · Kona",i:"Hawaiʻi",c:"surf",lon:-155.99,lat:19.615,sc:"waves",
   d:"Rompiente de arrecife en pleno Kailua-Kona, la ola más conocida de la costa oeste.",
-  lvl:"Intermedio",dur:"Sesión",tip:"Para aprender: Kahaluʻu (con escuela).",fm:["ok","Recibe swell noroeste en invierno."]}
+  lvl:"Intermedio",dur:"Sesión",tip:"Para aprender: Kahaluʻu (con escuela).",fm:["ok","Recibe swell noroeste en invierno."]},
+ // ───────── MÁS SURF
+ {n:"Sunset Beach",i:"Oʻahu",c:"surf",lon:-158.04,lat:21.679,sc:"bigwave",
+  d:"El otro gigante del North Shore: una pared enorme y cambiante sobre arrecife, sede de competencias de la Triple Corona. Al atardecer el sol cae justo detrás de las olas.",
+  lvl:"Experto",dur:"—",tip:"Para mirar: la arena al atardecer, con el sol detrás del line-up.",fm:["ok","Pleno invierno: temporada de olas grandes."]},
+ {n:"Haleʻiwa · Puaʻena Point",i:"Oʻahu",c:"surf",lon:-158.104,lat:21.598,sc:"waves",
+  d:"El pueblo surfer del North Shore. Puaʻena Point tiene olas más chicas y amables, protegidas del swell grande: el lugar para surfear el North Shore sin ser experto.",
+  lvl:"Principiante–intermedio",dur:"Sesión",tip:"Alquiler y escuelas en Haleʻiwa. Ojo con la corriente del canal del puerto.",fm:["ok","Si el North Shore está gigante, Puaʻena es el refugio."]},
+ {n:"Ala Moana Bowls",i:"Oʻahu",c:"surf",lon:-157.851,lat:21.289,sc:"barrel",
+  d:"La izquierda tubera más famosa del South Shore, junto al canal del puerto de Ala Wai. Rápida, hueca y muy concurrida.",
+  lvl:"Avanzado",dur:"Sesión",tip:"Remar por el canal; respetar el line-up local.",fm:["warn","Ola de verano (swell sur): en feb–mar suele estar chica."]},
+ {n:"Sandy Beach",i:"Oʻahu",c:"surf",lon:-157.672,lat:21.285,sc:"waves",
+  d:"El templo del bodyboard y bodysurf de Oʻahu: shorebreak potente que rompe en la arena, espectacular de ver al amanecer.",
+  lvl:"Experto (shorebreak)",dur:"Sesión",tip:"Es la playa con más lesiones de cuello de Hawái: si no tenés experiencia, mirá desde la arena.",fm:["ok","Con swell este/sur y alisios."]},
+ {n:"Kalapakī Bay",i:"Kauaʻi",c:"surf",lon:-159.35,lat:21.957,sc:"waves",
+  d:"Bahía protegida frente a Līhuʻe con olas suaves sobre arena: ideal para aprender o tomar longboard.",
+  lvl:"Principiante",dur:"Sesión",tip:"Alquiler en la playa. Mejor temprano, antes de que el viento se ponga onshore.",fm:["ok","Funciona con el swell de viento de los alisios."]},
+ {n:"Cove Park · Kīhei",i:"Maui",c:"surf",lon:-156.452,lat:20.733,sc:"waves",
+  d:"El aula de surf de Maui: olas chicas y largas, fondo amable y escuelas en la orilla.",
+  lvl:"Principiante",dur:"Sesión",tip:"Salir temprano: a la tarde el viento se pone fuerte en Kīhei.",fm:["warn","Costa sur: más chico en invierno, pero alcanza para aprender."]},
+ {n:"Pine Trees · Kona",i:"Hawaiʻi",c:"surf",lon:-156.05,lat:19.742,sc:"barrel",
+  d:"El spot más famoso de la costa de Kona, junto a Keāhole Point: varios picos sobre arrecife con agua cristalina y atardeceres increíbles.",
+  lvl:"Intermedio–avanzado",dur:"Sesión",tip:"Acceso por camino de tierra; muy local, ir con respeto.",fm:["ok","Swell noroeste de invierno."]},
+ {n:"Kahaluʻu Bay",i:"Hawaiʻi",c:"surf",lon:-155.959,lat:19.58,sc:"turtle",
+  d:"Bahía de Kona con escuelas de surf y olas para aprender en la rompiente exterior; adentro, tortugas y snorkel.",
+  lvl:"Principiante",dur:"Sesión",tip:"La ola de afuera tiene corriente hacia el canal: ir con instructor.",fm:["ok","Swell de invierno moderado."]},
+ {n:"Pohoiki",i:"Hawaiʻi",c:"surf",lon:-154.845,lat:19.461,sc:"blacksand",
+  d:"En Puna: la lava de 2018 creó aquí una playa de arena negra nueva. Olas sobre roca y arrecife con piletas termales al lado.",
+  lvl:"Intermedio–avanzado",dur:"Sesión",tip:"Zona remota: llevar agua; las piletas termales cierran a veces por calidad del agua.",fm:["ok","Swell este/sureste."]},
+ // ───────── KITE & WIND
+ {n:"Kanahā · Kite Beach",i:"Maui",c:"kite",lon:-156.437,lat:20.899,sc:"kite",
+  d:"La meca del kitesurf en Hawái: alisios constantes de lado-tierra, agua turquesa y vista a Haleakalā. Escuelas, tiendas y kiters de todo el mundo.",
+  lvl:"Todos (con escuela)",dur:"Tarde",tip:"Respetar las zonas: kite en Kite Beach, windsurf en Kanahā. Hay restricciones por el aeropuerto de Kahului.",fm:["warn","Los alisios son más constantes de abril a septiembre; en feb–mar hay días buenos y días de Kona o sin viento."]},
+ {n:"Kailua · kite",i:"Oʻahu",c:"kite",lon:-157.734,lat:21.404,sc:"kite",
+  d:"La bahía de kite de Oʻahu: agua plana dentro del arrecife, olas afuera y los islotes Mokulua de fondo. Escuelas de kite y windsurf.",
+  lvl:"Principiante–intermedio",dur:"Tarde",tip:"Mantenerse lejos de bañistas y kayaks; lanzar solo en la zona habilitada.",fm:["ok","Alisios del noreste, lado-tierra."]},
+ {n:"Diamond Head · kite",i:"Oʻahu",c:"kite",lon:-157.8,lat:21.256,sc:"kite",
+  d:"Kite de olas bajo el cráter: con alisios el viento sopla lado-afuera y las olas del sur se vuelven un parque de wave riding.",
+  lvl:"Experto",dur:"Tarde",tip:"Arrecife poco profundo y bajada por escalera desde la ruta: solo kiters con experiencia.",fm:["warn","Mejor en verano con swell sur; en feb–mar hay menos olas."]},
+ {n:"Mokulēʻia",i:"Oʻahu",c:"kite",lon:-158.195,lat:21.582,sc:"kite",
+  d:"Costa norte salvaje y vacía, al oeste de Haleʻiwa: viento de lado con olas para saltar, y planeadores del aeródromo de Dillingham arriba.",
+  lvl:"Intermedio–avanzado",dur:"Tarde",tip:"Zona remota y sin guardavidas: nunca salir solo.",fm:["warn","En invierno el swell norte puede ponerlo muy pesado."]},
+ {n:"ʻAnini",i:"Kauaʻi",c:"kite",lon:-159.455,lat:22.224,sc:"kite",
+  d:"La laguna más larga de Kauaʻi, protegida por un arrecife: agua plana y poco profunda, perfecta para aprender windsurf o kite.",
+  lvl:"Principiante",dur:"Tarde",tip:"Escuela de windsurf en la playa. Fuera del arrecife hay corriente.",fm:["ok","Alisios del este, constantes."]}
 ];
 
 
+const SPORT={"Hanalei Bay": ["Norte–noroeste (invierno)", "Alisios del este: lado-afuera a la mañana", "Arrecife afuera, arena adentro", "Mañana, invierno", "Longboard adentro · shortboard/step-up en el Bowl", "El swell grande se pone serio y hay corriente"], "Poʻipū": ["Sur (verano)", "Alisios: afuera en la mañana", "Arrecife", "Mañana", "Longboard / soft-top", "Focas monje en la arena: no acercarse"], "North Shore · Pipeline": ["Oeste–noroeste a norte", "Alisios del este: lado-afuera", "Arrecife de lava muy poco profundo", "Mañana, nov–feb", "Shortboard / step-up / gun", "Arrecife filoso, crowd y locales"], "Waimea Bay": ["Noroeste gigante (6 m+)", "Alisios: lado-afuera", "Arrecife y rocas; shorebreak en la arena", "Días de swell XXL", "Gun de 9 a 12 pies", "Hold-downs largos y corriente fuerte"], "Laniakea · Chun’s": ["Noroeste–norte", "Alisios: lado-afuera a la mañana", "Arrecife", "Mañana", "Shortboard / funboard", "Tortugas en el agua y en la arena"], "Waikīkī": ["Sur (verano)", "Alisios: afuera", "Arrecife profundo y parejo", "Amanecer", "Longboard / soft-top", "Mucha gente y tablas sueltas"], "Mākaha": ["Oeste–noroeste (invierno) y sur (verano)", "Alisios: afuera", "Arrecife; backwash en la orilla", "Mañana", "Longboard / shortboard", "El backwash y la corriente"], "Honolua Bay": ["Norte–noroeste", "Alisios del noreste: afuera", "Arrecife y roca", "Mañana, invierno", "Shortboard / step-up", "Rocas en la entrada y crowd"], "Peʻahi · Jaws": ["Norte–noroeste gigante (10–20 m)", "Alisios: lado-afuera", "Arrecife profundo", "Swells XXL de invierno", "Tow-in / gun", "Ola de clase mundial: solo profesionales"], "Hoʻokipa": ["Norte–noroeste", "Sin viento a la mañana; alisios fuertes de lado a la tarde (windsurf)", "Arrecife y roca", "Surf hasta el mediodía, windsurf después", "Shortboard · windsurf de olas", "Rocas, corriente y regla horaria surf/windsurf"], "Launiupoko": ["Sur", "Sin viento a la mañana", "Arrecife plano y arena", "Mañana", "Longboard / soft-top", "Fondo de piedras en marea baja"], "Honoliʻi (Hilo)": ["Norte–noreste y este", "Sin viento a la mañana", "Arena y roca en la boca del río", "Mañana", "Shortboard / funboard", "Agua marrón después de lluvias y locales"], "Banyans · Kona": ["Noroeste–oeste", "Sin viento a la mañana; brisa marina a la tarde", "Arrecife", "Mañana", "Shortboard", "Crowd local, arrecife poco profundo"], "Sunset Beach": ["Oeste–noroeste a norte", "Alisios del este: afuera", "Arrecife extenso", "Mañana, invierno", "Step-up / gun", "Corriente y series que rompen afuera de golpe"], "Haleʻiwa · Puaʻena Point": ["Noroeste", "Alisios: lado-afuera", "Arrecife", "Mañana", "Longboard / funboard", "Corriente del canal del puerto"], "Ala Moana Bowls": ["Sur (verano)", "Alisios: afuera", "Arrecife", "Mañana", "Shortboard", "Crowd y canal con botes"], "Sandy Beach": ["Este–sur", "Alisios: lado-tierra", "Arena con shorebreak", "Amanecer", "Bodyboard / bodysurf", "Lesiones de cuello y columna"], "Kalapakī Bay": ["Este (swell de viento)", "Mejor sin viento a la mañana", "Arena", "Mañana", "Longboard / soft-top", "Botes en la zona del puerto"], "Cove Park · Kīhei": ["Sur", "Glassy a la mañana; viento fuerte a la tarde", "Arena y arrecife", "Mañana", "Longboard / soft-top", "Mucha gente en las clases"], "Pine Trees · Kona": ["Noroeste–oeste", "Sin viento a la mañana", "Arrecife", "Mañana", "Shortboard / funboard", "Locales y camino de acceso"], "Kahaluʻu Bay": ["Oeste–noroeste moderado", "Sin viento a la mañana", "Arrecife", "Mañana", "Soft-top / longboard", "Corriente hacia el canal"], "Pohoiki": ["Este–sureste", "Alisios: lado-tierra", "Roca de lava y arrecife", "Mañana", "Shortboard", "Rocas y zona remota"], "Kanahā · Kite Beach": ["Chop y olas chicas en el arrecife", "Alisios del noreste, 15–25 nudos, lado-tierra", "Arena y arrecife", "Mediodía y tarde", "Kite 7–12 m · twin tip o surfkite", "Zona del aeropuerto, arrecife en marea baja"], "Kailua · kite": ["Agua plana adentro, olas afuera", "Alisios del noreste, lado-tierra", "Arena", "Mediodía y tarde", "Kite 9–12 m · twin tip", "Bañistas, kayaks y arrecife exterior"], "Diamond Head · kite": ["Sur (verano): wave riding", "Alisios: lado-afuera", "Arrecife poco profundo", "Tarde con alisios", "Kite 7–10 m · surfkite direccional", "Lado-afuera: si fallás, el viento te lleva mar adentro"], "Mokulēʻia": ["Norte: olas para saltar", "Alisios: de lado", "Arena y arrecife", "Tarde", "Kite 9–12 m · twin tip/surfkite", "Sin guardavidas y lejos de todo"], "ʻAnini": ["Laguna plana", "Alisios del este", "Arena poco profunda", "Mediodía", "Windsurf de iniciación · kite 10–12 m", "Corriente fuera del arrecife"]};
 const ISL_FULL={"Hawaiʻi":"Hawaiʻi (Big Island)"};
 
 const ISL_VIEW={"Kauaʻi":[95,5,135,100],"Oʻahu":[365,105,150,115],"Maui":[655,240,150,115],"Hawaiʻi":[750,345,270,300]};
@@ -582,6 +642,7 @@ function scene(type){
    arch:sky('#9fd8ef','#e6f6fb')+sea(95,'#1b6f9a')+`<path d="M110 150 V55 H250 V150 H215 V100 Q180 70 145 100 V150Z" fill="#2b2523"/><path d="M110 55 H250" stroke="#4a3e36" stroke-width="5"/>`,
    cave:`<rect width="330" height="150" fill="#1a1412"/><ellipse cx="165" cy="90" rx="120" ry="80" fill="#3a2c24"/><ellipse cx="165" cy="95" rx="70" ry="45" fill="#5a4436"/><ellipse cx="165" cy="98" rx="30" ry="20" fill="#e8d9a8"/>`,
    lighthouse:sky('#a6daf0','#eef9fd')+sea(95,'#1f7fb3')+`<path d="M0 150 V90 Q80 70 170 85 L200 150Z" fill="#5d6b3d"/><rect x="120" y="45" width="14" height="40" fill="#f2efe6"/><rect x="120" y="55" width="14" height="6" fill="#b3261e"/><path d="M117 45 h20 l-4 -10 h-12z" fill="#b3261e"/><path d="M220 115 q20 -14 40 0 q-20 -6 -40 0" fill="#3a4a5a"/>`,
+   kite:sky('#ffb36b','#ffe6c2')+sun(250,52,'#fff0b8')+sea(96,'#1f8fbf')+`<path d="M0 118 Q165 108 330 120 V150 H0Z" fill="#f2deb0"/><path d="M120 30 l26 -14 l14 24 l-26 14z" fill="#e8374d"/><path d="M146 16 l14 24" stroke="#fff" stroke-width="1.5"/><path d="M133 46 Q150 80 180 98" stroke="#333" stroke-width="1" fill="none"/><g transform="translate(180 100) rotate(-8)"><ellipse rx="15" ry="2.6" fill="#f7f0e0"/><circle cx="2" cy="-12" r="2.6" fill="#222"/><path d="M2 -9 V-2 M-3 -6 H7" stroke="#222" stroke-width="2"/></g><path d="M196 100 q20 -4 40 4" stroke="#fff" stroke-width="2" fill="none" opacity=".8"/>`,
    whale:sky('#9fd3ec','#e8f6fb')+sea(80,'#1b6f9a')+`<path d="M170 82 Q165 55 140 40 Q160 45 172 58 Q184 45 204 40 Q179 55 174 82Z" fill="#2a3640"/><path d="M60 100 q15 -6 30 0 M230 110 q15 -6 30 0" stroke="#fff" stroke-width="2" fill="none" opacity=".7"/>`
   };
   return `<svg viewBox="0 0 330 150" preserveAspectRatio="xMidYMid slice">${S[type]||S.waves}</svg>`;
@@ -608,7 +669,7 @@ const pinsEl=document.getElementById('pins'),card=document.getElementById('card'
 let VW=0,VH=0,DPR=1,z0=1;
 const cam={x:515,y:330,z:1},tgt={x:515,y:330,z:1},vel={x:0,y:0};
 let anchor=null,dirty=true,pinned=null,curSpot=null,currentIsl=null;
-const active={trek:true,volcan:true,surf:true,playa:true,aventura:true};
+const active={surf:true,kite:true,trek:true,volcan:true,playa:true,aventura:true};
 const TOP=()=>mobile()?125:90, BOT=()=>mobile()?95:80;
 
 function smooth(pts){const p=pts.map(a=>P(...a));const n=p.length;let d=`M${p[0][0]},${p[0][1]}`;
@@ -672,14 +733,22 @@ const SURFZ=[
  ["Peʻahi · Hoʻokipa",3,[[-156.391,20.922],[-156.38,20.924],[-156.348,20.946],[-156.33,20.951],[-156.297,20.952],[-156.283,20.951],[-156.265,20.944]]],
  ["Lahaina",1,[[-156.686,20.881],[-156.672,20.862],[-156.657,20.848],[-156.632,20.824]]],
  ["Honoliʻi",2,[[-155.088,19.769],[-155.088,19.8],[-155.088,19.821],[-155.088,19.86]]],
- ["Kona",1,[[-155.999,19.632],[-156.017,19.644],[-156.035,19.667],[-156.06,19.732]]]
-].map(([n,l,pts])=>{const P2=pts.map(p=>P(...p));
+ ["Pine Trees · Kona",1,[[-155.999,19.632],[-156.017,19.644],[-156.035,19.667],[-156.06,19.732]]],
+ ["Sandy's",1,[[-157.694,21.263],[-157.683,21.273],[-157.658,21.294],[-157.647,21.307]]],
+ ["Kalapakī",1,[[-159.336,21.959],[-159.347,21.959],[-159.357,21.952]]],
+ ["Pohoiki",1,[[-154.814,19.507],[-154.818,19.48],[-154.828,19.465],[-154.85,19.44]]],
+ ["Kanahā · kite",2,[[-156.474,20.9],[-156.463,20.905],[-156.452,20.919],[-156.434,20.917],[-156.42,20.92],[-156.391,20.922]],"kite"],
+ ["Kailua · kite",2,[[-157.737,21.437],[-157.741,21.42],[-157.737,21.405],[-157.723,21.396]],"kite"],
+ ["Mokulēʻia · kite",1,[[-158.137,21.589],[-158.166,21.586],[-158.195,21.587],[-158.238,21.586]],"kite"],
+ ["ʻAnini · kite",1,[[-159.462,22.227],[-159.44,22.227],[-159.429,22.221]],"kite"],
+ ["Diamond Head · kite",1,[[-157.781,21.265],[-157.795,21.255],[-157.809,21.255]],"kite"]
+].map(([n,l,pts,kind])=>{const P2=pts.map(p=>P(...p));
   // normales hacia el mar (se elige el lado que no cae en tierra)
   const N=P2.map((p,i)=>{const a=P2[Math.max(0,i-1)],b=P2[Math.min(P2.length-1,i+1)];let nx=-(b[1]-a[1]),ny=b[0]-a[0];const d=Math.hypot(nx,ny)||1;return [nx/d,ny/d];});
   let land=0;P2.forEach((p,i)=>{for(const k in PATH)if(hitCtx.isPointInPath(PATH[k],p[0]+N[i][0]*2.5,p[1]+N[i][1]*2.5))land++;});
   if(land>P2.length/2)N.forEach(v=>{v[0]=-v[0];v[1]=-v[1];});
   const mid=P2[P2.length>>1],mn=N[P2.length>>1];
-  return {n,l,P:P2,N,lx:mid[0]+mn[0]*14,ly:mid[1]+mn[1]*14};});
+  return {n,l,P:P2,N,kite:kind==='kite',lx:mid[0]+mn[0]*14,ly:mid[1]+mn[1]*14,cx:mid[0]+mn[0]*8,cy:mid[1]+mn[1]*8};});
 const SEA=new Path2D();SEA.rect(-800,-800,2700,2300);for(const k in PATH)SEA.addPath(PATH[k]);
 function zline(zn,off){ctx.beginPath();zn.P.forEach((p,i)=>{const x=p[0]+zn.N[i][0]*off,y=p[1]+zn.N[i][1]*off;i?ctx.lineTo(x,y):ctx.moveTo(x,y);});}
 function drawSurf(z){
@@ -688,18 +757,23 @@ function drawSurf(z){
   const pulse=(.85+.15*Math.sin(tNow*1.6))*(1+1.3*(1-sstep(1,2.6,z/z0)));
   for(const zn of SURFZ){const k=zn.l/3;
     // degradé: del turquesa claro pegado a la costa al azul profundo hacia afuera
-    [[22,.07],[15,.09],[9,.13],[5,.2],[2.4,.32]].forEach(([w,a],j)=>{ctx.strokeStyle=j<3?`rgba(40,200,255,${a*k*pulse})`:`rgba(150,250,255,${a*(.5+k*.5)*pulse})`;ctx.lineWidth=w*(.55+k*.6);zline(zn,w*.45);ctx.stroke();});}
+    const c1=zn.kite?'60,240,190':'40,200,255',c2=zn.kite?'170,255,225':'150,250,255';
+    [[22,.07],[15,.09],[9,.13],[5,.2],[2.4,.32]].forEach(([w,a],j)=>{ctx.strokeStyle=j<3?`rgba(${c1},${a*k*pulse})`:`rgba(${c2},${a*(.5+k*.5)*pulse})`;ctx.lineWidth=w*(.55+k*.6);zline(zn,w*.45);ctx.stroke();});}
   ctx.globalCompositeOperation=g;
   // líneas de swell que avanzan hacia la orilla
   const zr=z/z0;
-  for(const zn of SURFZ){const n=zn.l+1;for(let i=0;i<n;i++){const f=((tNow*(.12+zn.l*.03))+i/n)%1;const off=1+(1-f)*(10+zn.l*4);
+  // viento (alisios del noreste) sobre las zonas de kite
+  for(const zn of SURFZ){if(!zn.kite)continue;for(let i=0;i<9;i++){const f=((tNow*.35)+i*.137)%1,ox=((i*37)%19-9)*1.4,oy=((i*53)%13-6)*1.4;
+    const x=zn.cx+ox+(f-.5)*26*.92,y=zn.cy+oy-(f-.5)*26*-.38;ctx.strokeStyle=`rgba(230,255,248,${Math.sin(Math.PI*f)*.75})`;ctx.lineWidth=Math.max(.3,1.3/z*Math.min(2,zr*.7));
+    ctx.beginPath();ctx.moveTo(x,y);ctx.quadraticCurveTo(x-3,y+1.8,x-6.5,y+2.2);ctx.stroke();}}
+  for(const zn of SURFZ){if(zn.kite)continue;const n=zn.l+1;for(let i=0;i<n;i++){const f=((tNow*(.12+zn.l*.03))+i/n)%1;const off=1+(1-f)*(10+zn.l*4);
     ctx.strokeStyle=`rgba(235,252,255,${Math.sin(Math.PI*f)*(.35+zn.l*.15)})`;ctx.lineWidth=Math.max(.35,(1.1+zn.l*.35)/z*Math.min(2.2,zr*.7));zline(zn,off);ctx.stroke();}}
   ctx.restore();
 }
 function drawSurfLabels(zr){
   const a=sstep(1.15,1.6,zr)*(1-sstep(9,14,zr));if(a<=.01)return;
   for(const zn of SURFZ){if(zn.l<2&&zr<2.2)continue;const [sx,sy]=w2s(zn.lx,zn.ly);
-    label('≋ '+zn.n+(zn.l===3?' · olas XL':''),sx,sy,zn.l===3?12.5:11.5,a*(zn.l===3?1:.85),{font:"700 {s}px Inter, sans-serif",fill:'#bff4ff',ls:.5,lw:3.5});}
+    label((zn.kite?'🪁 ':'≋ ')+zn.n+(zn.l===3?' · olas XL':''),sx,sy,zn.l===3?12.5:11.5,a*(zn.l===3?1:.85),{font:"700 {s}px Inter, sans-serif",fill:zn.kite?'#b8ffe9':'#bff4ff',ls:.5,lw:3.5});}
 }
 /* destellos de sol sobre el agua */
 const GL=Array.from({length:26},()=>({x:Math.random(),y:Math.random(),t:Math.random()*4,d:1.5+Math.random()*2.5}));
@@ -769,7 +843,7 @@ SPOTS.forEach((s,i)=>{[s.x,s.y]=P(s.lon,s.lat);
   const b=document.createElement('button');b.className='pin';b.style.setProperty('--c',COLOR[s.c]);b.setAttribute('aria-label',s.n);
   b.innerHTML=`<span class="dot"></span><span class="b">${ICON[s.c]}</span><span class="nm">${s.n}</span>`;
   b.addEventListener('click',e=>{e.stopPropagation();openSpot(i);});
-  pinsEl.appendChild(b);s.el=b;pinEls.push(b);});
+  if(SPORT_CATS.has(s.c))b.classList.add('sport');pinsEl.appendChild(b);s.el=b;pinEls.push(b);});
 let lastPin='';
 /* Agrupar pines que se pisan: un círculo con número que al tocarlo acerca el mapa */
 const clPool=[];
@@ -779,7 +853,7 @@ function zoomCluster(m){if(!m)return;let cx=0,cy=0,md=1e9;m.forEach(s=>{cx+=s.x;
   for(let a=0;a<m.length;a++)for(let b=a+1;b<m.length;b++)md=Math.min(md,Math.hypot(m[a].x-m[b].x,m[a].y-m[b].y));
   const need=(mobile()?40:36)/Math.max(md,.05);anchor=null;flyTo(cx,cy,Math.max(cam.z*1.8,Math.min(need*1.05,zmax())));}
 function clusterPins(zin){
-  const R=mobile()?30:27,groups=[];
+  const R=mobile()?35:30,groups=[];
   if(zin)for(const s of SPOTS){if(!active[s.c]||s.el===SPOTS[pinned]?.el)continue;
     let g=groups.find(g=>Math.hypot(g.x-s.sx,g.y-s.sy)<R);
     if(g){g.m.push(s);g.x=(g.x*(g.m.length-1)+s.sx)/g.m.length;g.y=(g.y*(g.m.length-1)+s.sy)/g.m.length;}else groups.push({x:s.sx,y:s.sy,m:[s]});}
@@ -893,6 +967,7 @@ function render(s){
   card.innerHTML=`<div class="scene">${scene(s.sc)}<span class="tag">${ICON[s.c]}${CAT[s.c].label}</span><button class="close" aria-label="Cerrar">✕</button></div>
   <div class="body"><h3>${s.n}</h3><div class="isl">${islName(s.i)}</div><p>${s.d}</p>
   <div class="facts"><div class="fact"><b>Nivel</b>${s.lvl}</div><div class="fact"><b>Duración</b>${s.dur}</div></div>
+  ${SPORT[s.n]?`<div class="sport"><h5>${s.c==='kite'?'🪁':'🏄'} Ficha deportiva</h5><div class="sg">${['Swell / agua','Viento','Fondo','Mejor momento',s.c==='kite'?'Equipo':'Tabla','Ojo con'].map((l,k)=>`<div class="${k===5?'warn':''}"><b>${l}</b>${SPORT[s.n][k]}</div>`).join('')}</div></div>`:''}
   <div class="season ${s.fm[0]}"><b>Feb–Mar:</b> ${s.fm[1]}</div>
   <p class="tip"><b>Tip:</b> ${s.tip}</p>
   <div class="links"><a href="https://www.google.com/search?tbm=isch&q=${q}" target="_blank" rel="noopener">📷 Fotos</a><a href="https://www.google.com/maps/search/?api=1&query=${s.lat},${s.lon}" target="_blank" rel="noopener">📍 Maps</a><a href="https://www.pinterest.com/search/pins/?q=${q}" target="_blank" rel="noopener">Pinterest</a></div>
@@ -915,7 +990,7 @@ let ty=null;card.addEventListener('touchstart',e=>{ty=card.scrollTop<=0?e.touche
 card.addEventListener('touchend',e=>{if(ty!==null&&e.changedTouches[0].clientY-ty>80)closeCard();ty=null;});
 
 /* ---------- Fotos reales (Wikipedia / Wikimedia Commons) ---------- */
-const WIKI=["Kalalau Trail", "Kōkeʻe State Park", "Waimea Canyon State Park", "Nounou Mountain", "Wailua River", "Nā Pali Coast State Wilderness Park", "Hanalei Bay", "Poipu, Hawaii", "Hāʻena State Park", "Polihale State Park", "Kīlauea Point National Wildlife Refuge", "Diamond Head, Hawaii", "Koko Head", "Lanikai Beach", "Koʻolau Range", "Mānoa Falls", "Makapuʻu Point", "Kaʻena Point", "Banzai Pipeline", "Waimea Bay", "Laniakea Beach", "Waikiki", "Mākaha, Hawaii", "Hanauma Bay", "Kailua Beach Park", "Waimānalo Beach", "Shark's Cove", "Kualoa Ranch", "Haleakalā", "Haleakalā National Park", "Waimoku Falls", "West Maui Mountains", "ʻĪao Valley", "Waiʻānapanapa State Park", "Makena State Park", "Kāʻanapali", "Honolua Bay", "Peʻahi", "Hoʻokipa Beach Park", "Launiupoko, Hawaii", "Molokini", "Humpback whale", "Nakalele Point", "Halemaʻumaʻu", "Kīlauea Iki", "Chain of Craters Road", "Mauna Kea", "Mauna Loa", "Kaumana Caves", "Waipiʻo Valley", "Pololū Valley", "ʻAkaka Falls State Park", "Papakōlea Beach", "Punaluʻu Beach", "Hāpuna Beach State Recreation Area", "Kekaha Kai State Park", "Puʻuhonua o Hōnaunau National Historical Park", "Kealakekua Bay", "Reef manta ray", "Ka Lae", "Honoliʻi", "Kailua-Kona, Hawaii"];
+const WIKI=["Kalalau Trail", "Kōkeʻe State Park", "Waimea Canyon State Park", "Nounou Mountain", "Wailua River", "Nā Pali Coast State Wilderness Park", "Hanalei Bay", "Poipu, Hawaii", "Hāʻena State Park", "Polihale State Park", "Kīlauea Point National Wildlife Refuge", "Diamond Head, Hawaii", "Koko Head", "Lanikai Beach", "Koʻolau Range", "Mānoa Falls", "Makapuʻu Point", "Kaʻena Point", "Banzai Pipeline", "Waimea Bay", "Laniakea Beach", "Waikiki", "Mākaha, Hawaii", "Hanauma Bay", "Kailua Beach Park", "Waimānalo Beach", "Shark's Cove", "Kualoa Ranch", "Haleakalā", "Haleakalā National Park", "Waimoku Falls", "West Maui Mountains", "ʻĪao Valley", "Waiʻānapanapa State Park", "Makena State Park", "Kāʻanapali", "Honolua Bay", "Peʻahi", "Hoʻokipa Beach Park", "Launiupoko, Hawaii", "Molokini", "Humpback whale", "Nakalele Point", "Halemaʻumaʻu", "Kīlauea Iki", "Chain of Craters Road", "Mauna Kea", "Mauna Loa", "Kaumana Caves", "Waipiʻo Valley", "Pololū Valley", "ʻAkaka Falls State Park", "Papakōlea Beach", "Punaluʻu Beach", "Hāpuna Beach State Recreation Area", "Kekaha Kai State Park", "Puʻuhonua o Hōnaunau National Historical Park", "Kealakekua Bay", "Reef manta ray", "Ka Lae", "Honoliʻi", "Kailua-Kona, Hawaii", "Sunset Beach, Hawaii", "Haleʻiwa, Hawaii", "Ala Moana Beach Park", "Sandy Beach Park", "Kalapaki Beach", "Kihei, Hawaii", "Keāhole Point", "Kahaluu Beach Park", "Isaac Hale Beach Park", "Kanahā Beach Park", "Kailua Beach Park", "Diamond Head, Hawaii", "Mokulēʻia, Hawaii", "Anini Beach"];
 const API='https://en.wikipedia.org/w/api.php?format=json&origin=*&action=query&prop=pageimages&piprop=thumbnail&pithumbsize=900&pilimit=50';
 const okImg=u=>u&&!/\.svg|map|locator|location|seal|flag|logo/i.test(u);
 let photosP=null;
@@ -951,19 +1026,19 @@ setTimeout(loadPhotos,800);
 
 
 /* =================== Galería de fotos (Wikimedia Commons) =================== */
-const PHQ=[["Kalalau Valley", "Na Pali Coast sunset", "Kalalau Trail"], ["Awaawapuhi", "Kalalau lookout", "Na Pali Coast Kokee"], ["Waimea Canyon", "Waimea Canyon sunset"], ["Nounou Mountain", "Sleeping Giant Kauai", "Wailua Kauai"], ["Wailua River", "Uluwehi Falls", "Wailua Falls"], ["Na Pali Coast", "Na Pali Coast aerial"], ["Hanalei Bay sunset", "Hanalei Bay", "Hanalei pier"], ["Poipu Beach sunset", "Poipu"], ["Tunnels Beach Kauai", "Haena Beach", "Makua Beach Kauai"], ["Polihale sunset", "Polihale State Park"], ["Kilauea Lighthouse", "Kilauea Point"], ["Diamond Head sunset", "Diamond Head crater aerial", "Diamond Head Waikiki"], ["Koko Crater", "Koko Head"], ["Lanikai pillbox", "Mokulua Islands sunrise", "Kaiwa Ridge"], ["Kuliouou Ridge", "Koolau Range"], ["Manoa Falls"], ["Makapuu Lighthouse", "Makapuu Point"], ["Kaena Point", "Kaena Point sunset"], ["Banzai Pipeline", "Pipeline surfing", "Ehukai Beach"], ["Waimea Bay Oahu", "Waimea Bay sunset"], ["Laniakea Beach", "Green sea turtle Oahu"], ["Waikiki sunset", "Waikiki Beach Diamond Head"], ["Makaha Beach", "Makaha sunset"], ["Hanauma Bay"], ["Lanikai Beach", "Kailua Beach", "Mokulua Islands"], ["Waimanalo Beach", "Waimanalo Bay"], ["Sharks Cove Oahu", "Pupukea"], ["Kualoa Ranch", "Kaaawa Valley", "Kualoa"], ["Haleakala sunrise", "Haleakala sunset above clouds"], ["Haleakala crater", "Sliding Sands trail", "Haleakala cinder cones"], ["Pipiwai Trail", "Waimoku Falls", "Pipiwai bamboo"], ["Waihee Ridge", "West Maui Mountains"], ["Iao Valley", "Iao Needle"], ["Waianapanapa", "Waianapanapa black sand beach"], ["Makena Beach", "Big Beach Maui"], ["Kaanapali sunset", "Black Rock Kaanapali"], ["Honolua Bay"], ["Peahi Jaws", "Jaws Maui surfing"], ["Hookipa", "Hookipa windsurfing"], ["Launiupoko", "Lahaina sunset"], ["Molokini"], ["Humpback whale Maui", "Humpback whale breaching Hawaii"], ["Nakalele Blowhole", "Nakalele Point"], ["Halemaumau crater night", "Kilauea lava lake", "Halemaumau"], ["Kilauea Iki"], ["Holei Sea Arch", "Chain of Craters Road"], ["Mauna Kea sunset", "Mauna Kea observatories", "Mauna Kea night sky"], ["Mauna Loa", "Mokuaweoweo", "Mauna Loa summit"], ["Kaumana Caves", "lava tube Hawaii"], ["Waipio Valley", "Waipio Valley lookout"], ["Pololu Valley"], ["Akaka Falls"], ["Papakolea Beach", "green sand beach Hawaii"], ["Punaluu Beach", "Punaluu black sand"], ["Hapuna Beach", "Hapuna sunset"], ["Kua Bay", "Maniniowali", "Kekaha Kai"], ["Puuhonua o Honaunau", "Honaunau Bay"], ["Kealakekua Bay", "Captain Cook Monument"], ["Manta ray night snorkel Kona", "Manta birostris Hawaii", "Reef manta ray"], ["Ka Lae", "South Point Hawaii"], ["Honolii", "Hilo Bay sunrise"], ["Kailua-Kona sunset", "Kona coast sunset"]];
+const PHQ=[["Kalalau Valley", "Na Pali Coast sunset", "Kalalau Trail"], ["Awaawapuhi", "Kalalau lookout", "Na Pali Coast Kokee"], ["Waimea Canyon", "Waimea Canyon sunset"], ["Nounou Mountain", "Sleeping Giant Kauai", "Wailua Kauai"], ["Wailua River", "Uluwehi Falls", "Wailua Falls"], ["Na Pali Coast", "Na Pali Coast aerial"], ["Hanalei Bay surfer", "Hanalei Bay sunset", "Hanalei Bay surfing"], ["Poipu surfing", "Poipu Beach sunset"], ["Tunnels Beach Kauai", "Haena Beach", "Makua Beach Kauai"], ["Polihale sunset", "Polihale State Park"], ["Kilauea Lighthouse", "Kilauea Point"], ["Diamond Head sunset", "Diamond Head crater aerial", "Diamond Head Waikiki"], ["Koko Crater", "Koko Head"], ["Lanikai pillbox", "Mokulua Islands sunrise", "Kaiwa Ridge"], ["Kuliouou Ridge", "Koolau Range"], ["Manoa Falls"], ["Makapuu Lighthouse", "Makapuu Point"], ["Kaena Point", "Kaena Point sunset"], ["Banzai Pipeline surfer", "Pipeline barrel", "North Shore Oahu surfer sunset"], ["Waimea Bay big wave surfer", "Waimea Bay surfing", "Waimea Bay sunset"], ["Laniakea surfing", "North Shore Oahu surfer"], ["Waikiki surfer sunset", "Waikiki longboard surfing", "Waikiki sunset"], ["Makaha surfing", "Makaha surfer", "Makaha sunset"], ["Hanauma Bay"], ["Lanikai Beach", "Kailua Beach", "Mokulua Islands"], ["Waimanalo Beach", "Waimanalo Bay"], ["Sharks Cove Oahu", "Pupukea"], ["Kualoa Ranch", "Kaaawa Valley", "Kualoa"], ["Haleakala sunrise", "Haleakala sunset above clouds"], ["Haleakala crater", "Sliding Sands trail", "Haleakala cinder cones"], ["Pipiwai Trail", "Waimoku Falls", "Pipiwai bamboo"], ["Waihee Ridge", "West Maui Mountains"], ["Iao Valley", "Iao Needle"], ["Waianapanapa", "Waianapanapa black sand beach"], ["Makena Beach", "Big Beach Maui"], ["Kaanapali sunset", "Black Rock Kaanapali"], ["Honolua Bay surfing", "Honolua Bay surfer", "Honolua Bay"], ["Jaws Peahi surfer", "Peahi big wave surfing", "Jaws Maui"], ["Hookipa surfer", "Hookipa windsurfing", "Hookipa sunset"], ["Lahaina surfing sunset", "Launiupoko surfing"], ["Molokini"], ["Humpback whale Maui", "Humpback whale breaching Hawaii"], ["Nakalele Blowhole", "Nakalele Point"], ["Halemaumau crater night", "Kilauea lava lake", "Halemaumau"], ["Kilauea Iki"], ["Holei Sea Arch", "Chain of Craters Road"], ["Mauna Kea sunset", "Mauna Kea observatories", "Mauna Kea night sky"], ["Mauna Loa", "Mokuaweoweo", "Mauna Loa summit"], ["Kaumana Caves", "lava tube Hawaii"], ["Waipio Valley", "Waipio Valley lookout"], ["Pololu Valley"], ["Akaka Falls"], ["Papakolea Beach", "green sand beach Hawaii"], ["Punaluu Beach", "Punaluu black sand"], ["Hapuna Beach", "Hapuna sunset"], ["Kua Bay", "Maniniowali", "Kekaha Kai"], ["Puuhonua o Honaunau", "Honaunau Bay"], ["Kealakekua Bay", "Captain Cook Monument"], ["Manta ray night snorkel Kona", "Manta birostris Hawaii", "Reef manta ray"], ["Ka Lae", "South Point Hawaii"], ["Honolii surfing", "Hilo surfer"], ["Kona surfing sunset", "Kailua-Kona surfer"], ["Sunset Beach Oahu surfer", "Sunset Beach Hawaii sunset", "Sunset Beach surfing"], ["Haleiwa surfing", "Haleiwa surfer", "Haleiwa sunset"], ["Ala Moana Bowls surfing", "Ala Moana surfer"], ["Sandy Beach bodyboarding", "Sandy Beach Oahu waves"], ["Kalapaki Bay surfing", "Kalapaki Beach"], ["Kihei surfing", "Cove Park Kihei"], ["Pine Trees Kona surfing", "Kona surfer sunset"], ["Kahaluu Bay surfing", "Kahaluu Bay"], ["Pohoiki surfing", "Pohoiki black sand beach"], ["Kanaha kitesurfing", "Kite Beach Maui", "Maui kitesurfing sunset"], ["Kailua kitesurfing", "Kailua Beach windsurfing", "Kailua Oahu kiteboarding"], ["Diamond Head kitesurfing", "Diamond Head kiteboarding"], ["Mokuleia kitesurfing", "Mokuleia Beach"], ["Anini Beach windsurfing", "Anini Beach Kauai"]];
 const CAPI='https://commons.wikimedia.org/w/api.php?action=query&format=json&origin=*&generator=search&gsrnamespace=6&gsrlimit=16&prop=imageinfo&iiprop=url|size|extmetadata&iiextmetadatafilter=Artist|LicenseShortName&iiurlwidth=1100&gsrsearch=';
 const BADP=/\b(map|mapa|locator|location map|diagram|chart|sign|signs|plaque|logo|seal|flag|stamp|coin|postcard|drawing|illustration|engraving|lithograph|painting|museum|document|scan|book|label|specimen|herbarium|poster|brochure|screenshot|ticket|menu|graph)\b|\b1[89]\d\d\b/i;
 const GOODP=[[/sunset|sunrise|dusk|dawn|golden|twilight|afterglow|atardecer|amanecer/i,4],[/view|vista|lookout|overlook|panorama|panoramic|aerial|from above|scenic|landscape|vista/i,2.5],[/beach|bay|valley|falls|crater|coast|cliff|summit|wave|surf|lava|ridge|canyon/i,1]];
-function scoreImg(p,rank){const t=p.title,ii=p.imageinfo&&p.imageinfo[0];if(!ii||!ii.thumburl||BADP.test(t))return -99;
-  let sc=-rank*.3;for(const [r,v] of GOODP)if(r.test(t))sc+=v;const ar=ii.width/ii.height;if(ar<1.15||ar>2.7)sc-=2.5;if(ii.width>=3000)sc+=.8;if(ii.width<1400)sc-=1;if(!/\.jpe?g$/i.test(t))sc-=1.5;return sc;}
+function scoreImg(p,rank,cat){const t=p.title,ii=p.imageinfo&&p.imageinfo[0];if(!ii||!ii.thumburl||BADP.test(t))return -99;
+  let sc=-rank*.3;if(cat==='surf'&&/surf|surfer|surfing|barrel|tube|bodyboard|longboard/i.test(t))sc+=4;if(cat==='kite'&&/kite|kitesurf|kiteboard|windsurf|sailboard/i.test(t))sc+=4.5;for(const [r,v] of GOODP)if(r.test(t))sc+=v;const ar=ii.width/ii.height;if(ar<1.15||ar>2.7)sc-=2.5;if(ii.width>=3000)sc+=.8;if(ii.width<1400)sc-=1;if(!/\.jpe?g$/i.test(t))sc-=1.5;return sc;}
 async function commons(q,strict){try{const r=await fetch(CAPI+encodeURIComponent(q+' filetype:bitmap'+(strict?' filew:>1300':'')));const j=await r.json();
   return Object.values((j.query||{}).pages||{}).sort((a,b)=>a.index-b.index);}catch(e){return [];}}
 const galCache={};
 const stripH=h=>(h||'').replace(/<[^>]*>/g,'').replace(/\s+/g,' ').trim();
 function gallery(i){if(galCache[i])return galCache[i];const s=SPOTS[i];const qs=PHQ[i]||[s.n+' Hawaii'];
   return galCache[i]=(async()=>{let rs=await Promise.all(qs.map(q=>commons(q,true)));if(!rs.some(r=>r.length))rs=await Promise.all(qs.map(q=>commons(q,false)));
-    const seen=new Set(),all=[];rs.forEach(r=>r.forEach((p,k)=>{if(seen.has(p.title))return;seen.add(p.title);const sc=scoreImg(p,k);if(sc>-50)all.push({p,sc});}));
+    const seen=new Set(),all=[];rs.forEach(r=>r.forEach((p,k)=>{if(seen.has(p.title))return;seen.add(p.title);const sc=scoreImg(p,k,s.c);if(sc>-50)all.push({p,sc});}));
     all.sort((a,b)=>b.sc-a.sc);
     return all.slice(0,7).map(({p})=>{const ii=p.imageinfo[0],m=ii.extmetadata||{};const bw=Math.min(2200,ii.width);
       return {src:ii.thumburl,big:bw>=ii.width?ii.url:ii.thumburl.replace(/\/(\d+)px-/,'/'+bw+'px-'),page:ii.descriptionurl,
@@ -1028,9 +1103,10 @@ function applyFilters(){lastPin='';SPOTS.forEach(s=>{const h=!active[s.c];s.el.c
   document.getElementById('fcount').textContent=Object.values(active).filter(Boolean).length;
   fPanel.querySelectorAll('.frow[data-k]').forEach(r=>r.setAttribute('aria-pressed',String(active[r.dataset.k])));
   if(pinned!==null&&!active[SPOTS[pinned].c])closeCard();}
-fPanel.innerHTML=Object.entries(CAT).map(([k,v])=>`<button class="frow" data-k="${k}" aria-pressed="true" style="--c:${COLOR[k]}"><span class="ic">${ICON[k]}</span>${v.label}<span class="n">${SPOTS.filter(s=>s.c===k).length}</span><span class="sw"></span></button>`).join('')+
+fPanel.innerHTML=`<button class="frow" id="fSport" style="--c:#3df2c8"><span class="ic">${ICON.surf}</span><b>Solo surf + kite</b></button><div class="fsep"></div>`+Object.entries(CAT).map(([k,v])=>`<button class="frow" data-k="${k}" aria-pressed="true" style="--c:${COLOR[k]}"><span class="ic">${ICON[k]}</span>${v.label}<span class="n">${SPOTS.filter(s=>s.c===k).length}</span><span class="sw"></span></button>`).join('')+
   `<div class="fsep"></div><button class="frow" id="fAll" style="--c:var(--gold)">Mostrar todo</button><div class="fhint">Los spots aparecen al entrar a una isla. Tocá una isla o elegila abajo.</div>`;
 fPanel.querySelectorAll('.frow[data-k]').forEach(r=>r.onclick=e=>{e.stopPropagation();active[r.dataset.k]=!active[r.dataset.k];applyFilters();});
+document.getElementById('fSport').onclick=e=>{e.stopPropagation();for(const k in active)active[k]=SPORT_CATS.has(k);applyFilters();};
 document.getElementById('fAll').onclick=e=>{e.stopPropagation();for(const k in active)active[k]=true;applyFilters();};
 fPanel.addEventListener('pointerdown',e=>e.stopPropagation());
 
