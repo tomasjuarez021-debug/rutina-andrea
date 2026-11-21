@@ -95,16 +95,40 @@ button{font:inherit;color:inherit}
 /* ---------- Ficha ---------- */
 .card{position:absolute;z-index:20;top:calc(64px + env(safe-area-inset-top));right:14px;max-height:calc(100% - 80px - env(safe-area-inset-top));width:370px;overflow-y:auto;overscroll-behavior:contain;transform:translateX(calc(100% + 30px));transition:transform .4s cubic-bezier(.2,.85,.25,1);scrollbar-width:thin}
 .card.show{transform:none}
-.card .scene{height:200px;position:relative;background:#16283a;overflow:hidden;border-radius:14px 14px 0 0}
+.card .scene{height:240px;position:relative;background:#16283a;overflow:hidden;border-radius:14px 14px 0 0}
 .card .scene svg{width:100%;height:100%;display:block}
 .card .scene img.photo{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity .4s}
 .card .scene img.photo.on{opacity:1}
-.card .scene:after{content:'';position:absolute;inset:0;background:linear-gradient(to bottom,rgba(0,0,0,.35),transparent 35%,transparent 60%,rgba(9,20,29,.95));pointer-events:none}
-.card .credit{position:absolute;right:10px;bottom:8px;z-index:2;font:10.5px var(--ui);color:rgba(255,255,255,.75);text-decoration:none}
-.card .tag{position:absolute;z-index:2;top:12px;left:12px;display:flex;align-items:center;gap:6px;color:#0b1620;background:var(--c);font:700 10.5px var(--ui);letter-spacing:1.2px;text-transform:uppercase;padding:5px 10px 5px 7px;border-radius:999px}
+.card .scene:after{content:'';position:absolute;inset:0;z-index:2;background:linear-gradient(to bottom,rgba(0,0,0,.35),transparent 35%,transparent 60%,rgba(9,20,29,.95));pointer-events:none}
+.card .credit{position:absolute;right:12px;bottom:34px;z-index:3;max-width:70%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font:10.5px var(--ui);color:rgba(255,255,255,.75);text-decoration:none}
+.card .tag{position:absolute;z-index:3;top:12px;left:12px;display:flex;align-items:center;gap:6px;color:#0b1620;background:var(--c);font:700 10.5px var(--ui);letter-spacing:1.2px;text-transform:uppercase;padding:5px 10px 5px 7px;border-radius:999px}
 .card .tag svg{width:13px;height:13px}
 .card .close{position:absolute;z-index:3;top:10px;right:10px;width:32px;height:32px;border-radius:50%;border:1px solid rgba(255,255,255,.25);background:rgba(0,0,0,.45);color:#fff;cursor:pointer;font-size:14px}
-.card .body{padding:4px 18px 18px;margin-top:-26px;position:relative;z-index:2}
+.card .body{padding:4px 18px 18px;margin-top:-26px;position:relative;z-index:3}
+.gal{position:absolute;inset:0;z-index:1;display:flex;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;opacity:0;transition:opacity .6s;overscroll-behavior-x:contain}
+.gal::-webkit-scrollbar{display:none}
+.gal.on{opacity:1}
+.gal img{flex:none;width:100%;height:100%;object-fit:cover;scroll-snap-align:center;cursor:zoom-in;-webkit-user-drag:none}
+.gdots{position:absolute;z-index:3;left:18px;bottom:36px;display:flex;gap:5px}
+.gdots i{width:6px;height:6px;border-radius:3px;background:rgba(255,255,255,.45);transition:width .2s,background .2s}
+.gdots i.on{width:16px;background:#fff}
+.gzoom{position:absolute;z-index:3;right:52px;top:10px;height:32px;padding:0 10px;border-radius:999px;border:1px solid rgba(255,255,255,.25);background:rgba(0,0,0,.45);color:#fff;font:600 11.5px var(--ui);cursor:pointer;display:none}
+.gal.on~.gzoom{display:block}
+/* visor de fotos */
+#lb{position:fixed;inset:0;z-index:60;background:rgba(3,8,12,.96);display:flex;align-items:center;justify-content:center;touch-action:none;opacity:0;transition:opacity .25s}
+#lb.show{opacity:1}
+#lb[hidden]{display:none}
+#lbImg{max-width:100%;max-height:100%;object-fit:contain;transform-origin:0 0;will-change:transform;user-select:none;-webkit-user-drag:none}
+#lb .lbstage{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;overflow:hidden}
+#lb button{position:absolute;z-index:2;width:44px;height:44px;border-radius:50%;border:1px solid rgba(255,255,255,.25);background:rgba(0,0,0,.5);color:#fff;font-size:20px;cursor:pointer}
+#lb .lbx{top:calc(14px + env(safe-area-inset-top));right:14px}
+#lb .lbp{left:14px;top:50%;margin-top:-22px}#lb .lbn{right:14px;top:50%;margin-top:-22px}
+#lbCap{position:absolute;z-index:2;left:0;right:0;bottom:calc(14px + env(safe-area-inset-bottom));text-align:center;font:500 12px var(--ui);color:rgba(255,255,255,.75);padding:0 60px}
+#lbCap a{color:inherit}
+.zbtns{display:flex;flex-direction:column;border-radius:14px;overflow:hidden;border:1px solid var(--line);background:var(--panel);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);box-shadow:0 6px 20px rgba(0,0,0,.35);margin-bottom:8px}
+.zbtns button{width:40px;height:40px;border:0;background:none;color:var(--text);font:600 20px var(--ui);cursor:pointer}
+.zbtns button+button{border-top:1px solid rgba(255,255,255,.08)}
+.zbtns button:active{background:var(--panel2)}
 .card h3{font:700 22px/1.15 var(--display);color:var(--gold);margin:0 0 4px;text-wrap:balance}
 .card .isl{color:var(--muted);font-size:12px;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:12px}
 .card p{font-size:13.5px;line-height:1.55;margin:0 0 12px;color:var(--text)}
@@ -153,7 +177,7 @@ aside h2 button{margin-left:auto;background:none;border:0;color:var(--muted);fon
   .br{bottom:calc(76px + env(safe-area-inset-bottom))}
   #islandBar button{padding:9px 12px;font-size:12.5px;letter-spacing:1px}
   .card{left:0;right:0;top:auto;bottom:0;width:auto;max-height:66dvh;border-radius:18px 18px 0 0;transform:translateY(105%);padding-bottom:env(safe-area-inset-bottom)}
-  .card .scene{height:190px;border-radius:18px 18px 0 0}
+  .card .scene{height:235px;border-radius:18px 18px 0 0}
   .card:before{content:'';position:absolute;top:7px;left:50%;width:40px;height:4px;margin-left:-20px;border-radius:2px;background:rgba(255,255,255,.6);z-index:4}
   .links a{padding:11px 4px;font-size:13px}
   .pin .b{transform:rotate(-45deg) scale(.2)}
@@ -183,13 +207,14 @@ aside h2 button{margin-left:auto;background:none;border:0;color:var(--muted);fon
     <text y="-41" text-anchor="middle" font-family="Cinzel,serif" font-size="13" font-weight="700" fill="#e9c97f" dy="-1">N</text>
   </svg>
   <nav id="islandBar" aria-label="Islas"><button data-i="all" class="on">Todas</button><button data-i="Kauaʻi">Kauaʻi</button><button data-i="Oʻahu">Oʻahu</button><button data-i="Maui">Maui</button><button data-i="Hawaiʻi">Hawaiʻi</button></nav>
-  <div class="hud br"><div id="coords"></div><div id="scale"><span id="scaleTxt">50 km</span><div class="bar" id="scaleBar"></div></div></div>
+  <div class="hud br"><div class="zbtns"><button id="zIn" aria-label="Acercar">+</button><button id="zOut" aria-label="Alejar">−</button></div><div id="coords"></div><div id="scale"><span id="scaleTxt">50 km</span><div class="bar" id="scaleBar"></div></div></div>
   <div class="card panel" id="card"></div>
   <aside class="panel" id="aside">
     <h2>SPOTS <button id="asideClose" aria-label="Cerrar lista">✕</button></h2>
     <div id="list"></div>
     <p class="note">Costas reales (Natural Earth 1:10m). El relieve se genera a partir de la altura y posición real de cada volcán: es aproximado. Fotos de Wikimedia Commons. Permisos, cierres y reservas cambian seguido: verificá antes de ir (NPS, DLNR Hawaiʻi, USGS HVO).</p>
   </aside>
+  <div id="lb" hidden><div class="lbstage" id="lbStage"><img id="lbImg" alt=""></div><button class="lbx" aria-label="Cerrar">✕</button><button class="lbp" aria-label="Anterior">‹</button><button class="lbn" aria-label="Siguiente">›</button><div id="lbCap"></div></div>
   <div id="loader"><div class="lt">HAWAIʻI</div><div class="lb"><i id="lbar"></i></div><div class="ls" id="lmsg">Generando relieve</div></div>
 </div>
 
@@ -585,6 +610,7 @@ const PATH={},BBOX={},BAKED={};
 for(const [n,pts] of Object.entries(ISL)){PATH[n]=new Path2D(smooth(pts));const q=pts.map(a=>P(...a));
   BBOX[n]=[Math.min(...q.map(a=>a[0])),Math.min(...q.map(a=>a[1])),Math.max(...q.map(a=>a[0])),Math.max(...q.map(a=>a[1]))];}
 const hitCtx=document.createElement('canvas').getContext('2d');
+const ISL_C=Object.keys(ISL).map(n=>{const b=BBOX[n];return {x:(b[0]+b[2])/2,y:(b[1]+b[3])/2,r:Math.max(b[2]-b[0],b[3]-b[1])*.5};});
 
 function resize(){
   DPR=Math.min(2,devicePixelRatio||1);VW=cv.clientWidth;VH=cv.clientHeight;
@@ -593,12 +619,12 @@ function resize(){
   if(oz!==z0&&oz!==1){const f=z0/oz;cam.z*=f;tgt.z*=f;}
   oceanGrad=null;dirty=true;
 }
-const zmin=()=>z0*.8, zmax=()=>z0*(mobile()?22:16);
+const zmin=()=>z0*.8, zmax=()=>z0*(mobile()?48:30);
 function overview(){return {x:mobile()?570:515,y:330-((TOP()-BOT())/2)/z0,z:z0};}
 function flyTo(x,y,z){anchor=null;vel.x=vel.y=0;tgt.x=x;tgt.y=y;tgt.z=Math.min(zmax(),Math.max(zmin(),z));}
 function flyRect(r){const [x,y,w,h]=r;const z=Math.min(VW/w,(VH-TOP()-BOT())/h)*.92;flyTo(x+w/2,y+h/2-((TOP()-BOT())/2)/z,z);}
 function flyIsland(n){
-  currentIsl=n;const r=ISL_VIEW[n]||(b=>[b[0]-15,b[1]-15,b[2]-b[0]+30,b[3]-b[1]+30])(BBOX[n]);
+  currentIsl=n;setTimeout(()=>prefetchIsland(n),900);const r=ISL_VIEW[n]||(b=>[b[0]-15,b[1]-15,b[2]-b[0]+30,b[3]-b[1]+30])(BBOX[n]);
   flyRect(r);
 }
 function flyHome(){currentIsl=null;const o=overview();flyTo(o.x,o.y,o.z);}
@@ -619,7 +645,61 @@ const CLOUD=(()=>{const mk=(seed,dark)=>{const c=document.createElement('canvas'
   for(let i=0;i<26;i++){const x=60+r()*200,y=70+r()*60,rad=24+r()*42;const gr=g.createRadialGradient(x,y,0,x,y,rad);
     gr.addColorStop(0,dark?'rgba(0,18,30,.55)':'rgba(255,255,255,.95)');gr.addColorStop(.6,dark?'rgba(0,18,30,.25)':'rgba(248,250,252,.55)');gr.addColorStop(1,'rgba(255,255,255,0)');g.fillStyle=gr;g.beginPath();g.arc(x,y,rad,0,7);g.fill();}
   return c;};return [1,2,3].map(s=>({l:mk(s*977,false),d:mk(s*977,true)}));})();
-const clouds=Array.from({length:10},(_,i)=>{const r=k=>((Math.sin(i*91.7+k*13.3)*43758.5)%1+1)%1;return {x:-150+r(1)*1350,y:-120+r(2)*900,s:.55+r(3)*.9,v:CLOUD[i%3]};});
+const clouds=Array.from({length:12},(_,i)=>{const r=k=>((Math.sin(i*91.7+k*13.3)*43758.5)%1+1)%1;return {x:-150+r(1)*1350,y:-120+r(2)*900,s:.45+r(3)*.6,v:CLOUD[i%3],vis:1};});
+// que ninguna nube arranque tapando una isla
+setTimeout(()=>{for(const c of clouds){for(let t=0;t<40;t++){const w=288*c.s,h=180*c.s,cx=c.x+w/2,cy=c.y+h/2;
+  if(!ISL_C.some(o=>Math.hypot(cx-o.x,cy-o.y)<o.r+w*.4))break;c.x=-250+Math.random()*1450;c.y=-200+Math.random()*1000;}}},0);
+
+
+/* =================== Zonas de olas =================== */
+// [nombre, nivel 1-3, puntos de costa (lon,lat)]
+const SURFZ=[
+ ["North Shore",3,[[-158.112,21.604],[-158.094,21.614],[-158.072,21.63],[-158.065,21.636],[-158.061,21.653],[-158.051,21.672],[-158.036,21.684],[-158.015,21.702],[-157.982,21.711]]],
+ ["Mākaha",2,[[-158.205,21.459],[-158.216,21.466],[-158.227,21.483],[-158.227,21.505]]],
+ ["Waikīkī",1,[[-157.878,21.296],[-157.863,21.29],[-157.845,21.283],[-157.831,21.277],[-157.824,21.267]]],
+ ["Hanalei",2,[[-159.541,22.226],[-159.53,22.217],[-159.516,22.214],[-159.498,22.209],[-159.48,22.231],[-159.462,22.227],[-159.44,22.227]]],
+ ["Poʻipū",1,[[-159.437,21.869],[-159.465,21.876],[-159.483,21.883],[-159.509,21.886]]],
+ ["Honolua",2,[[-156.668,21.003],[-156.654,21.005],[-156.647,21.013],[-156.636,21.027],[-156.614,21.025]]],
+ ["Peʻahi · Hoʻokipa",3,[[-156.391,20.922],[-156.38,20.924],[-156.348,20.946],[-156.33,20.951],[-156.297,20.952],[-156.283,20.951],[-156.265,20.944]]],
+ ["Lahaina",1,[[-156.686,20.881],[-156.672,20.862],[-156.657,20.848],[-156.632,20.824]]],
+ ["Honoliʻi",2,[[-155.088,19.769],[-155.088,19.8],[-155.088,19.821],[-155.088,19.86]]],
+ ["Kona",1,[[-155.999,19.632],[-156.017,19.644],[-156.035,19.667],[-156.06,19.732]]]
+].map(([n,l,pts])=>{const P2=pts.map(p=>P(...p));
+  // normales hacia el mar (se elige el lado que no cae en tierra)
+  const N=P2.map((p,i)=>{const a=P2[Math.max(0,i-1)],b=P2[Math.min(P2.length-1,i+1)];let nx=-(b[1]-a[1]),ny=b[0]-a[0];const d=Math.hypot(nx,ny)||1;return [nx/d,ny/d];});
+  let land=0;P2.forEach((p,i)=>{for(const k in PATH)if(hitCtx.isPointInPath(PATH[k],p[0]+N[i][0]*2.5,p[1]+N[i][1]*2.5))land++;});
+  if(land>P2.length/2)N.forEach(v=>{v[0]=-v[0];v[1]=-v[1];});
+  const mid=P2[P2.length>>1],mn=N[P2.length>>1];
+  return {n,l,P:P2,N,lx:mid[0]+mn[0]*14,ly:mid[1]+mn[1]*14};});
+const SEA=new Path2D();SEA.rect(-800,-800,2700,2300);for(const k in PATH)SEA.addPath(PATH[k]);
+function zline(zn,off){ctx.beginPath();zn.P.forEach((p,i)=>{const x=p[0]+zn.N[i][0]*off,y=p[1]+zn.N[i][1]*off;i?ctx.lineTo(x,y):ctx.moveTo(x,y);});}
+function drawSurf(z){
+  ctx.save();ctx.clip(SEA,'evenodd');ctx.lineCap='round';ctx.lineJoin='round';
+  const g=ctx.globalCompositeOperation;ctx.globalCompositeOperation='lighter';
+  const pulse=(.85+.15*Math.sin(tNow*1.6))*(1+1.3*(1-sstep(1,2.6,z/z0)));
+  for(const zn of SURFZ){const k=zn.l/3;
+    // degradé: del turquesa claro pegado a la costa al azul profundo hacia afuera
+    [[22,.07],[15,.09],[9,.13],[5,.2],[2.4,.32]].forEach(([w,a],j)=>{ctx.strokeStyle=j<3?`rgba(40,200,255,${a*k*pulse})`:`rgba(150,250,255,${a*(.5+k*.5)*pulse})`;ctx.lineWidth=w*(.55+k*.6);zline(zn,w*.45);ctx.stroke();});}
+  ctx.globalCompositeOperation=g;
+  // líneas de swell que avanzan hacia la orilla
+  const zr=z/z0;
+  for(const zn of SURFZ){const n=zn.l+1;for(let i=0;i<n;i++){const f=((tNow*(.12+zn.l*.03))+i/n)%1;const off=1+(1-f)*(10+zn.l*4);
+    ctx.strokeStyle=`rgba(235,252,255,${Math.sin(Math.PI*f)*(.35+zn.l*.15)})`;ctx.lineWidth=Math.max(.35,(1.1+zn.l*.35)/z*Math.min(2.2,zr*.7));zline(zn,off);ctx.stroke();}}
+  ctx.restore();
+}
+function drawSurfLabels(zr){
+  const a=sstep(1.15,1.6,zr)*(1-sstep(9,14,zr));if(a<=.01)return;
+  for(const zn of SURFZ){if(zn.l<2&&zr<2.2)continue;const [sx,sy]=w2s(zn.lx,zn.ly);
+    label('≋ '+zn.n+(zn.l===3?' · olas XL':''),sx,sy,zn.l===3?12.5:11.5,a*(zn.l===3?1:.85),{font:"700 {s}px Inter, sans-serif",fill:'#bff4ff',ls:.5,lw:3.5});}
+}
+/* destellos de sol sobre el agua */
+const GL=Array.from({length:26},()=>({x:Math.random(),y:Math.random(),t:Math.random()*4,d:1.5+Math.random()*2.5}));
+function drawGlints(z){const zr=z/z0;const a=1-sstep(4,8,zr);if(a<=0)return;
+  ctx.save();ctx.setTransform(DPR,0,0,DPR,0,0);ctx.globalCompositeOperation='lighter';
+  for(const g of GL){g.t+=1/60;if(g.t>g.d){g.t=0;g.x=Math.random();g.y=Math.random();}
+    const k=Math.sin(Math.PI*g.t/g.d),x=g.x*VW,y=g.y*VH,r=2+k*4.5;ctx.globalAlpha=k*.55*a;ctx.fillStyle='#fff8e0';
+    ctx.beginPath();ctx.moveTo(x,y-r);ctx.lineTo(x+r*.22,y);ctx.lineTo(x,y+r);ctx.lineTo(x-r*.22,y);ctx.closePath();ctx.moveTo(x-r,y);ctx.lineTo(x,y+r*.22);ctx.lineTo(x+r,y);ctx.lineTo(x,y-r*.22);ctx.closePath();ctx.fill();}
+  ctx.restore();}
 
 /* =================== Render =================== */
 const NAME_FONT="700 {s}px Cinzel, Georgia, serif";
@@ -650,14 +730,18 @@ function draw(){
     if(b)ctx.drawImage(b.img,b.x0,b.y0,b.w,b.h);
     else{ctx.fillStyle='rgba(80,180,180,.25)';ctx.lineWidth=6;ctx.strokeStyle='rgba(80,180,180,.25)';ctx.stroke(PATH[n]);ctx.fillStyle='#6f8f5a';ctx.fill(PATH[n]);}}
   ctx.lineWidth=Math.min(1.2,1/z);ctx.strokeStyle='rgba(20,30,20,.35)';for(const n in ISL)ctx.stroke(PATH[n]);
+  // zonas de olas grandes: degradé en el agua + líneas de swell que llegan a la costa
+  drawSurf(z);
   // nubes (se disipan al acercarse)
   const ca=.55*(1-sstep(z0*1.05,z0*1.6,z));
-  if(ca>0){for(const c of clouds){const w=320*c.s*.9,h=200*c.s*.9;ctx.globalAlpha=ca*.5;ctx.drawImage(c.v.d,c.x+14,c.y+20,w,h);}
-    for(const c of clouds){const w=320*c.s*.9,h=200*c.s*.9;ctx.globalAlpha=ca;ctx.drawImage(c.v.l,c.x,c.y,w,h);}ctx.globalAlpha=1;}
+  if(ca>0){for(const c of clouds){const w=320*c.s*.9,h=200*c.s*.9;ctx.globalAlpha=ca*.5*c.vis;ctx.drawImage(c.v.d,c.x+14,c.y+20,w,h);}
+    for(const c of clouds){const w=320*c.s*.9,h=200*c.s*.9;ctx.globalAlpha=ca*c.vis;ctx.drawImage(c.v.l,c.x,c.y,w,h);}ctx.globalAlpha=1;}
+  drawGlints(z);
   // etiquetas en pantalla
   ctx.setTransform(DPR,0,0,DPR,0,0);
   const zr=z/z0;
   const aBig=1-sstep(2.2,3.2,zr),aDet=sstep(1.7,2.5,zr),aTown=sstep(2.3,3.2,zr);
+  drawSurfLabels(zr);
   label('OCÉANO PACÍFICO',...w2s(230,380),18,.35*aBig,{ls:14,rot:.22,fill:'#cfe6f0',stroke:'rgba(0,0,0,0)'});
   for(const [t,lo,la,r] of CHANNELS){const [x,y]=P(lo,la);label(t.toUpperCase(),...w2s(x,y),10.5,.45*aBig*sstep(.9,1.2,zr),{font:"500 {s}px Cinzel, serif",ls:4,rot:r*Math.PI/180,fill:'#cfe6f0',stroke:'rgba(0,0,0,0)'});}
   const aIn=sstep(1.6,1.9,zr)*(1-sstep(2.6,3.4,zr));
@@ -732,7 +816,13 @@ function frame(t){
   }
   // límites suaves
   const cx=Math.max(-60,Math.min(1090,tgt.x)),cy=Math.max(-60,Math.min(740,tgt.y));if(cx!==tgt.x||cy!==tgt.y){tgt.x=cx;tgt.y=cy;}
-  for(const c of clouds){c.x-=3.2*dt;c.y+=1.4*dt;if(c.x<-450){c.x=1250;}if(c.y>880){c.y=-260;}}
+  // las nubes circulan alrededor de las islas en vez de taparlas
+  for(const c of clouds){const w=320*c.s*.9,h=200*c.s*.9,cx=c.x+w/2,cy=c.y+h/2,cr=w*.32;let vis=1;
+    c.vx=c.vx??-3.2;c.vy=c.vy??1.4;let ax=(-3.2-c.vx)*.5,ay=(1.4-c.vy)*.5;
+    for(const o of ISL_C){const dx=cx-o.x,dy=cy-o.y,d=Math.hypot(dx,dy)||1,R=o.r+cr;
+      if(d<R){const f=(R-d)/R;ax+=dx/d*f*26;ay+=dy/d*f*26;}vis=Math.min(vis,.25+.75*sstep(o.r*.7,R,d));}
+    c.vx+=ax*dt;c.vy+=ay*dt;c.x+=c.vx*dt;c.y+=c.vy*dt;c.vis+=(vis-(c.vis??1))*Math.min(1,dt*2);
+    if(c.x<-450){c.x=1250;}if(c.x>1300)c.x=-440;if(c.y>880){c.y=-260;}if(c.y<-300)c.y=870;}
   draw();updatePins();
   requestAnimationFrame(frame);
 }
@@ -799,7 +889,7 @@ function render(s){
   <div class="links"><a href="https://www.google.com/search?tbm=isch&q=${q}" target="_blank" rel="noopener">📷 Fotos</a><a href="https://www.google.com/maps/search/?api=1&query=${s.lat},${s.lon}" target="_blank" rel="noopener">📍 Maps</a><a href="https://www.pinterest.com/search/pins/?q=${q}" target="_blank" rel="noopener">Pinterest</a></div>
   <div class="links two"><a href="https://www.youtube.com/results?search_query=${q}+shorts" target="_blank" rel="noopener">▶ YouTube</a><a href="https://www.tiktok.com/search/video?q=${q}" target="_blank" rel="noopener">♪ TikTok</a></div></div>`;
   card.querySelector('.close').onclick=e=>{e.stopPropagation();closeCard();};
-  card.scrollTop=0;ensurePhoto(s);
+  card.scrollTop=0;loadGallery(s);
 }
 function openSpot(i){
   const s=SPOTS[i];pinned=i;lastPin='';render(s);document.body.classList.add('cardOpen');card.classList.add('show');currentIsl=s.i;
@@ -849,6 +939,77 @@ async function ensurePhoto(s){
   cr.href='https://en.wikipedia.org/wiki/'+encodeURIComponent(s.wt.replace(/ /g,'_'));cr.textContent='Foto: Wikimedia Commons';sc.appendChild(cr);
 }
 setTimeout(loadPhotos,800);
+
+
+/* =================== Galería de fotos (Wikimedia Commons) =================== */
+const PHQ=[["Kalalau Valley", "Na Pali Coast sunset", "Kalalau Trail"], ["Awaawapuhi", "Kalalau lookout", "Na Pali Coast Kokee"], ["Waimea Canyon", "Waimea Canyon sunset"], ["Nounou Mountain", "Sleeping Giant Kauai", "Wailua Kauai"], ["Wailua River", "Uluwehi Falls", "Wailua Falls"], ["Na Pali Coast", "Na Pali Coast aerial"], ["Hanalei Bay sunset", "Hanalei Bay", "Hanalei pier"], ["Poipu Beach sunset", "Poipu"], ["Tunnels Beach Kauai", "Haena Beach", "Makua Beach Kauai"], ["Polihale sunset", "Polihale State Park"], ["Kilauea Lighthouse", "Kilauea Point"], ["Diamond Head sunset", "Diamond Head crater aerial", "Diamond Head Waikiki"], ["Koko Crater", "Koko Head"], ["Lanikai pillbox", "Mokulua Islands sunrise", "Kaiwa Ridge"], ["Kuliouou Ridge", "Koolau Range"], ["Manoa Falls"], ["Makapuu Lighthouse", "Makapuu Point"], ["Kaena Point", "Kaena Point sunset"], ["Banzai Pipeline", "Pipeline surfing", "Ehukai Beach"], ["Waimea Bay Oahu", "Waimea Bay sunset"], ["Laniakea Beach", "Green sea turtle Oahu"], ["Waikiki sunset", "Waikiki Beach Diamond Head"], ["Makaha Beach", "Makaha sunset"], ["Hanauma Bay"], ["Lanikai Beach", "Kailua Beach", "Mokulua Islands"], ["Waimanalo Beach", "Waimanalo Bay"], ["Sharks Cove Oahu", "Pupukea"], ["Kualoa Ranch", "Kaaawa Valley", "Kualoa"], ["Haleakala sunrise", "Haleakala sunset above clouds"], ["Haleakala crater", "Sliding Sands trail", "Haleakala cinder cones"], ["Pipiwai Trail", "Waimoku Falls", "Pipiwai bamboo"], ["Waihee Ridge", "West Maui Mountains"], ["Iao Valley", "Iao Needle"], ["Waianapanapa", "Waianapanapa black sand beach"], ["Makena Beach", "Big Beach Maui"], ["Kaanapali sunset", "Black Rock Kaanapali"], ["Honolua Bay"], ["Peahi Jaws", "Jaws Maui surfing"], ["Hookipa", "Hookipa windsurfing"], ["Launiupoko", "Lahaina sunset"], ["Molokini"], ["Humpback whale Maui", "Humpback whale breaching Hawaii"], ["Nakalele Blowhole", "Nakalele Point"], ["Halemaumau crater night", "Kilauea lava lake", "Halemaumau"], ["Kilauea Iki"], ["Holei Sea Arch", "Chain of Craters Road"], ["Mauna Kea sunset", "Mauna Kea observatories", "Mauna Kea night sky"], ["Mauna Loa", "Mokuaweoweo", "Mauna Loa summit"], ["Kaumana Caves", "lava tube Hawaii"], ["Waipio Valley", "Waipio Valley lookout"], ["Pololu Valley"], ["Akaka Falls"], ["Papakolea Beach", "green sand beach Hawaii"], ["Punaluu Beach", "Punaluu black sand"], ["Hapuna Beach", "Hapuna sunset"], ["Kua Bay", "Maniniowali", "Kekaha Kai"], ["Puuhonua o Honaunau", "Honaunau Bay"], ["Kealakekua Bay", "Captain Cook Monument"], ["Manta ray night snorkel Kona", "Manta birostris Hawaii", "Reef manta ray"], ["Ka Lae", "South Point Hawaii"], ["Honolii", "Hilo Bay sunrise"], ["Kailua-Kona sunset", "Kona coast sunset"]];
+const CAPI='https://commons.wikimedia.org/w/api.php?action=query&format=json&origin=*&generator=search&gsrnamespace=6&gsrlimit=16&prop=imageinfo&iiprop=url|size|extmetadata&iiextmetadatafilter=Artist|LicenseShortName&iiurlwidth=1100&gsrsearch=';
+const BADP=/\b(map|mapa|locator|location map|diagram|chart|sign|signs|plaque|logo|seal|flag|stamp|coin|postcard|drawing|illustration|engraving|lithograph|painting|museum|document|scan|book|label|specimen|herbarium|poster|brochure|screenshot|ticket|menu|graph)\b|\b1[89]\d\d\b/i;
+const GOODP=[[/sunset|sunrise|dusk|dawn|golden|twilight|afterglow|atardecer|amanecer/i,4],[/view|vista|lookout|overlook|panorama|panoramic|aerial|from above|scenic|landscape|vista/i,2.5],[/beach|bay|valley|falls|crater|coast|cliff|summit|wave|surf|lava|ridge|canyon/i,1]];
+function scoreImg(p,rank){const t=p.title,ii=p.imageinfo&&p.imageinfo[0];if(!ii||!ii.thumburl||BADP.test(t))return -99;
+  let sc=-rank*.3;for(const [r,v] of GOODP)if(r.test(t))sc+=v;const ar=ii.width/ii.height;if(ar<1.15||ar>2.7)sc-=2.5;if(ii.width>=3000)sc+=.8;if(ii.width<1400)sc-=1;if(!/\.jpe?g$/i.test(t))sc-=1.5;return sc;}
+async function commons(q,strict){try{const r=await fetch(CAPI+encodeURIComponent(q+' filetype:bitmap'+(strict?' filew:>1300':'')));const j=await r.json();
+  return Object.values((j.query||{}).pages||{}).sort((a,b)=>a.index-b.index);}catch(e){return [];}}
+const galCache={};
+const stripH=h=>(h||'').replace(/<[^>]*>/g,'').replace(/\s+/g,' ').trim();
+function gallery(i){if(galCache[i])return galCache[i];const s=SPOTS[i];const qs=PHQ[i]||[s.n+' Hawaii'];
+  return galCache[i]=(async()=>{let rs=await Promise.all(qs.map(q=>commons(q,true)));if(!rs.some(r=>r.length))rs=await Promise.all(qs.map(q=>commons(q,false)));
+    const seen=new Set(),all=[];rs.forEach(r=>r.forEach((p,k)=>{if(seen.has(p.title))return;seen.add(p.title);const sc=scoreImg(p,k);if(sc>-50)all.push({p,sc});}));
+    all.sort((a,b)=>b.sc-a.sc);
+    return all.slice(0,7).map(({p})=>{const ii=p.imageinfo[0],m=ii.extmetadata||{};const bw=Math.min(2200,ii.width);
+      return {src:ii.thumburl,big:bw>=ii.width?ii.url:ii.thumburl.replace(/\/(\d+)px-/,'/'+bw+'px-'),page:ii.descriptionurl,
+        by:stripH(m.Artist&&m.Artist.value).slice(0,50),lic:stripH(m.LicenseShortName&&m.LicenseShortName.value)};});})();}
+function prefetchIsland(n){let q=SPOTS.map((s,i)=>s.i===n?i:-1).filter(i=>i>=0&&!galCache[i]);const run=()=>{const i=q.shift();if(i===undefined)return;gallery(i).finally(run);};run();run();}
+async function loadGallery(s){const i=SPOTS.indexOf(s);const imgs=await gallery(i);if(curSpot!==s)return;
+  if(!imgs.length){ensurePhoto(s);return;}
+  const sc=card.querySelector('.scene');if(!sc||sc.querySelector('.gal'))return;
+  const g=document.createElement('div');g.className='gal';
+  g.innerHTML=imgs.map((m,k)=>`<img src="${m.src}" alt="${s.n}" referrerpolicy="no-referrer" ${k>1?'loading="lazy"':''} data-k="${k}">`).join('');
+  const dots=document.createElement('div');dots.className='gdots';dots.innerHTML=imgs.map((_,k)=>`<i class="${k?'':'on'}"></i>`).join('');
+  const cr=document.createElement('a');cr.className='credit';cr.target='_blank';cr.rel='noopener';
+  const zb=document.createElement('button');zb.className='gzoom';zb.textContent='⤢ Ampliar';
+  const setCr=k=>{const m=imgs[k];if(!m)return;cr.href=m.page;cr.textContent='📷 '+(m.by||'Wikimedia Commons')+(m.lic?' · '+m.lic:'');};
+  setCr(0);
+  sc.querySelectorAll('img.photo,.credit').forEach(e=>e.remove());
+  sc.appendChild(g);sc.appendChild(zb);sc.appendChild(dots);sc.appendChild(cr);
+  let first=g.querySelector('img');first.onload=()=>g.classList.add('on');if(first.complete&&first.naturalWidth)g.classList.add('on');
+  g.querySelectorAll('img').forEach(im=>{im.onerror=()=>{const k=+im.dataset.k;im.remove();const d=dots.children[[...g.children].length];d&&d.remove();if(!g.children.length){g.remove();dots.remove();cr.remove();zb.remove();ensurePhoto(s);}else if(k===0){g.children[0].onload=()=>g.classList.add('on');}};});
+  let cur=0;g.addEventListener('scroll',()=>{const k=Math.round(g.scrollLeft/g.clientWidth);if(k!==cur){cur=k;[...dots.children].forEach((d,j)=>d.classList.toggle('on',j===k));const im=g.children[k];setCr(im?+im.dataset.k:0);}},{passive:true});
+  const open=()=>{const im=g.children[cur];openLB(imgs,im?+im.dataset.k:0);};
+  g.addEventListener('click',open);zb.onclick=e=>{e.stopPropagation();open();};
+}
+/* visor a pantalla completa con zoom */
+const lb=document.getElementById('lb'),lbImg=document.getElementById('lbImg'),lbStage=document.getElementById('lbStage'),lbCap=document.getElementById('lbCap');
+let lbList=[],lbK=0,zs={s:1,x:0,y:0};
+function lbApply(){lbImg.style.transform=`translate(${zs.x}px,${zs.y}px) scale(${zs.s})`;}
+function lbShow(k){lbK=(k+lbList.length)%lbList.length;const m=lbList[lbK];zs={s:1,x:0,y:0};lbApply();lbImg.src=m.src;const big=new Image();big.referrerPolicy='no-referrer';big.onload=()=>{if(lbList[lbK]===m)lbImg.src=m.big;};big.src=m.big;
+  lbCap.innerHTML=`${lbK+1} / ${lbList.length} · <a href="${m.page}" target="_blank" rel="noopener">${(m.by||'Wikimedia Commons').replace(/</g,'')}${m.lic?' · '+m.lic:''}</a>`;}
+function openLB(list,k){lbList=list;lb.hidden=false;requestAnimationFrame(()=>lb.classList.add('show'));lbShow(k);}
+function closeLB(){lb.classList.remove('show');setTimeout(()=>{lb.hidden=true;lbImg.src='';},250);}
+lb.querySelector('.lbx').onclick=closeLB;lb.querySelector('.lbp').onclick=()=>lbShow(lbK-1);lb.querySelector('.lbn').onclick=()=>lbShow(lbK+1);
+lbImg.addEventListener('load',()=>{});
+(function(){const pt=new Map();let st=null,lastT=0;
+  const rel=(x,y)=>{const r=lbImg.getBoundingClientRect();return [x,y,r];};
+  lbStage.addEventListener('pointerdown',e=>{lbStage.setPointerCapture(e.pointerId);pt.set(e.pointerId,[e.clientX,e.clientY]);
+    st={z:{...zs},p:new Map(pt),t:performance.now()};});
+  lbStage.addEventListener('pointermove',e=>{if(!pt.has(e.pointerId)||!st)return;pt.set(e.pointerId,[e.clientX,e.clientY]);const a=[...pt.values()],b=[...st.p.values()];
+    if(a.length!==b.length){st={z:{...zs},p:new Map(pt),t:st.t};return;}
+    if(a.length===1){zs.x=st.z.x+(a[0][0]-b[0][0]);zs.y=st.z.y+(st.z.s>1?(a[0][1]-b[0][1]):0);}
+    else{const d=q=>Math.hypot(q[0][0]-q[1][0],q[0][1]-q[1][1]);const k=Math.max(1,Math.min(6,st.z.s*d(a)/d(b)))/st.z.s;
+      const r=lbImg.getBoundingClientRect(),ox=r.left-zs.x,oy=r.top-zs.y;const mx=(b[0][0]+b[1][0])/2-ox,my=(b[0][1]+b[1][1])/2-oy;
+      zs.s=st.z.s*k;zs.x=mx-(mx-st.z.x)*k+((a[0][0]+a[1][0])-(b[0][0]+b[1][0]))/2;zs.y=my-(my-st.z.y)*k+((a[0][1]+a[1][1])-(b[0][1]+b[1][1]))/2;}
+    lbApply();});
+  const end=e=>{if(!pt.has(e.pointerId))return;pt.delete(e.pointerId);
+    if(!pt.size&&st){const dx=zs.x-st.z.x;
+      if(st.z.s<=1.01&&zs.s<=1.01){if(Math.abs(dx)>60)lbShow(lbK+(dx<0?1:-1));else{zs.x=0;zs.y=0;lbApply();
+        const now=performance.now();if(now-lastT<300&&Math.abs(dx)<8){zs.s=2.5;const r=lbImg.getBoundingClientRect();zs.x=-(e.clientX-r.left)*1.5;zs.y=-(e.clientY-r.top)*1.5;lbApply();}lastT=now;}}
+      else{const now=performance.now();if(now-lastT<300&&Math.abs(dx)<8){zs={s:1,x:0,y:0};lbApply();}lastT=now;}
+      st=null;}else if(pt.size)st={z:{...zs},p:new Map(pt),t:performance.now()};};
+  lbStage.addEventListener('pointerup',end);lbStage.addEventListener('pointercancel',end);
+  lbStage.addEventListener('wheel',e=>{e.preventDefault();const r=lbImg.getBoundingClientRect(),ox=r.left-zs.x,oy=r.top-zs.y;const mx=e.clientX-ox,my=e.clientY-oy;
+    const ns=Math.max(1,Math.min(6,zs.s*Math.exp(-e.deltaY*.002))),k=ns/zs.s;zs.x=mx-(mx-zs.x)*k;zs.y=my-(my-zs.y)*k;zs.s=ns;if(ns===1){zs.x=zs.y=0;}lbApply();},{passive:false});
+})();
+addEventListener('keydown',e=>{if(lb.hidden)return;if(e.key==='Escape'){e.stopImmediatePropagation();closeLB();}if(e.key==='ArrowRight')lbShow(lbK+1);if(e.key==='ArrowLeft')lbShow(lbK-1);},true);
 
 /* =================== Filtros (desplegable) =================== */
 const fBtn=document.getElementById('filterBtn'),fPanel=document.getElementById('filterPanel');
@@ -920,6 +1081,9 @@ function ready(){
 
 /* =================== Arranque =================== */
 new ResizeObserver(()=>{resize();}).observe(cv);
+document.addEventListener('gesturestart',e=>e.preventDefault());document.addEventListener('gesturechange',e=>e.preventDefault());
+document.getElementById('zIn').onclick=e=>{e.stopPropagation();zoomAt(VW/2,VH/2,1.8);};
+document.getElementById('zOut').onclick=e=>{e.stopPropagation();zoomAt(VW/2,VH/2,1/1.8);};
 resize();
 {const o=overview();cam.x=tgt.x=o.x;cam.y=tgt.y=o.y-40;cam.z=tgt.z=o.z*.62;}
 requestAnimationFrame(frame);
