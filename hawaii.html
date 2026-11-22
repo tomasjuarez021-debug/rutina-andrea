@@ -163,6 +163,18 @@ body.touring .tl,body.touring .tr,body.touring #islandBar{opacity:0;pointer-even
 .rank .why{color:var(--muted);font-size:11.5px;margin-top:4px;line-height:1.4}
 .card .nophoto{position:absolute;z-index:3;left:14px;bottom:36px;font:500 11px var(--ui);color:#fff;background:rgba(0,0,0,.45);padding:4px 8px;border-radius:999px}
 .rk{color:var(--gold);font:600 11px var(--ui);margin-left:auto;white-space:nowrap}
+.visit{display:block;width:100%;margin:0 0 10px;padding:11px;border-radius:10px;border:1px dashed rgba(255,255,255,.3);background:rgba(255,255,255,.04);color:var(--text);font:600 13px var(--ui);cursor:pointer}
+.visit:hover{background:rgba(255,255,255,.09)}
+.visit.on{border-style:solid;border-color:rgba(160,170,175,.6);background:rgba(160,170,175,.15);color:#d6dde0}
+.visit span{font-weight:400;color:var(--muted);font-size:11.5px}
+.pin.visited .b,.pin.visited .dot{filter:grayscale(1) brightness(.75)}
+.pin.visited .b:after{display:none}
+.pin.visited .nm{color:#b9c1c5}
+.pin.visited .nm:before{content:'✓ '}
+.item.visited{opacity:.5}
+.item.visited .ic{filter:grayscale(1)}
+.item.visited:after{content:'✓';margin-left:6px;color:#b9c1c5}
+#vcount{font:500 11px var(--ui);letter-spacing:.5px;color:var(--muted);margin-left:10px}
 .facts{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px}
 .fact{background:var(--panel2);border:1px solid rgba(255,255,255,.06);border-radius:10px;padding:8px 10px;font-size:12.5px}
 .fact b{display:block;font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;font-weight:600;margin-bottom:2px}
@@ -197,7 +209,7 @@ aside h2 button{margin-left:auto;background:none;border:0;color:var(--muted);fon
 #loader .lb i{display:block;height:100%;width:0;background:linear-gradient(90deg,#b8924a,var(--gold));transition:width .3s}
 #loader .ls{font-size:11px;letter-spacing:3px;text-transform:uppercase;color:var(--muted)}
 #loader>*{position:relative;z-index:1}
- #welcome{position:absolute;inset:0;z-index:45;display:grid;place-content:center;justify-items:center;gap:10px;pointer-events:none;text-align:center;padding:0 20px;
+ #welcome{position:absolute;inset:0;z-index:15;display:grid;place-content:center;justify-items:center;gap:10px;pointer-events:none;text-align:center;padding:0 20px;
   background:radial-gradient(ellipse at center,rgba(6,18,27,.55),rgba(6,18,27,0) 65%);opacity:0;transition:opacity 1s ease}
 #welcome.show{opacity:1}
 #welcome .w1{font:300 13px var(--ui);letter-spacing:8px;text-transform:uppercase;color:var(--muted);transform:translateY(8px);transition:transform 1.4s ease}
@@ -266,7 +278,7 @@ aside h2 button{margin-left:auto;background:none;border:0;color:var(--muted);fon
   <div class="hud br"><div class="zbtns"><button id="zIn" aria-label="Acercar">+</button><button id="zOut" aria-label="Alejar">−</button></div><div id="coords"></div><div id="scale"><span id="scaleTxt">50 km</span><div class="bar" id="scaleBar"></div></div></div>
   <div class="card panel" id="card"></div>
   <aside class="panel" id="aside">
-    <h2>SPOTS <button id="asideClose" aria-label="Cerrar lista">✕</button></h2>
+    <h2>SPOTS <span id="vcount"></span><button id="asideClose" aria-label="Cerrar lista">✕</button></h2>
     <div id="list"></div>
     <p class="note">Costas reales (Natural Earth 1:10m). El relieve se genera a partir de la altura y posición real de cada volcán: es aproximado. Fotos de Wikimedia Commons. Permisos, cierres y reservas cambian seguido: verificá antes de ir (NPS, DLNR Hawaiʻi, USGS HVO).</p>
   </aside>
@@ -937,7 +949,7 @@ function zoomCluster(m){if(!m)return;let cx=0,cy=0,md=1e9;m.forEach(s=>{cx+=s.x;
   const need=(mobile()?40:36)/Math.max(md,.05);anchor=null;flyTo(cx,cy,Math.max(cam.z*1.8,Math.min(need*1.05,zmax())));}
 function clusterPins(zin){
   const R=mobile()?35:30,groups=[];
-  if(zin)for(const s of SPOTS){if(!active[s.c]||s.el===SPOTS[pinned]?.el)continue;
+  if(zin)for(const s of SPOTS){if(!active[s.c]||(hideVisited&&VISITED.has(s.n))||s.el===SPOTS[pinned]?.el)continue;
     let g=groups.find(g=>Math.hypot(g.x-s.sx,g.y-s.sy)<R);
     if(g){g.m.push(s);g.x=(g.x*(g.m.length-1)+s.sx)/g.m.length;g.y=(g.y*(g.m.length-1)+s.sy)/g.m.length;}else groups.push({x:s.sx,y:s.sy,m:[s]});}
   const inCl=new Set();let k=0;
@@ -947,7 +959,7 @@ function clusterPins(zin){
       const r=R*.8;g.m.forEach((s,j)=>{const an=-Math.PI/2+j*2*Math.PI/g.m.length;s.el.style.transform=`translate3d(${(g.x+Math.cos(an)*r).toFixed(1)}px,${(g.y+Math.sin(an)*r+12).toFixed(1)}px,0)`;});continue;}
     g.m.forEach(s=>inCl.add(s));
     const b=clEl(k++);b._m=g.m;b.hidden=false;b.style.transform=`translate3d(${g.x.toFixed(1)}px,${g.y.toFixed(1)}px,0)`;
-    const sig=g.m.map(s=>s.c).join();if(b._sig!==sig){b._sig=sig;const cols=g.m.map(s=>COLOR[s.c]);const st=100/cols.length;
+    const sig=g.m.map(s=>s.c+VISITED.has(s.n)).join();if(b._sig!==sig){b._sig=sig;const cols=g.m.map(s=>VISITED.has(s.n)?'#6b7378':COLOR[s.c]);const st=100/cols.length;
       b.style.setProperty('--ring',`conic-gradient(${cols.map((c,i)=>`${c} ${i*st}% ${(i+1)*st}%`).join(',')})`);
       b.innerHTML=`<span>${g.m.length}</span>`;b.setAttribute('aria-label',`${g.m.length} spots: ${g.m.map(s=>s.n).join(', ')}`);}}
   for(;k<clPool.length;k++)clPool[k].hidden=true;
@@ -1054,12 +1066,21 @@ function render(s){
   ${SPORT[s.n]?`<div class="sportbox"><h5>${s.c==='kite'?'🪁':'🏄'} Ficha deportiva</h5><div class="sg">${['Swell / agua','Viento','Fondo','Mejor momento',s.c==='kite'?'Equipo':'Tabla','Ojo con'].map((l,k)=>`<div class="${k===5?'warn':''}"><b>${l}</b>${SPORT[s.n][k]}</div>`).join('')}</div></div>`:''}
   <div class="season ${s.fm[0]}"><b>Feb–Mar:</b> ${s.fm[1]}</div>
   <p class="tip"><b>Tip:</b> ${s.tip}</p>
+  <button class="visit ${VISITED.has(s.n)?'on':''}" id="visitBtn">${VISITED.has(s.n)?'✓ Visitado <span>· tocá para desmarcar</span>':'○ Marcar como visitado'}</button>
   <div class="links"><a href="https://www.google.com/search?tbm=isch&q=${q}" target="_blank" rel="noopener">📷 Fotos</a><a href="https://www.google.com/maps/search/?api=1&query=${s.lat},${s.lon}" target="_blank" rel="noopener">📍 Maps</a><a href="https://www.pinterest.com/search/pins/?q=${q}" target="_blank" rel="noopener">Pinterest</a></div>
   <div class="links two"><a class="sv" href="https://www.google.com/maps/@?api=1&map_action=pano&viewpoint=${(SV[s.n]||[s.lat,s.lon]).join(',')}" target="_blank" rel="noopener">🚶 Recorrer en 360° (Street View)</a><a href="https://www.youtube.com/results?search_query=${q}+shorts" target="_blank" rel="noopener">▶ YouTube</a><a href="https://www.tiktok.com/search/video?q=${q}" target="_blank" rel="noopener">♪ TikTok</a></div></div>`;
   card.querySelector('.close').onclick=e=>{e.stopPropagation();closeCard();};
-  card.scrollTop=0;loadGallery(s);
+  card.scrollTop=0;document.getElementById('visitBtn').onclick=e=>{e.stopPropagation();toggleVisited(s);};loadGallery(s);
 }
 
+/* =================== Lugares visitados (se guardan en este dispositivo) =================== */
+const VKEY='hawaii-visitados';let hideVisited=false;
+const VISITED=new Set((()=>{try{return JSON.parse(localStorage.getItem(VKEY)||'[]');}catch(e){return [];}})());
+function saveVisited(){try{localStorage.setItem(VKEY,JSON.stringify([...VISITED]));}catch(e){}}
+function applyVisited(){SPOTS.forEach(s=>{const v=VISITED.has(s.n);s.el.classList.toggle('visited',v);(s.lis||[]).forEach(li=>li.classList.toggle('visited',v));});
+  const n=SPOTS.filter(s=>VISITED.has(s.n)).length;const c=document.getElementById('vcount');if(c)c.textContent=n?`${n}/${SPOTS.length} visitados`:'';lastPin='';}
+function toggleVisited(s){VISITED.has(s.n)?VISITED.delete(s.n):VISITED.add(s.n);saveVisited();applyVisited();applyFilters();
+  const b=document.getElementById('visitBtn');if(b&&curSpot===s){const v=VISITED.has(s.n);b.classList.toggle('on',v);b.innerHTML=v?'✓ Visitado <span>· tocá para desmarcar</span>':'○ Marcar como visitado';}}
 function stars(n){return '★★★★★'.slice(0,n)+'☆☆☆☆☆'.slice(0,5-n);}
 function rankHTML(s){
   if(s.c==='surf'&&RATE[s.n]){const k=SURF_RANK.indexOf(s.n)+1,[r,id]=RATE[s.n];
@@ -1209,14 +1230,16 @@ addEventListener('keydown',e=>{if(lb.hidden)return;if(e.key==='Escape'){e.stopIm
 const fBtn=document.getElementById('filterBtn'),fPanel=document.getElementById('filterPanel');
 function closeFilters(){fPanel.classList.add('closed');fBtn.setAttribute('aria-expanded','false');}
 fBtn.onclick=e=>{e.stopPropagation();const open=fPanel.classList.toggle('closed');fBtn.setAttribute('aria-expanded',String(!open));};
-function applyFilters(){lastPin='';SPOTS.forEach(s=>{const h=!active[s.c];s.el.classList.toggle('hidden',h);s.li&&s.li.classList.toggle('hidden',h);});
+function applyFilters(){lastPin='';SPOTS.forEach(s=>{const h=!active[s.c]||(hideVisited&&VISITED.has(s.n));s.el.classList.toggle('hidden',h);(s.lis||[]).forEach(li=>li.classList.toggle('hidden',h));});
+  const fv=document.getElementById('fHideV');if(fv)fv.setAttribute('aria-pressed',String(hideVisited));
   document.getElementById('fcount').textContent=Object.values(active).filter(Boolean).length;
   fPanel.querySelectorAll('.frow[data-k]').forEach(r=>r.setAttribute('aria-pressed',String(active[r.dataset.k])));
   if(pinned!==null&&!active[SPOTS[pinned].c])closeCard();}
 fPanel.innerHTML=`<button class="frow" id="fSport" style="--c:#3df2c8"><span class="ic">${ICON.surf}</span><b>Solo surf + kite</b></button><div class="fsep"></div>`+Object.entries(CAT).map(([k,v])=>`<button class="frow" data-k="${k}" aria-pressed="true" style="--c:${COLOR[k]}"><span class="ic">${ICON[k]}</span>${v.label}<span class="n">${SPOTS.filter(s=>s.c===k).length}</span><span class="sw"></span></button>`).join('')+
-  `<div class="fsep"></div><button class="frow" id="fAll" style="--c:var(--gold)">Mostrar todo</button><div class="fhint">Los spots aparecen al entrar a una isla. Tocá una isla o elegila abajo.</div>`;
+  `<div class="fsep"></div><button class="frow" id="fHideV" aria-pressed="false" style="--c:#9aa5ab"><span class="ic">✓</span>Ocultar visitados<span class="sw"></span></button><button class="frow" id="fAll" style="--c:var(--gold)">Mostrar todo</button><div class="fhint">Los spots aparecen al entrar a una isla. Tocá una isla o elegila abajo.</div>`;
 fPanel.querySelectorAll('.frow[data-k]').forEach(r=>r.onclick=e=>{e.stopPropagation();active[r.dataset.k]=!active[r.dataset.k];applyFilters();});
 document.getElementById('fSport').onclick=e=>{e.stopPropagation();for(const k in active)active[k]=SPORT_CATS.has(k);applyFilters();};
+document.getElementById('fHideV').onclick=e=>{e.stopPropagation();hideVisited=!hideVisited;applyFilters();};
 document.getElementById('fAll').onclick=e=>{e.stopPropagation();for(const k in active)active[k]=true;applyFilters();};
 fPanel.addEventListener('pointerdown',e=>e.stopPropagation());
 
@@ -1226,13 +1249,13 @@ const list=document.getElementById('list');
   arr.forEach((n,k)=>{const idx=SPOTS.findIndex(s=>s.n===n);if(idx<0)return;const s=SPOTS[idx],r=RATE[n];
     const it=document.createElement('div');it.className='item';it.style.setProperty('--c',COLOR[s.c]);
     it.innerHTML=`<span class="ic">${ICON[s.c]}</span>#${k+1} ${s.n}<span class="rk">${r?(r[0]?stars(r[0]):'s/d'):s.i}</span>`;
-    it.onclick=()=>{aside.classList.remove('open');openSpot(idx);};grp.appendChild(it);});
+    it.onclick=()=>{aside.classList.remove('open');openSpot(idx);};grp.appendChild(it);(s.lis||(s.lis=[])).push(it);});
   list.appendChild(grp);});
 ["Kauaʻi","Oʻahu","Molokaʻi","Lānaʻi","Maui","Hawaiʻi"].forEach(isl=>{
   const grp=document.createElement('div');grp.className='grp';grp.innerHTML=`<h4>${islName(isl).toUpperCase()}</h4>`;
   SPOTS.forEach((s,idx)=>{if(s.i!==isl)return;
     const it=document.createElement('div');it.className='item';it.style.setProperty('--c',COLOR[s.c]);it.innerHTML=`<span class="ic">${ICON[s.c]}</span>${s.n}`;
-    it.onclick=()=>{aside.classList.remove('open');openSpot(idx);};grp.appendChild(it);s.li=it;});
+    it.onclick=()=>{aside.classList.remove('open');openSpot(idx);};grp.appendChild(it);s.li=it;(s.lis||(s.lis=[])).push(it);});
   list.appendChild(grp);});
 document.getElementById('listBtn').onclick=e=>{e.stopPropagation();closeCard();aside.classList.toggle('open');};
 document.getElementById('asideClose').onclick=()=>aside.classList.remove('open');
@@ -1342,6 +1365,7 @@ function ready(){
 
 /* =================== Arranque =================== */
 new ResizeObserver(()=>{resize();}).observe(cv);
+applyVisited();
 const appEl=document.getElementById('app');appEl.addEventListener('scroll',()=>{if(appEl.scrollTop||appEl.scrollLeft){appEl.scrollTop=0;appEl.scrollLeft=0;}});
 addEventListener('scroll',()=>{if(scrollY||scrollX)scrollTo(0,0);});
 document.addEventListener('gesturestart',e=>e.preventDefault());document.addEventListener('gesturechange',e=>e.preventDefault());
