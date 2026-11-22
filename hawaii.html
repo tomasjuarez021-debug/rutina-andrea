@@ -924,7 +924,7 @@ function zoomCluster(m){if(!m)return;let cx=0,cy=0,md=1e9;m.forEach(s=>{cx+=s.x;
   for(let a=0;a<m.length;a++)for(let b=a+1;b<m.length;b++)md=Math.min(md,Math.hypot(m[a].x-m[b].x,m[a].y-m[b].y));
   const need=(mobile()?40:36)/Math.max(md,.05);anchor=null;flyTo(cx,cy,Math.max(cam.z*1.8,Math.min(need*1.05,zmax())));}
 function clusterPins(zin){
-  const R=mobile()?40:30,groups=[];
+  const R=mobile()?35:30,groups=[];
   if(zin)for(const s of SPOTS){if(!active[s.c]||s.el===SPOTS[pinned]?.el)continue;
     let g=groups.find(g=>Math.hypot(g.x-s.sx,g.y-s.sy)<R);
     if(g){g.m.push(s);g.x=(g.x*(g.m.length-1)+s.sx)/g.m.length;g.y=(g.y*(g.m.length-1)+s.sy)/g.m.length;}else groups.push({x:s.sx,y:s.sy,m:[s]});}
