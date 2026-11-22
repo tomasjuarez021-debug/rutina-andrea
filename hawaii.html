@@ -11,7 +11,7 @@
 <meta name="apple-mobile-web-app-title" content="Hawái">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="theme-color" content="#0b1d2a">
-<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
 /* Mapa de mundo estilo videojuego: canvas con cámara suave + HUD de vidrio oscuro */
 :root{
@@ -34,9 +34,9 @@ button{font:inherit;color:inherit}
 .tl{top:calc(14px + env(safe-area-inset-top));left:calc(14px + env(safe-area-inset-left));flex-direction:column}
 #filterWrap{position:relative}
 .tr{top:calc(14px + env(safe-area-inset-top));right:calc(14px + env(safe-area-inset-right))}
-.brand{font:700 26px/1 var(--display);letter-spacing:5px;color:var(--gold);text-shadow:0 2px 12px rgba(0,0,0,.6);pointer-events:none}
+.brand{font:300 20px/1 var(--ui);letter-spacing:8px;color:var(--gold);text-shadow:0 2px 12px rgba(0,0,0,.6);pointer-events:none}
 .brand small{display:block;font:500 11px var(--ui);letter-spacing:2.5px;color:var(--muted);text-transform:uppercase;margin-top:6px}
-.hbtn{display:inline-flex;align-items:center;gap:8px;padding:9px 14px;border-radius:999px;border:1px solid var(--line);background:var(--panel);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);font:600 13px var(--ui);cursor:pointer;box-shadow:0 6px 20px rgba(0,0,0,.35);transition:transform .15s,background .15s}
+.hbtn{display:inline-flex;align-items:center;gap:8px;padding:9px 14px;border-radius:999px;border:1px solid var(--line);background:var(--panel);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);font:500 12.5px var(--ui);cursor:pointer;box-shadow:0 6px 20px rgba(0,0,0,.35);transition:transform .15s,background .15s}
 .hbtn:hover{background:rgba(20,36,48,.92)}
 .hbtn:active{transform:scale(.96)}
 .hbtn:focus-visible,.pin:focus-visible,#islandBar button:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
@@ -74,7 +74,7 @@ body.touring .tl,body.touring .tr,body.touring #islandBar{opacity:0;pointer-even
 .fhint{font-size:11.5px;color:var(--muted);padding:4px 10px 6px;line-height:1.4}
 #islandBar{position:absolute;z-index:10;left:50%;transform:translateX(-50%);bottom:calc(14px + env(safe-area-inset-bottom));display:flex;gap:4px;padding:5px;border-radius:999px;background:var(--panel);border:1px solid var(--line);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);box-shadow:0 10px 30px rgba(0,0,0,.45);max-width:calc(100% - 20px);overflow-x:auto;scrollbar-width:none}
 #islandBar::-webkit-scrollbar{display:none}
-#islandBar button{flex:none;border:0;background:none;padding:9px 15px;border-radius:999px;font:700 13px var(--display);letter-spacing:1.5px;color:var(--text);cursor:pointer;transition:background .2s,color .2s}
+#islandBar button{flex:none;border:0;background:none;padding:9px 15px;border-radius:999px;font:400 11.5px var(--ui);letter-spacing:2px;text-transform:uppercase;color:var(--text);cursor:pointer;transition:background .2s,color .2s}
 #islandBar button:hover{background:var(--panel2)}
 #islandBar button.on{background:var(--gold);color:#1b1408}
 .br{right:calc(14px + env(safe-area-inset-right));bottom:calc(18px + env(safe-area-inset-bottom));flex-direction:column;align-items:flex-end;pointer-events:none}
@@ -90,7 +90,7 @@ body.touring .tl,body.touring .tr,body.touring #islandBar{opacity:0;pointer-even
 .pin .b{position:absolute;left:0;top:-34px;width:34px;height:34px;border-radius:50% 50% 50% 0;transform:rotate(-45deg) scale(.2);transform-origin:0% 100%;background:radial-gradient(circle at 60% 40%,#1d3242,#0b1620);border:2px solid var(--c);box-shadow:0 4px 12px rgba(0,0,0,.55),0 0 0 3px rgba(0,0,0,.18);opacity:0;transition:transform .35s cubic-bezier(.3,1.6,.5,1) var(--d,0s),opacity .2s var(--d,0s)}
 .pin .b svg{position:absolute;left:50%;top:50%;width:17px;height:17px;margin:-8.5px 0 0 -8.5px;transform:rotate(45deg);color:var(--c)}
 .pin .dot{position:absolute;left:-2px;top:-2px;width:4px;height:4px;border-radius:50%;background:var(--c);box-shadow:0 0 0 1px rgba(0,0,0,.5);opacity:.85;transition:opacity .2s var(--d,0s)}
-.pin .nm{position:absolute;left:0;top:6px;transform:translateX(-50%);white-space:nowrap;font:600 11.5px var(--ui);color:#fff;text-shadow:0 1px 3px #000,0 0 8px rgba(0,0,0,.8);opacity:0;transition:opacity .2s;pointer-events:none}
+.pin .nm{position:absolute;left:0;top:6px;transform:translateX(-50%);white-space:nowrap;font:500 10.5px var(--ui);color:#fff;text-shadow:0 1px 2px rgba(0,0,0,.9),0 0 6px rgba(0,0,0,.6);opacity:0;transition:opacity .2s;pointer-events:none}
 #pins.zin .pin .b{transform:rotate(-45deg) scale(1);opacity:1}
 #pins.zin .pin .dot{opacity:1}
 #pins.named .pin .nm{opacity:1}
@@ -149,7 +149,7 @@ body.touring .tl,body.touring .tr,body.touring #islandBar{opacity:0;pointer-even
 .zbtns button{width:40px;height:40px;border:0;background:none;color:var(--text);font:600 20px var(--ui);cursor:pointer}
 .zbtns button+button{border-top:1px solid rgba(255,255,255,.08)}
 .zbtns button:active{background:var(--panel2)}
-.card h3{font:700 22px/1.15 var(--display);color:var(--gold);margin:0 0 4px;text-wrap:balance}
+.card h3{font:500 21px/1.2 var(--display);color:var(--gold);margin:0 0 4px;text-wrap:balance}
 .card .isl{color:var(--muted);font-size:12px;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:12px}
 .card p{font-size:13.5px;line-height:1.55;margin:0 0 12px;color:var(--text)}
 .sportbox{margin:0 0 12px;padding:12px;border-radius:12px;background:linear-gradient(135deg,color-mix(in srgb,var(--c) 18%,transparent),rgba(255,255,255,.03));border:1px solid color-mix(in srgb,var(--c) 45%,transparent)}
@@ -201,7 +201,7 @@ aside h2 button{margin-left:auto;background:none;border:0;color:var(--muted);fon
 @media (prefers-reduced-motion:reduce){#flash.on,#loader .lt.hit{animation:none}}
 
 @media (max-width:820px),(hover:none){
-  .brand{font-size:21px;letter-spacing:4px}
+  .brand{font-size:17px;letter-spacing:6px}
   .brand small{font-size:10px}
   #compass{width:46px;height:46px;top:calc(64px + env(safe-area-inset-top))}
   #coords{display:none}
@@ -212,7 +212,7 @@ aside h2 button{margin-left:auto;background:none;border:0;color:var(--muted);fon
   body.cardOpen #islandBar,body.cardOpen .br{opacity:0;pointer-events:none}
   body.cardOpen #islandBar{transform:translate(-50%,24px)}
   .br{bottom:calc(76px + env(safe-area-inset-bottom))}
-  #islandBar button{padding:9px 12px;font-size:12.5px;letter-spacing:1px}
+  #islandBar button{padding:9px 12px;font-size:11px;letter-spacing:1.5px}
   .card{left:0;right:0;top:auto;bottom:0;width:auto;max-height:66dvh;border-radius:18px 18px 0 0;transform:translateY(105%);padding-bottom:env(safe-area-inset-bottom)}
   .card .scene{height:235px;border-radius:18px 18px 0 0}
   .card:before{content:'';position:absolute;top:7px;left:50%;width:40px;height:4px;margin-left:-20px;border-radius:2px;background:rgba(255,255,255,.6);z-index:4}
@@ -829,7 +829,7 @@ function drawSurf(z){
 function drawSurfLabels(zr){
   const a=sstep(1.15,1.6,zr)*(1-sstep(9,14,zr));if(a<=.01)return;
   for(const zn of SURFZ){if(zn.l<2&&zr<2.2)continue;const [sx,sy]=w2s(zn.lx,zn.ly);
-    label((zn.kite?'🪁 ':'≋ ')+zn.n+(zn.l===3?' · olas XL':''),sx,sy,zn.l===3?12.5:11.5,a*(zn.l===3?1:.85),{font:"700 {s}px Inter, sans-serif",fill:zn.kite?'#b8ffe9':'#bff4ff',ls:.5,lw:3.5});}
+    label((zn.kite?'🪁 ':'≋ ')+zn.n+(zn.l===3?' · olas XL':''),sx,sy,10,a*(zn.l===3?.9:.75),{font:"500 {s}px Inter, sans-serif",fill:zn.kite?'#b8ffe9':'#bff4ff',ls:.6,lw:2});}
 }
 /* destellos de sol sobre el agua */
 const GL=Array.from({length:26},()=>({x:Math.random(),y:Math.random(),t:Math.random()*4,d:1.5+Math.random()*2.5}));
@@ -846,7 +846,7 @@ function label(t,x,y,size,alpha,opt={}){
   if(alpha<=.01)return;ctx.save();ctx.globalAlpha=alpha;ctx.font=(opt.font||NAME_FONT).replace('{s}',size);ctx.textAlign=opt.align||'center';ctx.textBaseline='middle';
   if('letterSpacing' in ctx)ctx.letterSpacing=(opt.ls||0)+'px';
   if(opt.rot){ctx.translate(x,y);ctx.rotate(opt.rot);x=0;y=0;}
-  ctx.lineJoin='round';ctx.strokeStyle=opt.stroke||'rgba(4,14,22,.75)';ctx.lineWidth=opt.lw||4;ctx.strokeText(t,x,y);
+  ctx.lineJoin='round';ctx.strokeStyle=opt.stroke||'rgba(4,14,22,.45)';ctx.lineWidth=opt.lw||2;ctx.strokeText(t,x,y);
   ctx.fillStyle=opt.fill||'#f3ead3';ctx.fillText(t,x,y);ctx.restore();}
 let tNow=0;
 function draw(){
@@ -881,16 +881,16 @@ function draw(){
   const zr=z/z0;
   const aBig=1-sstep(2.2,3.2,zr),aDet=sstep(1.7,2.5,zr),aTown=sstep(2.3,3.2,zr);
   drawSurfLabels(zr);
-  label('OCÉANO PACÍFICO',...w2s(230,380),18,.35*aBig,{ls:14,rot:.22,fill:'#cfe6f0',stroke:'rgba(0,0,0,0)'});
-  for(const [t,lo,la,r] of CHANNELS){const [x,y]=P(lo,la);label(t.toUpperCase(),...w2s(x,y),10.5,.45*aBig*sstep(.9,1.2,zr),{font:"500 {s}px Cinzel, serif",ls:4,rot:r*Math.PI/180,fill:'#cfe6f0',stroke:'rgba(0,0,0,0)'});}
+  label('OCÉANO PACÍFICO',...w2s(230,380),13,.3*aBig,{font:"300 {s}px Inter, sans-serif",ls:14,rot:.22,fill:'#cfe6f0',stroke:'rgba(0,0,0,0)'});
+  for(const [t,lo,la,r] of CHANNELS){const [x,y]=P(lo,la);label(t.toUpperCase(),...w2s(x,y),9,.4*aBig*sstep(.9,1.2,zr),{font:"300 {s}px Inter, sans-serif",ls:4,rot:r*Math.PI/180,fill:'#cfe6f0',stroke:'rgba(0,0,0,0)'});}
   const aIn=sstep(1.6,1.9,zr)*(1-sstep(2.6,3.4,zr));
-  for(const [t,lo,la,fs] of ILABELS){const [x,y]=P(lo,la);const [sx,sy]=w2s(x,y);const main=fs>=20;const a=main?(1-sstep(2.6,3.4,zr)):(mobile()?sstep(1.3,1.7,zr)*(1-sstep(3,4,zr)):aBig);label(t.toUpperCase(),sx,sy,mobile()&&!main?11:Math.round(fs*1.05),.95*a,{ls:fs>16?6:3,lw:5});}
+  for(const [t,lo,la,fs] of ILABELS){const [x,y]=P(lo,la);const [sx,sy]=w2s(x,y);const main=fs>=20;const a=main?(1-sstep(2.6,3.4,zr)):(mobile()?sstep(1.3,1.7,zr)*(1-sstep(3,4,zr)):aBig);label(t.toUpperCase(),sx,sy,main?(mobile()?11:12.5):9,.9*a,{font:"300 {s}px Inter, sans-serif",ls:main?6:3.5,lw:2,fill:'#f4efe3'});}
   if(aDet>0)for(const [t,h,lo,la,tier] of PEAKS){const [sx,sy]=w2s(...P(lo,la));const a=tier===1?Math.max(aDet,.0):aDet*sstep(2.6,3.4,zr);if(a<=.01)continue;
-    ctx.globalAlpha=a;ctx.fillStyle='#f3ead3';ctx.strokeStyle='rgba(4,14,22,.8)';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(sx,sy-6);ctx.lineTo(sx+5.5,sy+3.5);ctx.lineTo(sx-5.5,sy+3.5);ctx.closePath();ctx.stroke();ctx.fill();ctx.globalAlpha=1;
-    label(t,sx,sy+15,12,a,{font:"700 {s}px Cinzel, serif",ls:1,lw:3.5});label(h,sx,sy+29,10.5,a*.85,{font:"500 {s}px Inter, sans-serif",lw:3,fill:'#cfdde3'});}
+    ctx.globalAlpha=a;ctx.fillStyle='#f3ead3';ctx.strokeStyle='rgba(4,14,22,.8)';ctx.lineWidth=2;ctx.beginPath();ctx.lineWidth=1.2;ctx.moveTo(sx,sy-4);ctx.lineTo(sx+3.6,sy+2.4);ctx.lineTo(sx-3.6,sy+2.4);ctx.closePath();ctx.stroke();ctx.fill();ctx.globalAlpha=1;
+    label(t,sx,sy+12,9.5,a*.9,{font:"400 {s}px Inter, sans-serif",ls:1.2,lw:2});label(h,sx,sy+23,8.5,a*.7,{font:"300 {s}px Inter, sans-serif",lw:2,fill:'#cfdde3'});}
   if(aTown>0)for(const [t,lo,la,s] of TOWNS){const [sx,sy]=w2s(...P(lo,la));
-    ctx.globalAlpha=aTown;ctx.fillStyle='#fff';ctx.strokeStyle='rgba(0,0,0,.7)';ctx.lineWidth=2;ctx.beginPath();ctx.arc(sx,sy,2.6,0,7);ctx.stroke();ctx.fill();ctx.globalAlpha=1;
-    label(t,sx+(s==='l'?-7:7),sy,12,aTown*.95,{font:"500 {s}px Inter, sans-serif",align:s==='l'?'right':'left',lw:3});}
+    ctx.globalAlpha=aTown*.85;ctx.fillStyle='#fff';ctx.strokeStyle='rgba(0,0,0,.5)';ctx.lineWidth=1;ctx.beginPath();ctx.arc(sx,sy,1.8,0,7);ctx.stroke();ctx.fill();ctx.globalAlpha=1;
+    label(t,sx+(s==='l'?-5:5),sy,10,aTown*.85,{font:"400 {s}px Inter, sans-serif",align:s==='l'?'right':'left',lw:2});}
 }
 
 /* =================== Pins (DOM) =================== */
