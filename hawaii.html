@@ -70,6 +70,12 @@ body.touring .tl,body.touring .tr,body.touring #islandBar{opacity:0;pointer-even
 .sw:after{content:'';position:absolute;top:2px;left:2px;width:14px;height:14px;border-radius:50%;background:#fff;transition:transform .2s}
 .frow[aria-pressed="true"] .sw{background:var(--c)}
 .frow[aria-pressed="true"] .sw:after{transform:translateX(12px)}
+.vlab{font:600 10.5px var(--ui);letter-spacing:1.2px;text-transform:uppercase;color:var(--muted);padding:6px 10px 4px}
+.vseg{display:flex;gap:3px;padding:3px;margin:0 6px 4px;border-radius:10px;background:rgba(255,255,255,.06)}
+.vseg button{flex:1;padding:7px 4px;border:0;border-radius:8px;background:none;color:var(--text);font:500 11.5px var(--ui);cursor:pointer;white-space:nowrap}
+.vseg button i{font-style:normal;color:var(--muted);font-size:10.5px}
+.vseg button.on{background:var(--gold);color:#1b1408}.vseg button.on i{color:#5a4520}
+#filterBtn.vis{box-shadow:0 0 0 2px rgba(233,201,127,.5),0 6px 20px rgba(0,0,0,.35)}
 .fsep{height:1px;background:rgba(255,255,255,.08);margin:6px 4px}
 .fhint{font-size:11.5px;color:var(--muted);padding:4px 10px 6px;line-height:1.4}
 #islandBar{position:absolute;z-index:10;left:50%;transform:translateX(-50%);bottom:calc(14px + env(safe-area-inset-bottom));display:flex;gap:4px;padding:5px;border-radius:999px;background:var(--panel);border:1px solid var(--line);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);box-shadow:0 10px 30px rgba(0,0,0,.45);max-width:calc(100% - 20px);overflow-x:auto;scrollbar-width:none}
@@ -949,7 +955,7 @@ function zoomCluster(m){if(!m)return;let cx=0,cy=0,md=1e9;m.forEach(s=>{cx+=s.x;
   const need=(mobile()?40:36)/Math.max(md,.05);anchor=null;flyTo(cx,cy,Math.max(cam.z*1.8,Math.min(need*1.05,zmax())));}
 function clusterPins(zin){
   const R=mobile()?35:30,groups=[];
-  if(zin)for(const s of SPOTS){if(!active[s.c]||(hideVisited&&VISITED.has(s.n))||s.el===SPOTS[pinned]?.el)continue;
+  if(zin)for(const s of SPOTS){if(!active[s.c]||visOut(s)||s.el===SPOTS[pinned]?.el)continue;
     let g=groups.find(g=>Math.hypot(g.x-s.sx,g.y-s.sy)<R);
     if(g){g.m.push(s);g.x=(g.x*(g.m.length-1)+s.sx)/g.m.length;g.y=(g.y*(g.m.length-1)+s.sy)/g.m.length;}else groups.push({x:s.sx,y:s.sy,m:[s]});}
   const inCl=new Set();let k=0;
@@ -1074,12 +1080,13 @@ function render(s){
 }
 
 /* =================== Lugares visitados (se guardan en este dispositivo) =================== */
-const VKEY='hawaii-visitados';let hideVisited=false;
+const VKEY='hawaii-visitados';let visMode='all';// all | todo (por visitar) | done (visitados)
+const visOut=s=>visMode==='todo'?VISITED.has(s.n):visMode==='done'?!VISITED.has(s.n):false;
 const VISITED=new Set((()=>{try{return JSON.parse(localStorage.getItem(VKEY)||'[]');}catch(e){return [];}})());
 function saveVisited(){try{localStorage.setItem(VKEY,JSON.stringify([...VISITED]));}catch(e){}}
 function applyVisited(){SPOTS.forEach(s=>{const v=VISITED.has(s.n);s.el.classList.toggle('visited',v);(s.lis||[]).forEach(li=>li.classList.toggle('visited',v));});
   const n=SPOTS.filter(s=>VISITED.has(s.n)).length;const c=document.getElementById('vcount');if(c)c.textContent=n?`${n}/${SPOTS.length} visitados`:'';lastPin='';}
-function toggleVisited(s){VISITED.has(s.n)?VISITED.delete(s.n):VISITED.add(s.n);saveVisited();applyVisited();applyFilters();
+function toggleVisited(s){VISITED.has(s.n)?VISITED.delete(s.n):VISITED.add(s.n);saveVisited();applyVisited();applyFilters();if(visOut(s)&&pinned!==null)SPOTS[pinned].el.classList.remove('hidden');
   const b=document.getElementById('visitBtn');if(b&&curSpot===s){const v=VISITED.has(s.n);b.classList.toggle('on',v);b.innerHTML=v?'✓ Visitado <span>· tocá para desmarcar</span>':'○ Marcar como visitado';}}
 function stars(n){return '★★★★★'.slice(0,n)+'☆☆☆☆☆'.slice(0,5-n);}
 function rankHTML(s){
@@ -1230,17 +1237,19 @@ addEventListener('keydown',e=>{if(lb.hidden)return;if(e.key==='Escape'){e.stopIm
 const fBtn=document.getElementById('filterBtn'),fPanel=document.getElementById('filterPanel');
 function closeFilters(){fPanel.classList.add('closed');fBtn.setAttribute('aria-expanded','false');}
 fBtn.onclick=e=>{e.stopPropagation();const open=fPanel.classList.toggle('closed');fBtn.setAttribute('aria-expanded',String(!open));};
-function applyFilters(){lastPin='';SPOTS.forEach(s=>{const h=!active[s.c]||(hideVisited&&VISITED.has(s.n));s.el.classList.toggle('hidden',h);(s.lis||[]).forEach(li=>li.classList.toggle('hidden',h));});
-  const fv=document.getElementById('fHideV');if(fv)fv.setAttribute('aria-pressed',String(hideVisited));
+function applyFilters(){lastPin='';SPOTS.forEach(s=>{const h=!active[s.c]||visOut(s);s.el.classList.toggle('hidden',h);(s.lis||[]).forEach(li=>li.classList.toggle('hidden',h));});
+  fPanel.querySelectorAll('.vseg button').forEach(b=>b.classList.toggle('on',b.dataset.v===visMode));
+  const n=SPOTS.filter(s=>VISITED.has(s.n)).length,vd=fPanel.querySelector('.vseg [data-v=done] i'),vt=fPanel.querySelector('.vseg [data-v=todo] i');if(vd){vd.textContent=n;vt.textContent=SPOTS.length-n;}
+  document.getElementById('filterBtn').classList.toggle('vis',visMode!=='all');
   document.getElementById('fcount').textContent=Object.values(active).filter(Boolean).length;
   fPanel.querySelectorAll('.frow[data-k]').forEach(r=>r.setAttribute('aria-pressed',String(active[r.dataset.k])));
   if(pinned!==null&&!active[SPOTS[pinned].c])closeCard();}
 fPanel.innerHTML=`<button class="frow" id="fSport" style="--c:#3df2c8"><span class="ic">${ICON.surf}</span><b>Solo surf + kite</b></button><div class="fsep"></div>`+Object.entries(CAT).map(([k,v])=>`<button class="frow" data-k="${k}" aria-pressed="true" style="--c:${COLOR[k]}"><span class="ic">${ICON[k]}</span>${v.label}<span class="n">${SPOTS.filter(s=>s.c===k).length}</span><span class="sw"></span></button>`).join('')+
-  `<div class="fsep"></div><button class="frow" id="fHideV" aria-pressed="false" style="--c:#9aa5ab"><span class="ic">✓</span>Ocultar visitados<span class="sw"></span></button><button class="frow" id="fAll" style="--c:var(--gold)">Mostrar todo</button><div class="fhint">Los spots aparecen al entrar a una isla. Tocá una isla o elegila abajo.</div>`;
+  `<div class="fsep"></div><div class="vlab">Visitados</div><div class="vseg"><button data-v="all" class="on">Todos</button><button data-v="todo">Por visitar <i></i></button><button data-v="done">✓ Visitados <i></i></button></div><div class="fsep"></div><button class="frow" id="fAll" style="--c:var(--gold)">Mostrar todo</button><div class="fhint">Los spots aparecen al entrar a una isla. Tocá una isla o elegila abajo.</div>`;
 fPanel.querySelectorAll('.frow[data-k]').forEach(r=>r.onclick=e=>{e.stopPropagation();active[r.dataset.k]=!active[r.dataset.k];applyFilters();});
 document.getElementById('fSport').onclick=e=>{e.stopPropagation();for(const k in active)active[k]=SPORT_CATS.has(k);applyFilters();};
-document.getElementById('fHideV').onclick=e=>{e.stopPropagation();hideVisited=!hideVisited;applyFilters();};
-document.getElementById('fAll').onclick=e=>{e.stopPropagation();for(const k in active)active[k]=true;applyFilters();};
+fPanel.querySelectorAll('.vseg button').forEach(b=>b.onclick=e=>{e.stopPropagation();visMode=b.dataset.v;applyFilters();});
+document.getElementById('fAll').onclick=e=>{e.stopPropagation();for(const k in active)active[k]=true;visMode='all';applyFilters();};
 fPanel.addEventListener('pointerdown',e=>e.stopPropagation());
 
 /* =================== Lista =================== */
@@ -1365,7 +1374,7 @@ function ready(){
 
 /* =================== Arranque =================== */
 new ResizeObserver(()=>{resize();}).observe(cv);
-applyVisited();
+applyVisited();applyFilters();
 const appEl=document.getElementById('app');appEl.addEventListener('scroll',()=>{if(appEl.scrollTop||appEl.scrollLeft){appEl.scrollTop=0;appEl.scrollLeft=0;}});
 addEventListener('scroll',()=>{if(scrollY||scrollX)scrollTo(0,0);});
 document.addEventListener('gesturestart',e=>e.preventDefault());document.addEventListener('gesturechange',e=>e.preventDefault());
