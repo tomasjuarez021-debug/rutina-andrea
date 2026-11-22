@@ -197,6 +197,17 @@ aside h2 button{margin-left:auto;background:none;border:0;color:var(--muted);fon
 #loader .lb i{display:block;height:100%;width:0;background:linear-gradient(90deg,#b8924a,var(--gold));transition:width .3s}
 #loader .ls{font-size:11px;letter-spacing:3px;text-transform:uppercase;color:var(--muted)}
 #loader>*{position:relative;z-index:1}
+ #welcome{position:absolute;inset:0;z-index:45;display:grid;place-content:center;justify-items:center;gap:10px;pointer-events:none;text-align:center;padding:0 20px;
+  background:radial-gradient(ellipse at center,rgba(6,18,27,.55),rgba(6,18,27,0) 65%);opacity:0;transition:opacity 1s ease}
+#welcome.show{opacity:1}
+#welcome .w1{font:300 13px var(--ui);letter-spacing:8px;text-transform:uppercase;color:var(--muted);transform:translateY(8px);transition:transform 1.4s ease}
+#welcome .w2{font:300 clamp(30px,7vw,64px)/1.1 var(--ui);letter-spacing:clamp(6px,1.6vw,16px);text-transform:uppercase;color:#fff;padding-left:clamp(6px,1.6vw,16px);
+  text-shadow:0 2px 30px rgba(0,0,0,.6);transform:translateY(12px) scale(.98);transition:transform 1.6s cubic-bezier(.2,.8,.2,1)}
+#welcome .w2 b{font-weight:400;color:var(--gold)}
+#welcome .w3{font:italic 400 15px var(--ui);letter-spacing:3px;color:var(--gold);opacity:.9;transform:translateY(8px);transition:transform 1.8s ease}
+#welcome.show .w1,#welcome.show .w2,#welcome.show .w3{transform:none}
+#welcome .line{width:0;height:1px;background:linear-gradient(90deg,transparent,var(--gold),transparent);transition:width 1.6s ease .3s}
+#welcome.show .line{width:min(320px,60vw)}
 #bolt{position:absolute!important;inset:0;width:100%;height:100%;z-index:0!important;pointer-events:none}
 #flash{position:fixed;inset:0;z-index:70;background:radial-gradient(ellipse at 50% 30%,rgba(230,240,255,.95),rgba(170,200,255,.55) 45%,rgba(120,160,255,0) 80%);opacity:0;pointer-events:none}
 #flash.on{animation:flash .9s ease-out}
@@ -210,6 +221,7 @@ aside h2 button{margin-left:auto;background:none;border:0;color:var(--muted);fon
   .brand small{font-size:10px}
   #compass{width:46px;height:46px;top:calc(64px + env(safe-area-inset-top))}
   #coords{display:none}
+  #welcome .w3{font-size:12px;letter-spacing:1.5px}
   .tourBtn{padding:9px 12px}
   .tourBtn .x{display:none}
   #tourBar{top:calc(10px + env(safe-area-inset-top))}
@@ -259,6 +271,7 @@ aside h2 button{margin-left:auto;background:none;border:0;color:var(--muted);fon
     <p class="note">Costas reales (Natural Earth 1:10m). El relieve se genera a partir de la altura y posición real de cada volcán: es aproximado. Fotos de Wikimedia Commons. Permisos, cierres y reservas cambian seguido: verificá antes de ir (NPS, DLNR Hawaiʻi, USGS HVO).</p>
   </aside>
   <div id="lb" hidden><div class="lbstage" id="lbStage"><img id="lbImg" alt=""></div><button class="lbx" aria-label="Cerrar">✕</button><button class="lbp" aria-label="Anterior">‹</button><button class="lbn" aria-label="Siguiente">›</button><div id="lbCap"></div></div>
+  <div id="welcome" aria-live="polite"><div class="w1">Aloha</div><div class="w2">Bienvenidos a <b>Hawaiʻi</b></div><div class="line"></div><div class="w3">Mapa de aventura · surf · kite · volcanes</div></div>
   <div id="flash"></div>
   <div id="loader"><canvas id="bolt"></canvas><div class="lt">HAWAIʻI</div><div class="lb"><i id="lbar"></i></div><div class="ls" id="lmsg">Generando relieve</div></div>
 </div>
@@ -1320,7 +1333,10 @@ const Bolt=(()=>{const c=document.getElementById('bolt'),g=c.getContext('2d');le
 Bolt.start();
 function ready(){
   const L=document.getElementById('loader');Bolt.finale();
-  setTimeout(()=>{L.classList.add('done');setTimeout(()=>L.remove(),800);},380);
+  setTimeout(()=>{L.classList.add('done');setTimeout(()=>L.remove(),800);
+    const W=document.getElementById('welcome');W.classList.add('show');
+    const hideW=()=>{W.classList.remove('show');setTimeout(()=>W.remove(),1100);removeEventListener('pointerdown',hideW,true);};
+    const tm=setTimeout(hideW,3200);addEventListener('pointerdown',()=>{clearTimeout(tm);hideW();},{capture:true,once:true});},380);
   const o=overview();flyTo(o.x,o.y,o.z);
 }
 
