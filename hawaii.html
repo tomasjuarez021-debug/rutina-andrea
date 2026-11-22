@@ -158,6 +158,11 @@ body.touring .tl,body.touring .tr,body.touring #islandBar{opacity:0;pointer-even
 .sg div{font-size:12.5px;line-height:1.35;min-width:0}
 .sg b{display:block;font-size:9.5px;letter-spacing:1px;text-transform:uppercase;color:var(--muted);margin-bottom:1px}
 .sg .warn{grid-column:1/-1;color:#ffd9ad}
+.rank{font-size:12.5px;color:var(--text);background:rgba(233,201,127,.08);border:1px solid rgba(233,201,127,.3);border-radius:10px;padding:8px 10px;margin:-4px 0 12px}
+.rank b{color:var(--gold)}.rank .st{color:var(--gold);letter-spacing:1px}.rank a{color:var(--muted)}
+.rank .why{color:var(--muted);font-size:11.5px;margin-top:4px;line-height:1.4}
+.card .nophoto{position:absolute;z-index:3;left:14px;bottom:36px;font:500 11px var(--ui);color:#fff;background:rgba(0,0,0,.45);padding:4px 8px;border-radius:999px}
+.rk{color:var(--gold);font:600 11px var(--ui);margin-left:auto;white-space:nowrap}
 .facts{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px}
 .fact{background:var(--panel2);border:1px solid rgba(255,255,255,.06);border-radius:10px;padding:8px 10px;font-size:12.5px}
 .fact b{display:block;font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;font-weight:600;margin-bottom:2px}
@@ -651,6 +656,15 @@ const SV={"North Shore · Pipeline":[21.6646,-158.0497],"Waimea Bay":[21.6417,-1
  "Kalalau Trail · Nā Pali":[22.1514,-159.6464],"Waimea Canyon":[22.0712,-159.6618],"Hanalei Bay":[22.2121,-159.4993],"Honolua Bay":[21.0124,-156.6385],
  "Mauna Kea":[19.7612,-155.4559],"Kanahā · Kite Beach":[20.8985,-156.4385],"Kailua · kite":[21.3975,-157.7275]};
 const TOUR=["Kalalau Trail · Nā Pali","Hanalei Bay","North Shore · Pipeline","Waimea Bay","Waikīkī","Honolua Bay","Peʻahi · Jaws","Kanahā · Kite Beach","Haleakalā · amanecer","Kīlauea · Halemaʻumaʻu","Mauna Kea"];
+
+/* =================== Ranking y fotos verificadas de surf y kite =================== */
+// Calificación de cada rompiente en surf-forecast.com (1–5, votos de surfistas); 0 = sin calificación publicada
+const RATE={"North Shore · Pipeline": [5, "Pipeline_1"], "Peʻahi · Jaws": [5, "Jaws"], "Waimea Bay": [5, "Waimea-Bay-Pinballs"], "Sunset Beach": [4, "Sunset_1"], "Hanalei Bay": [4, "Hanalei-Bay"], "Honolua Bay": [4, "Honolua-Bay"], "Hoʻokipa": [4, "Hookipa"], "Ala Moana Bowls": [4, "Ala-Moana-Bowls"], "Mākaha": [3, "Makaha"], "Laniakea · Chun’s": [3, "Chuns-Reef"], "Honoliʻi (Hilo)": [3, "Honolii-Beach-Park"], "Pine Trees · Kona": [3, "Pine-Trees"], "Poʻipū": [3, "P-Ks"], "Banyans · Kona": [3, "Banyons"], "Sandy Beach": [3, "Sandys-Beach"], "Kahaluʻu Bay": [3, "Kahalu-u"], "Pohoiki": [2, "Pohoiki"], "Waikīkī": [2, "Canoes"], "Haleʻiwa · Puaʻena Point": [2, "Puaena-Point"], "Kalapakī Bay": [2, "Kalapaki-Beach"], "Launiupoko": [0, null], "Cove Park · Kīhei": [0, "Kihei-Cove"]};
+const SURF_RANK=Object.keys(RATE);
+const KITE_RANK=["Kanahā · Kite Beach", "Kailua · kite", "Mokulēʻia", "Diamond Head · kite", "ʻAnini"];
+const KITE_WHY={"Kanahā · Kite Beach": "El spot de kite más reconocido de Hawái: todos los niveles, escuelas y alisios constantes.", "Kailua · kite": "El más recomendado de Oʻahu para todos los niveles y para aprender, todo el año.", "Mokulēʻia": "Señalado como el principal spot de kite de Oʻahu para riders con experiencia.", "Diamond Head · kite": "Opción de la costa sur, con olas; mejor en verano.", "ʻAnini": "Laguna plana de Kauaʻi para iniciarse en windsurf y kite."};
+// f: archivos de Commons elegidos a mano · c: categoría del lugar · cf: categoría general filtrada por nombre · k: el título tiene que nombrar el lugar
+const PH={"North Shore · Pipeline": {"f": ["Surfer at Banzai Pipeline, North Shore (Oahu).jpg", "Escaping the jaws of a Banzai Pipeline wave.jpg"], "c": ["Banzai Pipeline"], "k": "pipeline|ehukai|banzai", "q": ["Banzai Pipeline"]}, "Peʻahi · Jaws": {"f": ["Jeff Rowley Jaws Peahi Maui Paddle In Big Wave Surfing Red Bull Jaws 7.jpg", "Jeff Rowley Big Wave Surfer Jaws Peahi Maui First Australian to Paddle in 4 January 2012 Xvolution Media - Flickr - Jeff Rowley Big Wave Surfer.jpg"], "c": ["Surfing at Peahi"], "k": "peahi|pe'ahi|jaws"}, "Waimea Bay": {"f": ["A monster wave at Waimea Bay on the north shore of Oahu.jpg", "The Eddie Aikau Big Wave Invitational, Waimea Bay, Oahu, Hawaii.jpg", "Eddie Aikau Big Wave Invitational Surf Contest Waimea Bay Hawaii Febrary 2016 (24982903470).jpg", "Eddie Aikau Big Wave Invitational Surf Contest Waimea Bay Hawaii Febrary 2016 (25185363461).jpg", "Eddie Aikau Big Wave Invitational Surf Contest Waimea Bay Hawaii Febrary 2016 (24982900920).jpg"], "k": "waimea bay", "q": ["Waimea Bay Oahu surf"]}, "Sunset Beach": {"f": ["SunsetBeach.jpg"], "c": ["Sunset Beach, Hawaii", "Sunset Beach Park"], "k": "sunset beach", "q": ["Sunset Beach Oahu", "Sunset Beach North Shore"]}, "Hanalei Bay": {"f": ["Surfing on Hanalai Beach (8034679249).jpg", "Paddle surfing in Hanalei Bay (8034673156).jpg"], "c": ["Hanalei Bay"], "k": "hanalei|hanalai"}, "Honolua Bay": {"f": ["Honolua Bay Surfing (40521440453).jpg"], "c": ["Honolua Bay"], "k": "honolua"}, "Hoʻokipa": {"f": ["Hookipa Beach surfing Maui Hawaii (45690499842).jpg"], "c": ["Hookipa"], "k": "hookipa|ho'okipa"}, "Ala Moana Bowls": {"f": ["Surfing at Ala Moana Beach Park (6206069737).jpg"], "k": "bowls", "q": ["Ala Moana Bowls", "South Swell Surf Bowls"]}, "Mākaha": {"f": ["Makaha beach, surf, sand, sky - panoramio.jpg"], "c": ["Mākaha Beach Park"], "k": "makaha"}, "Laniakea · Chun’s": {"f": ["Sea turtles at Laniakea Beach, Hawaii.jpg"], "k": "laniakea|chun", "q": ["Laniakea Beach", "Chuns Reef"]}, "Honoliʻi (Hilo)": {"k": "honolii", "q": ["Honolii", "Honolii Beach Park"]}, "Pine Trees · Kona": {"k": "pine trees|kohanaiki", "q": ["Kohanaiki", "Pine Trees Kona"]}, "Poʻipū": {"c": ["Poipu Beach Park"], "k": "poipu"}, "Banyans · Kona": {"k": "banyans", "q": ["Banyans Kona surf"]}, "Sandy Beach": {"f": ["Sandy Beach (Hawaii) Sunrise5.jpg"], "k": "sandy beach.{0,40}(hawaii|oahu|honolulu|park)|sandy's", "q": ["Sandy Beach Oahu", "Sandy Beach Hawaii"]}, "Kahaluʻu Bay": {"f": ["Kahaluu Beach Park.jpg"], "c": ["Kahaluu Bay"], "k": "kahaluu"}, "Pohoiki": {"k": "pohoiki|isaac hale", "q": ["Pohoiki", "Isaac Hale Beach Park"]}, "Waikīkī": {"c": ["Waikiki Beach"], "k": "waikiki", "q": ["Waikiki surfing", "Canoes Waikiki surf"]}, "Haleʻiwa · Puaʻena Point": {"f": ["Haleiwa Beach and Maeaea Beach - Haleiwa Oahu Hawaii.jpg"], "c": ["Haleiwa Beach Park"], "k": "puaena|haleiwa"}, "Kalapakī Bay": {"c": ["Kalapaki Beach"], "k": "kalapaki"}, "Launiupoko": {"k": "launiupoko", "q": ["Launiupoko"]}, "Cove Park · Kīhei": {"k": "kihei cove|cove park", "q": ["Kihei Cove", "Cove Park Kihei"]}, "Kanahā · Kite Beach": {"cf": ["Kitesurfing in Hawaii", "Kitesurfers", "Kitesurfing"], "k": "kanaha", "q": ["Kanaha kitesurfing", "Kanaha Beach Park"]}, "Kailua · kite": {"cf": ["Kitesurfing in Hawaii", "Windsurfing in Hawaii"], "c": ["Kailua Beach"], "k": "kailua", "q": ["Kailua Beach kitesurfing", "Kailua Bay windsurfing"]}, "Diamond Head · kite": {"cf": ["Kitesurfing in Hawaii", "Windsurfing in Hawaii"], "k": "diamond head.{0,60}(kite|wind|sail)|(kite|wind|sail).{0,60}diamond head", "q": ["Diamond Head kitesurfing", "Diamond Head windsurfing"]}, "Mokulēʻia": {"f": ["Kite surfing Oahu.jpg"], "cf": ["Kitesurfing in Hawaii"], "k": "mokuleia|mokule'ia", "q": ["Mokuleia"]}, "ʻAnini": {"cf": ["Kitesurfing in Hawaii", "Windsurfing in Hawaii"], "k": "anini", "q": ["Anini Beach"]}};
 const ISL_FULL={"Hawaiʻi":"Hawaiʻi (Big Island)"};
 
 const ISL_VIEW={"Kauaʻi":[95,5,135,100],"Oʻahu":[365,105,150,115],"Maui":[655,240,150,115],"Hawaiʻi":[750,345,270,300]};
@@ -1022,7 +1036,7 @@ function render(s){
   const q=encodeURIComponent(s.n.replace(/·/g,' ')+' '+s.i+' Hawaii');
   card.style.setProperty('--c',COLOR[s.c]);
   card.innerHTML=`<div class="scene">${scene(s.sc)}<span class="tag">${ICON[s.c]}${CAT[s.c].label}</span><button class="close" aria-label="Cerrar">✕</button></div>
-  <div class="body"><h3>${s.n}</h3><div class="isl">${islName(s.i)}</div><p>${s.d}</p>
+  <div class="body"><h3>${s.n}</h3><div class="isl">${islName(s.i)}</div>${rankHTML(s)}<p>${s.d}</p>
   <div class="facts"><div class="fact"><b>Nivel</b>${s.lvl}</div><div class="fact"><b>Duración</b>${s.dur}</div></div>
   ${SPORT[s.n]?`<div class="sportbox"><h5>${s.c==='kite'?'🪁':'🏄'} Ficha deportiva</h5><div class="sg">${['Swell / agua','Viento','Fondo','Mejor momento',s.c==='kite'?'Equipo':'Tabla','Ojo con'].map((l,k)=>`<div class="${k===5?'warn':''}"><b>${l}</b>${SPORT[s.n][k]}</div>`).join('')}</div></div>`:''}
   <div class="season ${s.fm[0]}"><b>Feb–Mar:</b> ${s.fm[1]}</div>
@@ -1032,6 +1046,13 @@ function render(s){
   card.querySelector('.close').onclick=e=>{e.stopPropagation();closeCard();};
   card.scrollTop=0;loadGallery(s);
 }
+
+function stars(n){return '★★★★★'.slice(0,n)+'☆☆☆☆☆'.slice(0,5-n);}
+function rankHTML(s){
+  if(s.c==='surf'&&RATE[s.n]){const k=SURF_RANK.indexOf(s.n)+1,[r,id]=RATE[s.n];
+    return `<div class="rank"><b>🏆 #${k}</b> de ${SURF_RANK.length} en surf${r?` · <span class="st">${stars(r)}</span> ${r}/5`:' · sin calificación publicada'}${id?` · <a href="https://www.surf-forecast.com/breaks/${id}" target="_blank" rel="noopener">surf-forecast.com</a>`:''}</div>`;}
+  if(s.c==='kite'){const k=KITE_RANK.indexOf(s.n)+1;if(k)return `<div class="rank"><b>🏆 #${k}</b> de ${KITE_RANK.length} en kite<div class="why">${KITE_WHY[s.n]} Ranking por reputación en guías de kite: no hay calificaciones públicas con suficientes votos.</div></div>`;}
+  return '';}
 function openSpot(i,zMin){
   const s=SPOTS[i];pinned=i;lastPin='';render(s);document.body.classList.add('cardOpen');card.classList.add('show');currentIsl=s.i;
   SPOTS.forEach((o,k)=>{o.el.classList.toggle('sel',k===i);o.li&&o.li.classList.toggle('sel',k===i);});
@@ -1084,25 +1105,38 @@ setTimeout(loadPhotos,800);
 
 /* =================== Galería de fotos (Wikimedia Commons) =================== */
 const PHQ=[["Kalalau Valley", "Na Pali Coast sunset", "Kalalau Trail"], ["Awaawapuhi", "Kalalau lookout", "Na Pali Coast Kokee"], ["Waimea Canyon", "Waimea Canyon sunset"], ["Nounou Mountain", "Sleeping Giant Kauai", "Wailua Kauai"], ["Wailua River", "Uluwehi Falls", "Wailua Falls"], ["Na Pali Coast", "Na Pali Coast aerial"], ["Hanalei Bay surfer", "Hanalei Bay sunset", "Hanalei Bay surfing"], ["Poipu surfing", "Poipu Beach sunset"], ["Tunnels Beach Kauai", "Haena Beach", "Makua Beach Kauai"], ["Polihale sunset", "Polihale State Park"], ["Kilauea Lighthouse", "Kilauea Point"], ["Diamond Head sunset", "Diamond Head crater aerial", "Diamond Head Waikiki"], ["Koko Crater", "Koko Head"], ["Lanikai pillbox", "Mokulua Islands sunrise", "Kaiwa Ridge"], ["Kuliouou Ridge", "Koolau Range"], ["Manoa Falls"], ["Makapuu Lighthouse", "Makapuu Point"], ["Kaena Point", "Kaena Point sunset"], ["Banzai Pipeline surfer", "Pipeline barrel", "North Shore Oahu surfer sunset"], ["Waimea Bay big wave surfer", "Waimea Bay surfing", "Waimea Bay sunset"], ["Laniakea surfing", "North Shore Oahu surfer"], ["Waikiki surfer sunset", "Waikiki longboard surfing", "Waikiki sunset"], ["Makaha surfing", "Makaha surfer", "Makaha sunset"], ["Hanauma Bay"], ["Lanikai Beach", "Kailua Beach", "Mokulua Islands"], ["Waimanalo Beach", "Waimanalo Bay"], ["Sharks Cove Oahu", "Pupukea"], ["Kualoa Ranch", "Kaaawa Valley", "Kualoa"], ["Haleakala sunrise", "Haleakala sunset above clouds"], ["Haleakala crater", "Sliding Sands trail", "Haleakala cinder cones"], ["Pipiwai Trail", "Waimoku Falls", "Pipiwai bamboo"], ["Waihee Ridge", "West Maui Mountains"], ["Iao Valley", "Iao Needle"], ["Waianapanapa", "Waianapanapa black sand beach"], ["Makena Beach", "Big Beach Maui"], ["Kaanapali sunset", "Black Rock Kaanapali"], ["Honolua Bay surfing", "Honolua Bay surfer", "Honolua Bay"], ["Jaws Peahi surfer", "Peahi big wave surfing", "Jaws Maui"], ["Hookipa surfer", "Hookipa windsurfing", "Hookipa sunset"], ["Lahaina surfing sunset", "Launiupoko surfing"], ["Molokini"], ["Humpback whale Maui", "Humpback whale breaching Hawaii"], ["Nakalele Blowhole", "Nakalele Point"], ["Halemaumau crater night", "Kilauea lava lake", "Halemaumau"], ["Kilauea Iki"], ["Holei Sea Arch", "Chain of Craters Road"], ["Mauna Kea sunset", "Mauna Kea observatories", "Mauna Kea night sky"], ["Mauna Loa", "Mokuaweoweo", "Mauna Loa summit"], ["Kaumana Caves", "lava tube Hawaii"], ["Waipio Valley", "Waipio Valley lookout"], ["Pololu Valley"], ["Akaka Falls"], ["Papakolea Beach", "green sand beach Hawaii"], ["Punaluu Beach", "Punaluu black sand"], ["Hapuna Beach", "Hapuna sunset"], ["Kua Bay", "Maniniowali", "Kekaha Kai"], ["Puuhonua o Honaunau", "Honaunau Bay"], ["Kealakekua Bay", "Captain Cook Monument"], ["Manta ray night snorkel Kona", "Manta birostris Hawaii", "Reef manta ray"], ["Ka Lae", "South Point Hawaii"], ["Honolii surfing", "Hilo surfer"], ["Kona surfing sunset", "Kailua-Kona surfer"], ["Sunset Beach Oahu surfer", "Sunset Beach Hawaii sunset", "Sunset Beach surfing"], ["Haleiwa surfing", "Haleiwa surfer", "Haleiwa sunset"], ["Ala Moana Bowls surfing", "Ala Moana surfer"], ["Sandy Beach bodyboarding", "Sandy Beach Oahu waves"], ["Kalapaki Bay surfing", "Kalapaki Beach"], ["Kihei surfing", "Cove Park Kihei"], ["Pine Trees Kona surfing", "Kona surfer sunset"], ["Kahaluu Bay surfing", "Kahaluu Bay"], ["Pohoiki surfing", "Pohoiki black sand beach"], ["Kanaha kitesurfing", "Kite Beach Maui", "Maui kitesurfing sunset"], ["Kailua kitesurfing", "Kailua Beach windsurfing", "Kailua Oahu kiteboarding"], ["Diamond Head kitesurfing", "Diamond Head kiteboarding"], ["Mokuleia kitesurfing", "Mokuleia Beach"], ["Anini Beach windsurfing", "Anini Beach Kauai"], ["Kalaupapa lookout", "Kalaupapa peninsula", "Molokai sea cliffs"], ["Halawa Valley Molokai", "Moaula Falls", "Halawa Bay"], ["Papohaku Beach", "Papohaku Beach sunset", "Molokai sunset"], ["Kamakou Preserve", "Pepeopae bog", "Kamakou"], ["Molokai reef", "Molokai fishpond", "Molokai south shore"], ["Puu Pehe", "Hulopoe Bay", "Sweetheart Rock Lanai"], ["Garden of the Gods Lanai", "Keahiakawelo"], ["Shipwreck Beach Lanai", "Kaiolohia", "Lanai shipwreck"], ["Munro Trail Lanai", "Lanaihale", "Lanai view"]];
-const CAPI='https://commons.wikimedia.org/w/api.php?action=query&format=json&origin=*&generator=search&gsrnamespace=6&gsrlimit=16&prop=imageinfo&iiprop=url|size|extmetadata&iiextmetadatafilter=Artist|LicenseShortName&iiurlwidth=1100&gsrsearch=';
-const BADP=/\b(map|mapa|locator|location map|diagram|chart|sign|signs|plaque|logo|seal|flag|stamp|coin|postcard|drawing|illustration|engraving|lithograph|painting|museum|document|scan|book|label|specimen|herbarium|poster|brochure|screenshot|ticket|menu|graph)\b|\b1[89]\d\d\b/i;
-const GOODP=[[/sunset|sunrise|dusk|dawn|golden|twilight|afterglow|atardecer|amanecer/i,4],[/view|vista|lookout|overlook|panorama|panoramic|aerial|from above|scenic|landscape|vista/i,2.5],[/beach|bay|valley|falls|crater|coast|cliff|summit|wave|surf|lava|ridge|canyon/i,1]];
+const CBASE='https://commons.wikimedia.org/w/api.php?action=query&format=json&origin=*&prop=imageinfo&iiprop=url|size|extmetadata&iiextmetadatafilter=Artist|LicenseShortName&iiurlwidth=1100';
+const BADP=/\b(map|mapa|locator|location map|diagram|chart|sign|signs|plaque|logo|seal|flag|stamp|coin|postcard|drawing|illustration|engraving|lithograph|painting|museum|document|scan|book|label|specimen|herbarium|poster|brochure|screenshot|ticket|menu|graph)\b|\b1[89]\d\d\b|starr-\d/i;
+const GOODP=[[/sunset|sunrise|dusk|dawn|golden|twilight|afterglow|atardecer|amanecer/i,4],[/view|vista|lookout|overlook|panorama|panoramic|aerial|from above|scenic|landscape/i,2.5],[/beach|bay|valley|falls|crater|coast|cliff|summit|wave|surf|lava|ridge|canyon/i,1]];
+const norm=t=>(t||'').normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/[ʻʼ’`]/g,"'").toLowerCase();
+const GENERIC=new Set('beach bay valley trail hawaii hawai maui oahu kauai lanai molokai island islands big park state point view falls lookout sunset sunrise aerial surfing surfer surf kona hilo north shore south coast black sand green the and from road national historical night sky summit crater ridge reef ray whale lava tube cave kayak snorkel'.split(' '));
+function keyRe(i){const s=SPOTS[i],ph=PH[s.n];if(ph&&ph.k)return new RegExp(ph.k,'i');
+  const w=new Set();[s.n,...(PHQ[i]||[])].forEach(q=>norm(q).replace(/'/g,'').split(/[^a-z0-9]+/).forEach(x=>{if(x.length>=4&&!GENERIC.has(x))w.add(x);}));
+  return w.size?new RegExp([...w].join('|'),'i'):null;}
 function scoreImg(p,rank,cat){const t=p.title,ii=p.imageinfo&&p.imageinfo[0];if(!ii||!ii.thumburl||BADP.test(t))return -99;
-  let sc=-rank*.3;if(cat==='surf'&&/surf|surfer|surfing|barrel|tube|bodyboard|longboard/i.test(t))sc+=4;if(cat==='kite'&&/kite|kitesurf|kiteboard|windsurf|sailboard/i.test(t))sc+=4.5;for(const [r,v] of GOODP)if(r.test(t))sc+=v;const ar=ii.width/ii.height;if(ar<1.15||ar>2.7)sc-=2.5;if(ii.width>=3000)sc+=.8;if(ii.width<1400)sc-=1;if(!/\.jpe?g$/i.test(t))sc-=1.5;return sc;}
-async function commons(q,strict){try{const r=await fetch(CAPI+encodeURIComponent(q+' filetype:bitmap'+(strict?' filew:>1300':'')));const j=await r.json();
-  return Object.values((j.query||{}).pages||{}).sort((a,b)=>a.index-b.index);}catch(e){return [];}}
+  let sc=-rank*.3;if(cat==='surf'&&/surf|surfer|surfing|barrel|tube|bodyboard|longboard|wave/i.test(t))sc+=4;if(cat==='kite'&&/kite|kitesurf|kiteboard|windsurf|sailboard/i.test(t))sc+=4.5;
+  for(const [r,v] of GOODP)if(r.test(t))sc+=v;const ar=ii.width/ii.height;if(ar<1.15||ar>2.7)sc-=2.5;if(ii.width>=3000)sc+=.8;if(ii.width<1400)sc-=1;if(!/\.jpe?g$/i.test(t))sc-=1.5;return sc;}
+const pagesOf=j=>Object.values((j.query||{}).pages||{}).filter(p=>p.imageinfo&&p.imageinfo[0]&&p.imageinfo[0].thumburl).sort((a,b)=>(a.index||0)-(b.index||0));
+const getJ=u=>fetch(u).then(r=>r.json()).catch(()=>({}));
+const byFiles=fs=>fs.length?getJ(CBASE+'&titles='+encodeURIComponent(fs.map(f=>'File:'+f).join('|'))).then(j=>{const ps=pagesOf(j);return fs.map(f=>ps.find(p=>norm(p.title)===norm('File:'+f))).filter(Boolean);}):Promise.resolve([]);
+const byCat=c=>getJ(CBASE+'&generator=categorymembers&gcmtype=file&gcmlimit=50&gcmtitle='+encodeURIComponent('Category:'+c)).then(pagesOf);
+const bySearch=q=>getJ(CBASE+'&generator=search&gsrnamespace=6&gsrlimit=20&gsrsearch='+encodeURIComponent(q+' filetype:bitmap')).then(pagesOf);
 const galCache={};
 const stripH=h=>(h||'').replace(/<[^>]*>/g,'').replace(/\s+/g,' ').trim();
-function gallery(i){if(galCache[i])return galCache[i];const s=SPOTS[i];const qs=PHQ[i]||[s.n+' Hawaii'];
-  return galCache[i]=(async()=>{let rs=await Promise.all(qs.map(q=>commons(q,true)));if(!rs.some(r=>r.length))rs=await Promise.all(qs.map(q=>commons(q,false)));
-    const seen=new Set(),all=[];rs.forEach(r=>r.forEach((p,k)=>{if(seen.has(p.title))return;seen.add(p.title);const sc=scoreImg(p,k,s.c);if(sc>-50)all.push({p,sc});}));
-    all.sort((a,b)=>b.sc-a.sc);
-    return all.slice(0,7).map(({p})=>{const ii=p.imageinfo[0],m=ii.extmetadata||{};const bw=Math.min(2200,ii.width);
-      return {src:ii.thumburl,big:bw>=ii.width?ii.url:ii.thumburl.replace(/\/(\d+)px-/,'/'+bw+'px-'),page:ii.descriptionurl,
-        by:stripH(m.Artist&&m.Artist.value).slice(0,50),lic:stripH(m.LicenseShortName&&m.LicenseShortName.value)};});})();}
+const toImg=p=>{const ii=p.imageinfo[0],m=ii.extmetadata||{};const bw=Math.min(2200,ii.width);
+  return {src:ii.thumburl,big:bw>=ii.width?ii.url:ii.thumburl.replace(/\/(\d+)px-/,'/'+bw+'px-'),page:ii.descriptionurl,
+    by:stripH(m.Artist&&m.Artist.value).slice(0,50),lic:stripH(m.LicenseShortName&&m.LicenseShortName.value)};};
+// Solo fotos del lugar: archivos elegidos a mano, categorías del lugar o títulos que nombran el lugar
+function gallery(i){if(galCache[i])return galCache[i];const s=SPOTS[i],ph=PH[s.n]||{},key=keyRe(i),seen=new Set(),out=[];
+  return galCache[i]=(async()=>{
+    const fx=await byFiles(ph.f||[]);fx.forEach(p=>{if(!seen.has(p.title)){seen.add(p.title);out.push({p,sc:100-out.length});}});
+    const [cs,cfs,qs]=await Promise.all([Promise.all((ph.c||[]).map(byCat)),Promise.all((ph.cf||[]).map(byCat)),Promise.all((ph.q||(PH[s.n]?[]:PHQ[i]||[])).map(bySearch))]);
+    const add=(list,needKey)=>list.forEach((p,k)=>{if(seen.has(p.title))return;if(needKey&&!(key&&key.test(norm(p.title))))return;const sc=scoreImg(p,k,s.c);if(sc>-50){seen.add(p.title);out.push({p,sc});}});
+    cs.forEach(l=>add(l,false));cfs.forEach(l=>add(l,true));qs.forEach(l=>add(l,true));
+    out.sort((a,b)=>b.sc-a.sc);return out.slice(0,8).map(o=>toImg(o.p));})();}
 function prefetchIsland(n){let q=SPOTS.map((s,i)=>s.i===n?i:-1).filter(i=>i>=0&&!galCache[i]);const run=()=>{const i=q.shift();if(i===undefined)return;gallery(i).finally(run);};run();run();}
 async function loadGallery(s){const i=SPOTS.indexOf(s);const imgs=await gallery(i);if(curSpot!==s)return;
-  if(!imgs.length){ensurePhoto(s);return;}
+  if(!imgs.length){if(!PH[s.n])ensurePhoto(s);else{const sc=card.querySelector('.scene');if(sc&&!sc.querySelector('.nophoto')){const n=document.createElement('span');n.className='nophoto';n.textContent='Sin fotos verificadas de este spot todavía';sc.appendChild(n);}}return;}
   const sc=card.querySelector('.scene');if(!sc||sc.querySelector('.gal'))return;
   const g=document.createElement('div');g.className='gal';
   g.innerHTML=imgs.map((m,k)=>`<img src="${m.src}" alt="${s.n}" referrerpolicy="no-referrer" ${k>1?'loading="lazy"':''} data-k="${k}">`).join('');
@@ -1114,7 +1148,7 @@ async function loadGallery(s){const i=SPOTS.indexOf(s);const imgs=await gallery(
   sc.querySelectorAll('img.photo,.credit').forEach(e=>e.remove());
   sc.appendChild(g);sc.appendChild(zb);sc.appendChild(dots);sc.appendChild(cr);
   let first=g.querySelector('img');first.onload=()=>g.classList.add('on');if(first.complete&&first.naturalWidth)g.classList.add('on');
-  g.querySelectorAll('img').forEach(im=>{im.onerror=()=>{const k=+im.dataset.k;im.remove();const d=dots.children[[...g.children].length];d&&d.remove();if(!g.children.length){g.remove();dots.remove();cr.remove();zb.remove();ensurePhoto(s);}else if(k===0){g.children[0].onload=()=>g.classList.add('on');}};});
+  g.querySelectorAll('img').forEach(im=>{im.onerror=()=>{const k=+im.dataset.k;im.remove();const d=dots.children[[...g.children].length];d&&d.remove();if(!g.children.length){g.remove();dots.remove();cr.remove();zb.remove();if(!PH[s.n])ensurePhoto(s);}else if(k===0){g.children[0].onload=()=>g.classList.add('on');}};});
   let cur=0;g.addEventListener('scroll',()=>{const k=Math.round(g.scrollLeft/g.clientWidth);if(k!==cur){cur=k;[...dots.children].forEach((d,j)=>d.classList.toggle('on',j===k));const im=g.children[k];setCr(im?+im.dataset.k:0);}},{passive:true});
   const open=()=>{const im=g.children[cur];openLB(imgs,im?+im.dataset.k:0);};
   g.addEventListener('click',open);zb.onclick=e=>{e.stopPropagation();open();};
@@ -1169,6 +1203,12 @@ fPanel.addEventListener('pointerdown',e=>e.stopPropagation());
 
 /* =================== Lista =================== */
 const list=document.getElementById('list');
+[['🏆 RANKING SURF',SURF_RANK],['🏆 RANKING KITE',KITE_RANK]].forEach(([t,arr])=>{const grp=document.createElement('div');grp.className='grp';grp.innerHTML=`<h4>${t}</h4>`;
+  arr.forEach((n,k)=>{const idx=SPOTS.findIndex(s=>s.n===n);if(idx<0)return;const s=SPOTS[idx],r=RATE[n];
+    const it=document.createElement('div');it.className='item';it.style.setProperty('--c',COLOR[s.c]);
+    it.innerHTML=`<span class="ic">${ICON[s.c]}</span>#${k+1} ${s.n}<span class="rk">${r?(r[0]?stars(r[0]):'s/d'):s.i}</span>`;
+    it.onclick=()=>{aside.classList.remove('open');openSpot(idx);};grp.appendChild(it);});
+  list.appendChild(grp);});
 ["Kauaʻi","Oʻahu","Molokaʻi","Lānaʻi","Maui","Hawaiʻi"].forEach(isl=>{
   const grp=document.createElement('div');grp.className='grp';grp.innerHTML=`<h4>${islName(isl).toUpperCase()}</h4>`;
   SPOTS.forEach((s,idx)=>{if(s.i!==isl)return;
